@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,8 +11,6 @@
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <!-- Babel for in-browser JSX transform -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <!-- lucide-react UMD -->
-  <script src="https://unpkg.com/lucide-react/dist/lucide-react.umd.js"></script>
   <style>
     body { background: #faf7ff; }
     .badge { font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 9999px; }
@@ -24,18 +21,17 @@
 
   <script type="text/babel">
     const { useState, useMemo } = React;
-    const { Shield, Search, FileText, AlertCircle, Info, XCircle, Link: LinkIcon } = lucideReact;
 
     const SUBCOVERAGES = ["UMBI", "UMPD", "UIMBI", "UIMPD", "Medpay", "PIP"];
 
     const formatLimit = (value) => {
       if (value === undefined || value === null || value === "N/A") return "N/A";
       if (value === "INCLUDED") return "Included with UM/UMPD";
-      if (typeof value === "string" && value.includes("/")) return value.startsWith("$") ? value : value;
+      if (typeof value === "string" && value.includes("/")) return value;
       if (typeof value === "number") return `$${value.toLocaleString()}`;
       if (typeof value === "string") {
         if (value.startsWith("$")) return value;
-        if (/^\\d/.test(value)) return `$${value}`;
+        if (/^\d/.test(value)) return `$${value}`;
         return value;
       }
       return String(value);
@@ -58,7 +54,7 @@
       return { status: "Not Required", color: "text-gray-500" };
     };
 
-    // Data (WA tweaked to E&S only: no Admitted:"X")
+    // Data (WA tweaked to E&S only: removed Admitted:"X")
     const stateData = [
       {"State":"Alabama","State Abbrev.":"AL","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI","Deductible":"N/A","Notes":"Currently set up Accept or Reject UMBI"},
       {"State":"Arizona","State Abbrev.":"AZ","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UIMBI","Deductible":"N/A","Notes":"Currently set up as 'accept all' or 'reject all'"},
@@ -111,10 +107,9 @@
       return v !== "N/A";
     };
 
-    const CoverageAssessmentTool = () => {
+    const App = () => {
       const [selectedState, setSelectedState] = useState("");
       const [searchTerm, setSearchTerm] = useState("");
-      const [showUIMInfo, setShowUIMInfo] = useState(false);
       const [selectedCoverages, setSelectedCoverages] = useState([]);
 
       const selectedStateData = useMemo(() => {
@@ -131,19 +126,11 @@
         });
       }, []);
 
-      const filteredStates = useMemo(() => {
-        return stateData.filter(state =>
-          state.State.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          state["State Abbrev."].toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      }, [searchTerm]);
-
       const toggleCoverage = (cov) => {
         setSelectedCoverages(prev => prev.includes(cov) ? prev.filter(c => c !== cov) : [...prev, cov]);
       };
 
       const coverageToStates = useMemo(() => {
-        // Map coverage -> [states]
         const map = {};
         SUBCOVERAGES.forEach(cov => {
           map[cov] = uniqueStates.filter(s => hasCoverage(s, cov));
@@ -153,7 +140,6 @@
 
       const intersectionStates = useMemo(() => {
         if (selectedCoverages.length === 0) return [];
-        // Intersect state lists by coverage (based on abbrev)
         const lists = selectedCoverages.map(cov => new Set(coverageToStates[cov].map(s => s["State Abbrev."])));
         const common = [...lists[0]].filter(abbr => lists.every(set => set.has(abbr)));
         return uniqueStates.filter(s => common.includes(s["State Abbrev."]));
@@ -162,26 +148,23 @@
       return (
         <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 p-6">
           <div className="max-w-7xl mx-auto">
-            {/* Header */}
             <div className="bg-white rounded-lg shadow-lg mb-8 overflow-hidden">
               <div className="bg-gradient-to-r from-purple-700 to-purple-900 p-8 text-white">
-                <div className="flex items-center gap-3 mb-4">
-                  <Shield className="w-10 h-10" />
-                  <h1 className="text-3xl md:text-4xl font-bold">Roman's Coverages by State Tool</h1>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="text-3xl">🛡️</div>
+                  <h1 className="text-3xl md:text-4xl font-bold">Coverages by State Tool</h1>
                 </div>
                 <p className="text-purple-100 text-lg">
-                  Auto Liability Subcoverages Assessment Platform for Core Systems Management
+                  Auto Liability Subcoverages Assessment Platform
                 </p>
               </div>
             </div>
 
-            {/* Search + Select */}
             <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
               <div className="grid lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-1">
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    <Search className="inline w-4 h-4 mr-1" />
-                    Search State
+                    🔎 Search State
                   </label>
                   <input
                     type="text"
@@ -195,8 +178,7 @@
 
                 <div className="lg:col-span-1">
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    <FileText className="inline w-4 h-4 mr-1" />
-                    Select State
+                    📄 Select State
                   </label>
                   <select
                     value={selectedState}
@@ -216,11 +198,9 @@
                   </select>
                 </div>
 
-                {/* Coverage Filters */}
                 <div className="lg:col-span-1">
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    <FileText className="inline w-4 h-4 mr-1" />
-                    Filter by Subcoverages
+                    🧮 Filter by Subcoverages
                   </label>
                   <div className="grid grid-cols-3 gap-2">
                     {SUBCOVERAGES.map(cov => (
@@ -237,7 +217,6 @@
                 </div>
               </div>
 
-              {/* Filter Results */}
               <div className="mt-6">
                 {selectedCoverages.length === 0 ? (
                   <div className="text-sm text-gray-600">
@@ -245,7 +224,6 @@
                   </div>
                 ) : (
                   <div className="space-y-6">
-                    {/* Intersection */}
                     <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
                       <h4 className="font-semibold text-purple-900 mb-2">
                         States providing <span className="italic">{selectedCoverages.join(", ")}</span> (intersection)
@@ -264,7 +242,6 @@
                       )}
                     </div>
 
-                    {/* Per-coverage lists */}
                     <div className="grid md:grid-cols-2 gap-4">
                       {selectedCoverages.map(cov => (
                         <div key={cov} className="bg-white border border-purple-100 rounded-lg p-4">
@@ -292,14 +269,11 @@
               </div>
             </div>
 
-            {/* Coverage Details */}
             {selectedStateData ? (
               <div className="space-y-6">
-                {/* Basic Information */}
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h2 className="text-2xl font-bold mb-6 flex items-center gap-2" style={{ color: '#7E369F' }}>
-                    <Info className="w-6 h-6" />
-                    {selectedStateData.State} Coverage Information
+                    ℹ️ {selectedStateData.State} Coverage Information
                   </h2>
 
                   <div className="grid md:grid-cols-3 gap-6 mb-6">
@@ -330,10 +304,8 @@
                   </div>
                 </div>
 
-                {/* Coverage Limits Grid */}
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-xl font-bold mb-6" style={{ color: '#7E369F' }}>Coverage Limits & Requirements</h3>
-
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {SUBCOVERAGES.map(cov => {
                       const status = getCoverageStatus(cov, selectedStateData["Mandatory (On Platform)"], selectedStateData["Optional (On Platform)"]);
@@ -357,8 +329,8 @@
                             {formatLimit(selectedStateData[cov])}
                           </p>
                           {selectedStateData[cov] === "INCLUDED" && (
-                            <p className="text-xs text-purple-600 mt-1 flex items-center gap-1">
-                              <span>Bundled with UM/UMPD</span>
+                            <p className="text-xs text-purple-600 mt-1">
+                              Bundled with UM/UMPD
                             </p>
                           )}
                         </div>
@@ -367,12 +339,10 @@
                   </div>
                 </div>
 
-                {/* Deductibles and Notes */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="bg-white rounded-lg shadow-lg p-6">
                     <h3 className="text-xl font-bold mb-4 flex items-center gap-2" style={{ color: '#7E369F' }}>
-                      <AlertCircle className="w-5 h-5" />
-                      Deductibles
+                      ⚠️ Deductibles
                     </h3>
                     <div className="bg-purple-50 p-4 rounded-lg">
                       <p className="text-gray-700">
@@ -385,8 +355,7 @@
 
                   <div className="bg-white rounded-lg shadow-lg p-6">
                     <h3 className="text-xl font-bold mb-4 flex items-center gap-2" style={{ color: '#7E369F' }}>
-                      <Info className="w-5 h-5" />
-                      Platform Requirements
+                      🧾 Platform Requirements
                     </h3>
                     <div className="space-y-3">
                       <div className="bg-red-50 p-3 rounded-lg">
@@ -409,12 +378,10 @@
                   </div>
                 </div>
 
-                {/* Additional Notes */}
                 {selectedStateData.Notes && selectedStateData.Notes !== "N/A" && (
                   <div className="bg-gradient-to-r from-purple-100 to-purple-50 rounded-lg shadow-lg p-6">
-                    <h3 className="text-xl font-bold mb-4 flex items-center gap-2" style={{ color: '#7E369F' }}>
-                      <FileText className="w-5 h-5" />
-                      Important Notes
+                    <h3 className="text-xl font-bold mb-4" style={{ color: '#7E369F' }}>
+                      📝 Important Notes
                     </h3>
                     <p className="text-gray-700 bg-white p-4 rounded-lg">
                       {selectedStateData.Notes}
@@ -424,7 +391,7 @@
               </div>
             ) : (
               <div className="bg-white rounded-lg shadow-lg p-12 text-center">
-                <Shield className="w-16 h-16 mx-auto mb-4 text-purple-300" />
+                <div className="text-5xl mb-4">🛡️</div>
                 <h3 className="text-xl font-semibold text-gray-600 mb-2">No State Selected</h3>
                 <p className="text-gray-500">
                   Please select a state from the dropdown above to view coverage information
@@ -432,11 +399,9 @@
               </div>
             )}
 
-            {/* UIM Information Footer */}
             <div className="mt-8 bg-purple-50 rounded-lg p-6">
-              <h3 className="text-lg font-bold mb-3 flex items-center gap-2" style={{ color: '#7E369F' }}>
-                <Info className="w-5 h-5" />
-                Understanding UIM Limit Relationships
+              <h3 className="text-lg font-bold mb-3" style={{ color: '#7E369F' }}>
+                ℹ️ Understanding UIM Limit Relationships
               </h3>
               <div className="space-y-3 text-sm">
                 <div className="flex items-start gap-2">
@@ -457,7 +422,6 @@
               </div>
             </div>
 
-            {/* Footer */}
             <div className="mt-8 text-center text-sm text-gray-500">
               <p>Core Systems Management Tool • Auto Liability Coverage Assessment Platform</p>
               <p className="mt-1">Data current as of the latest spreadsheet update • 43 states included</p>
@@ -468,7 +432,7 @@
     };
 
     const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<CoverageAssessmentTool />);
+    root.render(<App />);
   </script>
 </body>
 </html>
