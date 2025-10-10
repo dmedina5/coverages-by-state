@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Coverages by State Tool</title>
+  <title>Enhanced Coverages by State Tool</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -20,6 +20,13 @@
       margin: 0;
       padding: 0;
     }
+    .fade-in {
+      animation: fadeIn 0.3s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
@@ -29,37 +36,10 @@
     const { useState, useMemo } = React;
 
     const SUBCOVERAGES = ["UMBI", "UMPD", "UIMBI", "UIMPD", "Medpay", "PIP"];
+    const LINES_OF_BUSINESS = ["APD", "MTC", "NTL", "TGL"];
+    const OPERATIONS = ["UIIA", "Hotshots", "DS&G"];
 
-    const formatLimit = (value) => {
-      if (value === undefined || value === null || value === "N/A") return "N/A";
-      if (value === "INCLUDED") return "Included with UM/UMPD";
-      if (typeof value === "string" && value.includes("/")) return value;
-      if (typeof value === "number") return `$${value.toLocaleString()}`;
-      if (typeof value === "string") {
-        if (value.startsWith("$")) return value;
-        if (/^\d/.test(value)) return `$${value}`;
-        return value;
-      }
-      return String(value);
-    };
-
-    const getCoverageType = (admitted, es) => {
-      if (admitted === "X" && es === "X") return "Both Admitted & E&S";
-      if (admitted === "X") return "Admitted";
-      if (es === "X") return "E&S (Excess & Surplus)";
-      return "Not Specified";
-    };
-
-    const getCoverageStatus = (coverage, mandatory, optional) => {
-      if (mandatory && mandatory !== "N/A" && mandatory.includes(coverage)) {
-        return { status: "Mandatory", color: "text-red-600" };
-      }
-      if (optional && optional !== "N/A" && optional.includes(coverage)) {
-        return { status: "Optional", color: "text-yellow-600" };
-      }
-      return { status: "Not Required", color: "text-gray-500" };
-    };
-
+    // Complete state data
     const stateData = [
       {"State":"Alabama","State Abbrev.":"AL","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI","Deductible":"N/A","Notes":"Currently set up Accept or Reject UMBI"},
       {"State":"Arizona","State Abbrev.":"AZ","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UIMBI","Deductible":"N/A","Notes":"Currently set up as 'accept all' or 'reject all'"},
@@ -104,19 +84,165 @@
       {"State":"Wisconsin","State Abbrev.":"WI","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":100000,"UMPD":"N/A","UIMBI":100000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI","Optional (On Platform)":"UIMBI","Notes":"Mandatory Accept UMBI/ Option to Accept/Reject UIMBI"}
     ];
 
-    const hasCoverage = (state, coverage) => {
-      const v = state[coverage];
-      if (v === undefined || v === null) return false;
-      return v !== "N/A";
+    // LOB and Operations data
+    const lobOpsData = {
+      "AL": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "AK": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"N/A","MTC":"N/A","NTL":"N/A","TGL":"N/A"},
+      "AZ": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "AR": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "CA": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "CO": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "CT": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"N/A","MTC":"N/A","NTL":"N/A","TGL":"N/A"},
+      "DE": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "FL": {"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "GA": {"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"Y","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "HI": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"N/A","MTC":"N/A","NTL":"N/A","TGL":"N/A"},
+      "ID": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "IL": {"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"Y","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "IN": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "IA": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "KS": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"N/A","MTC":"N/A","NTL":"N/A","TGL":"N/A"},
+      "KY": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"N/A","MTC":"N/A","NTL":"N/A","TGL":"N/A"},
+      "LA": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"N/A","MTC":"N/A","NTL":"N/A","TGL":"N/A"},
+      "ME": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "MD": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "MA": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"N/A","MTC":"N/A","NTL":"N/A","TGL":"N/A"},
+      "MI": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "MN": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "MS": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "MO": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "MT": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "NE": {"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"Y","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "NV": {"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"Y","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "NH": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "NJ": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "NM": {"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"Y","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "NY": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"N/A","MTC":"N/A","NTL":"N/A","TGL":"N/A"},
+      "NC": {"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"Y","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "ND": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "OH": {"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"Y","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "OK": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "OR": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "PA": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "RI": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "SC": {"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"Y","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "SD": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "TN": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "TX": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "UT": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "VT": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "VA": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "WA": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "WV": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "WI": {"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"Y","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "WY": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"N/A","MTC":"N/A","NTL":"N/A","TGL":"N/A"}
+    };
+
+    // Carrier data
+    const carrierData = {
+      "AL": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "AK": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
+      "AZ": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "AR": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "CA": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "CO": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "CT": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
+      "DE": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "FL": {"Everspan Admitted GenRe":"Y","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "GA": {"Everspan Admitted GenRe":"Y","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "HI": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
+      "ID": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "IL": {"Everspan Admitted GenRe":"Y","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "IN": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "IA": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "KS": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
+      "KY": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
+      "LA": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
+      "ME": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "MD": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "MA": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
+      "MI": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "MN": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "MS": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "MO": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "MT": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "NE": {"Everspan Admitted GenRe":"Y","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "NV": {"Everspan Admitted GenRe":"Y","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "NH": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "NJ": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "NM": {"Everspan Admitted GenRe":"Y","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "NY": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
+      "NC": {"Everspan Admitted GenRe":"Y","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "ND": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "OH": {"Everspan Admitted GenRe":"Y","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "OK": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "OR": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "PA": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "RI": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "SC": {"Everspan Admitted GenRe":"Y","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "SD": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "TN": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "TX": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "UT": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "VT": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "VA": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "WA": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "WV": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "WI": {"Everspan Admitted GenRe":"Y","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "WY": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"}
+    };
+
+    // Helper functions
+    const formatLimit = (value) => {
+      if (value === undefined || value === null || value === "N/A") return "N/A";
+      if (value === "INCLUDED") return "Included with UM/UMPD";
+      if (typeof value === "string" && value.includes("/")) return value;
+      if (typeof value === "number") return `$${value.toLocaleString()}`;
+      if (typeof value === "string") {
+        if (value.startsWith("$")) return value;
+        if (/^\d/.test(value)) return `$${value}`;
+        return value;
+      }
+      return String(value);
+    };
+
+    const getCoverageType = (admitted, es) => {
+      if (admitted === "X" && es === "X") return "Both Admitted & E&S";
+      if (admitted === "X") return "Admitted";
+      if (es === "X") return "E&S (Excess & Surplus)";
+      return "Not Specified";
+    };
+
+    const getCoverageStatus = (coverage, mandatory, optional) => {
+      if (mandatory && mandatory !== "N/A" && mandatory.includes(coverage)) {
+        return { status: "Mandatory", color: "text-red-600" };
+      }
+      if (optional && optional !== "N/A" && optional.includes(coverage)) {
+        return { status: "Optional", color: "text-yellow-600" };
+      }
+      return { status: "Not Required", color: "text-gray-500" };
+    };
+
+    const getAvailabilityStatus = (value) => {
+      if (value === "Y") return { available: true, label: "Available", className: "text-green-600 bg-green-50" };
+      if (value === "N/A") return { available: false, label: "Not Available", className: "text-gray-500 bg-gray-50" };
+      if (value === "turned off") return { available: false, label: "Turned Off", className: "text-orange-600 bg-orange-50" };
+      if (value === "blocked") return { available: false, label: "Blocked", className: "text-red-600 bg-red-50" };
+      return { available: false, label: value || "N/A", className: "text-gray-500 bg-gray-50" };
     };
 
     function App() {
       const [selectedState, setSelectedState] = useState("");
       const [searchTerm, setSearchTerm] = useState("");
-      const [selectedCoverages, setSelectedCoverages] = useState([]);
+      const [activeTab, setActiveTab] = useState("dashboard");
+      const [lobFilter, setLobFilter] = useState([]);
+      const [opsFilter, setOpsFilter] = useState([]);
 
       const selectedStateData = useMemo(() => {
-        return stateData.find(s => s["State Abbrev."] === selectedState);
+        const coverage = stateData.find(s => s["State Abbrev."] === selectedState);
+        const lob = lobOpsData[selectedState] || {};
+        const carriers = carrierData[selectedState] || {};
+        return { coverage, lob, carriers };
       }, [selectedState]);
 
       const uniqueStates = useMemo(() => {
@@ -129,61 +255,327 @@
         });
       }, []);
 
-      const toggleCoverage = (cov) => {
-        setSelectedCoverages(prev => prev.includes(cov) ? prev.filter(c => c !== cov) : [...prev, cov]);
+      const toggleLobFilter = (lob) => {
+        setLobFilter(prev => prev.includes(lob) ? prev.filter(l => l !== lob) : [...prev, lob]);
       };
 
-      const coverageToStates = useMemo(() => {
-        const map = {};
-        SUBCOVERAGES.forEach(cov => {
-          map[cov] = uniqueStates.filter(s => hasCoverage(s, cov));
-        });
-        return map;
-      }, [uniqueStates]);
-
-      const intersectionStates = useMemo(() => {
-        if (selectedCoverages.length === 0) return [];
-        const lists = selectedCoverages.map(cov => new Set(coverageToStates[cov].map(s => s["State Abbrev."])));
-        const common = [...lists[0]].filter(abbr => lists.every(set => set.has(abbr)));
-        return uniqueStates.filter(s => common.includes(s["State Abbrev."]));
-      }, [selectedCoverages, coverageToStates, uniqueStates]);
-
-      const formatCoverageLimit = (value, state) => {
-        if (state && state["State Abbrev."] === "OH" && typeof value === "string" && value.includes("(E&S)")) {
-          const esMatch = value.match(/(\d+) \(E&S\)/);
-          const admittedMatch = value.match(/(\d+) \(Admitted\)/);
-          const esValue = esMatch ? `${parseInt(esMatch[1]).toLocaleString()}` : "N/A";
-          const admittedValue = admittedMatch ? `${parseInt(admittedMatch[1]).toLocaleString()}` : "N/A";
-          return `E&S: ${esValue} / Admitted: ${admittedValue}`;
-        }
-        return formatLimit(value);
+      const toggleOpsFilter = (op) => {
+        setOpsFilter(prev => prev.includes(op) ? prev.filter(o => o !== op) : [...prev, op]);
       };
 
-      const getCoverageStatusForOhio = (coverage, mandatory, optional) => {
-        if (mandatory && mandatory.includes(coverage) && mandatory.includes("(Admitted only)")) {
-          return { status: "Mandatory (Admitted) / Optional (E&S)", color: "text-orange-600" };
+      const filteredStates = useMemo(() => {
+        let states = Object.keys(lobOpsData);
+        
+        // Filter by LOBs
+        if (lobFilter.length > 0) {
+          states = states.filter(state => {
+            return lobFilter.every(lob => lobOpsData[state][lob] === "Y");
+          });
         }
-        return getCoverageStatus(coverage, mandatory, optional);
+        
+        // Filter by Operations
+        if (opsFilter.length > 0) {
+          states = states.filter(state => {
+            const data = lobOpsData[state];
+            return opsFilter.every(op => {
+              if (op === "UIIA") return data["Admitted AL UIIA"] === "Y" || data["Non-Admitted AL (including UIIA & Hotshots)"] === "Y";
+              if (op === "Hotshots") return data["Admitted AL Hotshots"] === "Y" || data["Non-Admitted AL (including UIIA & Hotshots)"] === "Y";
+              if (op === "DS&G") return data["Non-Admitted AL DS&G"] === "Y";
+              return false;
+            });
+          });
+        }
+        
+        return states.sort();
+      }, [lobFilter, opsFilter]);
+
+      const renderDashboard = () => {
+        if (!selectedStateData.coverage) {
+          return (
+            <div className="bg-white rounded-lg shadow-lg p-12 text-center">
+              <div className="text-6xl mb-4">📊</div>
+              <h3 className="text-2xl font-semibold text-gray-600 mb-2">No State Selected</h3>
+              <p className="text-gray-500">Please select a state from the dropdown above to view comprehensive coverage information</p>
+            </div>
+          );
+        }
+
+        return (
+          <div className="space-y-6 fade-in">
+            {/* State Overview */}
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg shadow-lg p-6 text-white">
+              <h2 className="text-3xl font-bold mb-2">{selectedStateData.coverage.State}</h2>
+              <div className="grid md:grid-cols-3 gap-4">
+                <div>
+                  <p className="text-purple-200 text-sm">Coverage Type</p>
+                  <p className="text-lg font-semibold">{getCoverageType(selectedStateData.coverage.Admitted, selectedStateData.coverage["E&S"])}</p>
+                </div>
+                <div>
+                  <p className="text-purple-200 text-sm">AL CSL Limit</p>
+                  <p className="text-lg font-semibold">{formatLimit(selectedStateData.coverage["AL CSL Limit"])}</p>
+                </div>
+                <div>
+                  <p className="text-purple-200 text-sm">UIM Relationship</p>
+                  <p className="text-lg font-semibold">{selectedStateData.coverage["UIM Limit Included or Separate from UM"] || "N/A"}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-6">
+              {/* Lines of Business */}
+              <div className="bg-white rounded-lg shadow-lg p-6">
+                <h3 className="text-xl font-bold mb-4 text-indigo-800 flex items-center gap-2">
+                  <span>📦</span> Lines of Business
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {LINES_OF_BUSINESS.map(lob => {
+                    const status = getAvailabilityStatus(selectedStateData.lob[lob]);
+                    return (
+                      <div key={lob} className={`p-4 rounded-lg border-2 ${status.available ? 'border-green-300' : 'border-gray-200'}`}>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-semibold text-gray-700">{lob}</p>
+                            <p className="text-xs text-gray-500">
+                              {lob === "APD" && "Auto Physical Damage"}
+                              {lob === "MTC" && "Motor Truck Cargo"}
+                              {lob === "NTL" && "Non-Trucking Liability"}
+                              {lob === "TGL" && "Truckers General Liability"}
+                            </p>
+                          </div>
+                          <span className={`text-xs px-2 py-1 rounded-full font-semibold ${status.className}`}>
+                            {status.available ? "✓" : "✗"}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Permitted Operations */}
+              <div className="bg-white rounded-lg shadow-lg p-6">
+                <h3 className="text-xl font-bold mb-4 text-indigo-800 flex items-center gap-2">
+                  <span>🚚</span> Permitted Operations
+                </h3>
+                <div className="space-y-4">
+                  <div className="p-4 rounded-lg bg-blue-50 border border-blue-200">
+                    <p className="font-semibold text-blue-900 mb-2">UIIA (Trailer Interchange)</p>
+                    <div className="text-sm space-y-1">
+                      <p className="flex items-center gap-2">
+                        <span className={`px-2 py-1 rounded text-xs font-semibold ${selectedStateData.lob["Admitted AL UIIA"] === "Y" ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                          Admitted: {selectedStateData.lob["Admitted AL UIIA"] === "Y" ? "Yes" : "No"}
+                        </span>
+                      </p>
+                      <p className="flex items-center gap-2">
+                        <span className={`px-2 py-1 rounded text-xs font-semibold ${selectedStateData.lob["Non-Admitted AL (including UIIA & Hotshots)"] === "Y" ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                          Non-Admitted: {selectedStateData.lob["Non-Admitted AL (including UIIA & Hotshots)"] === "Y" ? "Yes" : "No"}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-lg bg-orange-50 border border-orange-200">
+                    <p className="font-semibold text-orange-900 mb-2">Hotshots</p>
+                    <div className="text-sm space-y-1">
+                      <p className="flex items-center gap-2">
+                        <span className={`px-2 py-1 rounded text-xs font-semibold ${selectedStateData.lob["Admitted AL Hotshots"] === "Y" ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                          Admitted: {selectedStateData.lob["Admitted AL Hotshots"] === "Y" ? "Yes" : "No"}
+                        </span>
+                      </p>
+                      <p className="flex items-center gap-2">
+                        <span className={`px-2 py-1 rounded text-xs font-semibold ${selectedStateData.lob["Non-Admitted AL (including UIIA & Hotshots)"] === "Y" ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                          Non-Admitted: {selectedStateData.lob["Non-Admitted AL (including UIIA & Hotshots)"] === "Y" ? "Yes" : "No"}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-lg bg-purple-50 border border-purple-200">
+                    <p className="font-semibold text-purple-900 mb-2">DS&G (Dump, Sand & Gravel)</p>
+                    <div className="text-sm">
+                      <p className="flex items-center gap-2">
+                        <span className={`px-2 py-1 rounded text-xs font-semibold ${selectedStateData.lob["Non-Admitted AL DS&G"] === "Y" ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                          Non-Admitted: {selectedStateData.lob["Non-Admitted AL DS&G"] === "Y" ? "Yes" : "No"}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Carrier Availability */}
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h3 className="text-xl font-bold mb-4 text-indigo-800 flex items-center gap-2">
+                <span>🏢</span> Carrier Availability
+              </h3>
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                  { key: "Everspan Admitted GenRe", label: "Everspan Admitted (GenRe)" },
+                  { key: "Everspan Non-Admitted GenRe", label: "Everspan Non-Admitted (GenRe)" },
+                  { key: "Everspan Admitted MunichRe", label: "Everspan Admitted (MunichRe)" },
+                  { key: "Everspan Non-Admitted MunichRe", label: "Everspan Non-Admitted (MunichRe)" },
+                  { key: "Accredited Non-Admitted 1st", label: "Accredited Non-Admitted (1st)" },
+                  { key: "Accredited Non-Admitted New", label: "Accredited Non-Admitted (New)" },
+                  { key: "Knight Non-Admitted", label: "Knight Non-Admitted" },
+                  { key: "Ascot Non-Admitted", label: "Ascot Non-Admitted" }
+                ].map(carrier => {
+                  const status = getAvailabilityStatus(selectedStateData.carriers[carrier.key]);
+                  return (
+                    <div key={carrier.key} className="p-3 rounded-lg border bg-gray-50">
+                      <p className="text-sm font-medium text-gray-700 mb-1">{carrier.label}</p>
+                      <span className={`text-xs px-2 py-1 rounded-full font-semibold ${status.className}`}>
+                        {status.label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Coverage Limits */}
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h3 className="text-xl font-bold mb-4 text-indigo-800">Coverage Limits & Requirements</h3>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {SUBCOVERAGES.map(cov => {
+                  const status = getCoverageStatus(cov, selectedStateData.coverage["Mandatory (On Platform)"], selectedStateData.coverage["Optional (On Platform)"]);
+                  return (
+                    <div key={cov} className="border-2 border-indigo-100 rounded-lg p-4 hover:shadow-md transition-shadow">
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="font-semibold text-gray-700">{cov}</h4>
+                        <span className={`text-xs font-semibold ${status.color}`}>{status.status}</span>
+                      </div>
+                      <p className="text-sm text-gray-500 mb-1">
+                        {cov === "UMBI" && "Uninsured Motorist Bodily Injury"}
+                        {cov === "UMPD" && "Uninsured Motorist Property Damage"}
+                        {cov === "UIMBI" && "Underinsured Motorist Bodily Injury"}
+                        {cov === "UIMPD" && "Underinsured Motorist Property Damage"}
+                        {cov === "PIP" && "Personal Injury Protection"}
+                        {cov === "Medpay" && "Medical Payments"}
+                      </p>
+                      <p className="font-bold text-lg text-indigo-800">
+                        {formatLimit(selectedStateData.coverage[cov])}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Notes and Deductibles */}
+            {(selectedStateData.coverage.Notes || selectedStateData.coverage.Deductible) && (
+              <div className="grid md:grid-cols-2 gap-6">
+                {selectedStateData.coverage.Deductible && selectedStateData.coverage.Deductible !== "N/A" && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+                    <h3 className="text-lg font-bold mb-3 text-yellow-800">⚠️ Deductibles</h3>
+                    <p className="text-gray-700">{selectedStateData.coverage.Deductible}</p>
+                  </div>
+                )}
+                {selectedStateData.coverage.Notes && selectedStateData.coverage.Notes !== "N/A" && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                    <h3 className="text-lg font-bold mb-3 text-blue-800">📝 Important Notes</h3>
+                    <p className="text-gray-700">{selectedStateData.coverage.Notes}</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      };
+
+      const renderStateAvailability = () => {
+        return (
+          <div className="space-y-6 fade-in">
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h3 className="text-2xl font-bold mb-6 text-indigo-800">Filter States by Available Services</h3>
+              
+              <div className="grid md:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <h4 className="font-semibold text-gray-700 mb-3">Lines of Business</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {LINES_OF_BUSINESS.map(lob => (
+                      <button
+                        key={lob}
+                        onClick={() => toggleLobFilter(lob)}
+                        className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                          lobFilter.includes(lob)
+                            ? 'bg-indigo-600 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        {lob}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold text-gray-700 mb-3">Permitted Operations</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {OPERATIONS.map(op => (
+                      <button
+                        key={op}
+                        onClick={() => toggleOpsFilter(op)}
+                        className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                          opsFilter.includes(op)
+                            ? 'bg-purple-600 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        {op}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t pt-6">
+                <h4 className="font-semibold text-gray-700 mb-3">
+                  States Matching Criteria ({filteredStates.length} of 50)
+                </h4>
+                <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-2">
+                  {filteredStates.map(state => (
+                    <button
+                      key={state}
+                      onClick={() => {
+                        setSelectedState(state);
+                        setActiveTab("dashboard");
+                      }}
+                      className="p-3 bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg hover:from-indigo-100 hover:to-purple-100 transition-colors cursor-pointer"
+                    >
+                      <p className="font-bold text-indigo-700">{state}</p>
+                      <p className="text-xs text-gray-600">
+                        {Object.values(lobOpsData[state] || {}).filter(v => v === "Y").length} services
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
       };
 
       return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 p-6">
+        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6">
           <div className="max-w-7xl mx-auto">
+            {/* Header */}
             <div className="bg-white rounded-lg shadow-lg mb-8 overflow-hidden">
-              <div className="bg-gradient-to-r from-purple-700 to-purple-900 p-8 text-white">
+              <div className="bg-gradient-to-r from-indigo-700 to-purple-700 p-8 text-white">
                 <div className="flex items-center gap-3 mb-2">
                   <div className="text-3xl">🛡️</div>
-                  <h1 className="text-3xl md:text-4xl font-bold">Coverages by State Tool</h1>
+                  <h1 className="text-3xl md:text-4xl font-bold">Enhanced Coverages by State Tool</h1>
                 </div>
-                <p className="text-purple-100 text-lg">
-                  Auto Liability Subcoverages Assessment Platform
+                <p className="text-indigo-100 text-lg">
+                  Comprehensive Insurance Coverage, Lines of Business & Operations Platform
                 </p>
               </div>
             </div>
 
+            {/* State Selection */}
             <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-              <div className="grid lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-1">
+              <div className="grid lg:grid-cols-2 gap-6">
+                <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     🔎 Search State
                   </label>
@@ -192,18 +584,18 @@
                     placeholder="Type state name or abbreviation..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-purple-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors bg-purple-50"
+                    className="w-full px-4 py-3 border-2 border-indigo-200 rounded-lg focus:border-indigo-500 focus:outline-none transition-colors bg-indigo-50"
                   />
                 </div>
 
-                <div className="lg:col-span-1">
+                <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     📄 Select State
                   </label>
                   <select
                     value={selectedState}
                     onChange={(e) => setSelectedState(e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-purple-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors cursor-pointer bg-purple-50"
+                    className="w-full px-4 py-3 border-2 border-indigo-200 rounded-lg focus:border-indigo-500 focus:outline-none transition-colors cursor-pointer bg-indigo-50"
                   >
                     <option value="">Choose a state...</option>
                     {uniqueStates.filter(state =>
@@ -216,233 +608,44 @@
                     ))}
                   </select>
                 </div>
-
-                <div className="lg:col-span-1">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    🧮 Filter by Subcoverages
-                  </label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {SUBCOVERAGES.map(cov => (
-                      <label key={cov} className="flex items-center gap-2 bg-purple-50 border border-purple-200 rounded-lg px-3 py-2 cursor-pointer hover:bg-purple-100">
-                        <input
-                          type="checkbox"
-                          checked={selectedCoverages.includes(cov)}
-                          onChange={() => toggleCoverage(cov)}
-                          className="cursor-pointer"
-                        />
-                        <span className="text-sm text-purple-900 font-medium">{cov}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6">
-                {selectedCoverages.length === 0 ? (
-                  <div className="text-sm text-gray-600">
-                    Select one or more subcoverages above to see which states provide them (based on non-"N/A" values).
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                      <h4 className="font-semibold text-purple-900 mb-2">
-                        States providing <span className="italic">{selectedCoverages.join(", ")}</span> (intersection)
-                        <span className="ml-2 text-xs px-2 py-1 bg-purple-200 text-purple-900 rounded-full">{intersectionStates.length}</span>
-                      </h4>
-                      {intersectionStates.length ? (
-                        <div className="flex flex-wrap gap-2">
-                          {intersectionStates.map(s => (
-                            <span key={s["State Abbrev."]} className="text-xs px-3 py-1 bg-white border border-purple-300 text-purple-800 rounded-full">
-                              {s.State} ({s["State Abbrev."]})
-                            </span>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-sm text-gray-700">No states match all selected subcoverages.</p>
-                      )}
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-4">
-                      {selectedCoverages.map(cov => (
-                        <div key={cov} className="bg-white border border-purple-100 rounded-lg p-4">
-                          <h5 className="font-semibold text-gray-800 mb-2">
-                            States with {cov}
-                            <span className="ml-2 text-xs px-2 py-1 bg-purple-100 text-purple-900 rounded-full">{coverageToStates[cov].length}</span>
-                          </h5>
-                          <div className="flex flex-wrap gap-2">
-                            {coverageToStates[cov].map(s => (
-                              <button
-                                key={s["State Abbrev."] + cov}
-                                className="text-xs px-3 py-1 bg-purple-50 border border-purple-200 text-purple-900 rounded-full hover:bg-purple-100 cursor-pointer"
-                                onClick={() => setSelectedState(s["State Abbrev."])}
-                                title={`Open ${s.State}`}
-                              >
-                                {s.State} ({s["State Abbrev."]})
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
 
-            {selectedStateData ? (
-              <div className="space-y-6">
-                <div className="bg-white rounded-lg shadow-lg p-6">
-                  <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-purple-800">
-                    ℹ️ {selectedStateData.State} Coverage Information
-                  </h2>
-
-                  <div className="grid md:grid-cols-3 gap-6 mb-6">
-                    <div className="bg-purple-50 p-4 rounded-lg">
-                      <p className="text-sm font-semibold text-gray-600 mb-1">Coverage Type</p>
-                      <p className="text-lg font-bold text-purple-800">
-                        {getCoverageType(selectedStateData.Admitted, selectedStateData["E&S"])}
-                      </p>
-                    </div>
-
-                    <div className="bg-purple-50 p-4 rounded-lg">
-                      <p className="text-sm font-semibold text-gray-600 mb-1">AL CSL Limit</p>
-                      <p className="text-lg font-bold text-purple-800">
-                        {formatLimit(selectedStateData["AL CSL Limit"])}
-                      </p>
-                    </div>
-
-                    <div className="bg-purple-50 p-4 rounded-lg">
-                      <p className="text-sm font-semibold text-gray-600 mb-1">UIM Limit Relationship</p>
-                      <p className="text-lg font-bold text-purple-800">
-                        {selectedStateData["UIM Limit Included or Separate from UM"] || "N/A"}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-lg shadow-lg p-6">
-                  <h3 className="text-xl font-bold mb-6 text-purple-800">Coverage Limits & Requirements</h3>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {SUBCOVERAGES.map(cov => {
-                      const status = selectedStateData["State Abbrev."] === "OH" 
-                        ? getCoverageStatusForOhio(cov, selectedStateData["Mandatory (On Platform)"], selectedStateData["Optional (On Platform)"])
-                        : getCoverageStatus(cov, selectedStateData["Mandatory (On Platform)"], selectedStateData["Optional (On Platform)"]);
-                      return (
-                        <div key={cov} className="border-2 border-purple-100 rounded-lg p-4 hover:shadow-md transition-shadow">
-                          <div className="flex justify-between items-start mb-2">
-                            <h4 className="font-semibold text-gray-700">{cov}</h4>
-                            <div className={`flex items-center gap-2 ${status.color}`}>
-                              <span className="text-xs font-semibold">{status.status}</span>
-                            </div>
-                          </div>
-                          <p className="text-sm text-gray-500 mb-1">
-                            {cov === "UMBI" && "Uninsured Motorist Bodily Injury"}
-                            {cov === "UMPD" && "Uninsured Motorist Property Damage"}
-                            {cov === "UIMBI" && "Underinsured Motorist Bodily Injury"}
-                            {cov === "UIMPD" && "Underinsured Motorist Property Damage"}
-                            {cov === "PIP" && "Personal Injury Protection"}
-                            {cov === "Medpay" && "Medical Payments"}
-                          </p>
-                          <p className="font-bold text-lg text-purple-800">
-                            {formatCoverageLimit(selectedStateData[cov], selectedStateData)}
-                          </p>
-                          {selectedStateData[cov] === "INCLUDED" && (
-                            <p className="text-xs text-purple-600 mt-1">
-                              Bundled with UM/UMPD
-                            </p>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="bg-white rounded-lg shadow-lg p-6">
-                    <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-purple-800">
-                      ⚠️ Deductibles
-                    </h3>
-                    <div className="bg-purple-50 p-4 rounded-lg">
-                      <p className="text-gray-700">
-                        {selectedStateData.Deductible && selectedStateData.Deductible !== "N/A"
-                          ? selectedStateData.Deductible
-                          : "No deductibles apply for this state"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="bg-white rounded-lg shadow-lg p-6">
-                    <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-purple-800">
-                      🧾 Platform Requirements
-                    </h3>
-                    <div className="space-y-3">
-                      <div className="bg-red-50 p-3 rounded-lg">
-                        <p className="text-sm font-semibold text-red-700 mb-1">Mandatory Coverages:</p>
-                        <p className="text-gray-700">
-                          {selectedStateData["Mandatory (On Platform)"] && selectedStateData["Mandatory (On Platform)"] !== "N/A"
-                            ? selectedStateData["Mandatory (On Platform)"]
-                            : "None"}
-                        </p>
-                      </div>
-                      <div className="bg-yellow-50 p-3 rounded-lg">
-                        <p className="text-sm font-semibold text-yellow-700 mb-1">Optional Coverages:</p>
-                        <p className="text-gray-700">
-                          {selectedStateData["Optional (On Platform)"] && selectedStateData["Optional (On Platform)"] !== "N/A"
-                            ? selectedStateData["Optional (On Platform)"]
-                            : "None"}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {selectedStateData.Notes && selectedStateData.Notes !== "N/A" && (
-                  <div className="bg-gradient-to-r from-purple-100 to-purple-50 rounded-lg shadow-lg p-6">
-                    <h3 className="text-xl font-bold mb-4 text-purple-800">
-                      📝 Important Notes
-                    </h3>
-                    <p className="text-gray-700 bg-white p-4 rounded-lg">
-                      {selectedStateData.Notes}
-                    </p>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="bg-white rounded-lg shadow-lg p-12 text-center">
-                <div className="text-5xl mb-4">🛡️</div>
-                <h3 className="text-xl font-semibold text-gray-600 mb-2">No State Selected</h3>
-                <p className="text-gray-500">
-                  Please select a state from the dropdown above to view coverage information
-                </p>
-              </div>
-            )}
-
-            <div className="mt-8 bg-purple-50 rounded-lg p-6">
-              <h3 className="text-lg font-bold mb-3 text-purple-800">
-                ℹ️ Understanding UIM Limit Relationships
-              </h3>
-              <div className="space-y-3 text-sm">
-                <div className="flex items-start gap-2">
-                  <span className="font-semibold text-purple-700 min-w-[100px]">Included:</span>
-                  <span className="text-gray-700">UIM coverage is bundled with UM coverage at the same limits. When you see "INCLUDED" as a coverage value, it means that coverage is automatically included with the corresponding UM coverage.</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="font-semibold text-purple-700 min-w-[100px]">Separate:</span>
-                  <span className="text-gray-700">UIM and UM coverages are independent and can have different limit amounts.</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="font-semibold text-purple-700 min-w-[100px]">N/A:</span>
-                  <span className="text-gray-700">UIM coverage is not offered or has special circumstances in this state.</span>
-                </div>
-                <div className="mt-4 pt-3 border-t border-purple-200 text-xs text-gray-600">
-                  <p>Note: Auto Liability coverage is not currently offered in Connecticut, Kansas, Kentucky, Massachusetts, New York, and Wyoming.</p>
-                </div>
+            {/* Tab Navigation */}
+            <div className="bg-white rounded-lg shadow-lg mb-6 p-2">
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setActiveTab("dashboard")}
+                  className={`flex-1 px-4 py-3 rounded-lg font-medium transition-colors ${
+                    activeTab === "dashboard"
+                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  📊 State Dashboard
+                </button>
+                <button
+                  onClick={() => setActiveTab("availability")}
+                  className={`flex-1 px-4 py-3 rounded-lg font-medium transition-colors ${
+                    activeTab === "availability"
+                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  🗺️ State Availability Matrix
+                </button>
               </div>
             </div>
 
+            {/* Content */}
+            {activeTab === "dashboard" && renderDashboard()}
+            {activeTab === "availability" && renderStateAvailability()}
+
+            {/* Footer */}
             <div className="mt-8 text-center text-sm text-gray-500">
-              <p>Core Systems Management Tool • Auto Liability Coverage Assessment Platform</p>
-              <p className="mt-1">Data current as of the latest spreadsheet update • 42 states included</p>
+              <p>Core Systems Management Tool • Enhanced Coverage Assessment Platform</p>
+              <p className="mt-1">Includes AL, APD, MTC, NTL, TGL Lines of Business • UIIA, Hotshots, DS&G Operations</p>
+              <p className="mt-1">Data current as of latest spreadsheet update • 50 states included</p>
             </div>
           </div>
         </div>
