@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title> Coverages by State Tool by JJ & Dan Squared👌 </title>
+  <title>Coverages by State Tool by JJ & Dan²</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -138,57 +138,57 @@
       "WY": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"N/A","MTC":"N/A","NTL":"N/A","TGL":"N/A"}
     };
 
-    // Carrier data
+    // Updated Carrier data with latest changes
     const carrierData = {
-      "AL": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "AL": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
       "AK": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
-      "AZ": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "AR": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
-      "CA": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "CO": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "CT": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
-      "DE": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
-      "FL": {"Everspan Admitted GenRe":"Y","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "GA": {"Everspan Admitted GenRe":"Y","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "AZ": {"Everspan Admitted GenRe":"backlog","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"backlog","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"Y"},
+      "AR": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "CA": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"Y"},
+      "CO": {"Everspan Admitted GenRe":"backlog","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"backlog","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"Y"},
+      "CT": {"Everspan Admitted GenRe":"backlog","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"backlog","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
+      "DE": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "FL": {"Everspan Admitted GenRe":"turned off","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"blocked","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "GA": {"Everspan Admitted GenRe":"turned off","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"Y"},
       "HI": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
-      "ID": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "IL": {"Everspan Admitted GenRe":"Y","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "IN": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "IA": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "ID": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "IL": {"Everspan Admitted GenRe":"turned off","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
+      "IN": {"Everspan Admitted GenRe":"backlog","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"backlog","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"Y"},
+      "IA": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"Y"},
       "KS": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
       "KY": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
-      "LA": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
-      "ME": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
-      "MD": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "LA": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
+      "ME": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "MD": {"Everspan Admitted GenRe":"backlog","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"backlog","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
       "MA": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
-      "MI": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "MN": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "MS": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "MO": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "MT": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "NE": {"Everspan Admitted GenRe":"Y","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "NV": {"Everspan Admitted GenRe":"Y","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "NH": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
-      "NJ": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "NM": {"Everspan Admitted GenRe":"Y","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "MI": {"Everspan Admitted GenRe":"backlog","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"backlog","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"blocked","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"blocked"},
+      "MN": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"blocked","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "MS": {"Everspan Admitted GenRe":"backlog","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"backlog","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "MO": {"Everspan Admitted GenRe":"backlog","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"backlog","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "MT": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "NE": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"Y"},
+      "NV": {"Everspan Admitted GenRe":"turned off","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
+      "NH": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"Y"},
+      "NJ": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "NM": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
       "NY": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
-      "NC": {"Everspan Admitted GenRe":"Y","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "ND": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "OH": {"Everspan Admitted GenRe":"Y","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "OK": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "OR": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "PA": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
-      "RI": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
-      "SC": {"Everspan Admitted GenRe":"Y","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "SD": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "TN": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "TX": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "UT": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "VT": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
-      "VA": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
-      "WA": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "WV": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"Y","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
-      "WI": {"Everspan Admitted GenRe":"Y","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"Y","Ascot Non-Admitted":"Y"},
+      "NC": {"Everspan Admitted GenRe":"turned off","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
+      "ND": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "OH": {"Everspan Admitted GenRe":"turned off","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "OK": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"Y"},
+      "OR": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"Y"},
+      "PA": {"Everspan Admitted GenRe":"backlog","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"backlog","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "RI": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "SC": {"Everspan Admitted GenRe":"turned off","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
+      "SD": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "TN": {"Everspan Admitted GenRe":"backlog","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"backlog","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "TX": {"Everspan Admitted GenRe":"backlog","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"backlog","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"Y"},
+      "UT": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "VT": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "VA": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"N/A"},
+      "WA": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
+      "WV": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"Y","Accredited Non-Admitted 1st":"Y","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off","Ascot Non-Admitted":"blocked"},
+      "WI": {"Everspan Admitted GenRe":"turned off","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"Y","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},
       "WY": {"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"}
     };
 
@@ -228,6 +228,7 @@
       if (value === "N/A") return { available: false, label: "Not Available", className: "text-gray-500 bg-gray-50" };
       if (value === "turned off") return { available: false, label: "Turned Off", className: "text-orange-600 bg-orange-50" };
       if (value === "blocked") return { available: false, label: "Blocked", className: "text-red-600 bg-red-50" };
+      if (value === "backlog") return { available: false, label: "In Backlog", className: "text-blue-600 bg-blue-50" };
       return { available: false, label: value || "N/A", className: "text-gray-500 bg-gray-50" };
     };
 
@@ -409,6 +410,59 @@
               <h3 className="text-xl font-bold mb-4 text-indigo-800 flex items-center gap-2">
                 <span>🏢</span> Carrier Availability
               </h3>
+              
+              {/* Carrier Status Summary */}
+              {(() => {
+                const turnedOffCarriers = [];
+                const blockedCarriers = [];
+                const backlogCarriers = [];
+                const availableCarriers = [];
+                
+                const carrierList = [
+                  { key: "Everspan Admitted GenRe", label: "Everspan Admitted (GenRe)" },
+                  { key: "Everspan Non-Admitted GenRe", label: "Everspan Non-Admitted (GenRe)" },
+                  { key: "Everspan Admitted MunichRe", label: "Everspan Admitted (MunichRe)" },
+                  { key: "Everspan Non-Admitted MunichRe", label: "Everspan Non-Admitted (MunichRe)" },
+                  { key: "Accredited Non-Admitted 1st", label: "Accredited Non-Admitted (1st)" },
+                  { key: "Accredited Non-Admitted New", label: "Accredited Non-Admitted (New)" },
+                  { key: "Knight Non-Admitted", label: "Knight Non-Admitted" },
+                  { key: "Ascot Non-Admitted", label: "Ascot Non-Admitted" }
+                ];
+                
+                carrierList.forEach(carrier => {
+                  const status = selectedStateData.carriers[carrier.key];
+                  if (status === "turned off") turnedOffCarriers.push(carrier.label);
+                  else if (status === "blocked") blockedCarriers.push(carrier.label);
+                  else if (status === "backlog") backlogCarriers.push(carrier.label);
+                  else if (status === "Y") availableCarriers.push(carrier.label);
+                });
+                
+                return (
+                  <>
+                    {turnedOffCarriers.length > 0 && (
+                      <div className="mb-4 p-4 bg-orange-50 border-l-4 border-orange-500 rounded">
+                        <p className="font-semibold text-orange-800 mb-2">⚠️ Carriers Turned Off in {selectedStateData.coverage.State}:</p>
+                        <p className="text-sm text-orange-700">{turnedOffCarriers.join(", ")}</p>
+                      </div>
+                    )}
+                    
+                    {blockedCarriers.length > 0 && (
+                      <div className="mb-4 p-4 bg-red-50 border-l-4 border-red-500 rounded">
+                        <p className="font-semibold text-red-800 mb-2">🚫 Carriers Blocked in {selectedStateData.coverage.State}:</p>
+                        <p className="text-sm text-red-700">{blockedCarriers.join(", ")}</p>
+                      </div>
+                    )}
+                    
+                    {backlogCarriers.length > 0 && (
+                      <div className="mb-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
+                        <p className="font-semibold text-blue-800 mb-2">📋 Carriers in Backlog for {selectedStateData.coverage.State}:</p>
+                        <p className="text-sm text-blue-700">{backlogCarriers.join(", ")}</p>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
+              
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
                   { key: "Everspan Admitted GenRe", label: "Everspan Admitted (GenRe)" },
@@ -641,7 +695,91 @@
             {activeTab === "dashboard" && renderDashboard()}
             {activeTab === "availability" && renderStateAvailability()}
 
+            {/* Status Legend */}
+            <div className="mt-8 bg-indigo-50 rounded-lg p-6">
+              <h3 className="text-lg font-bold mb-3 text-indigo-800">📖 Reference Guide</h3>
+              <div className="grid md:grid-cols-3 gap-4">
+                <div>
+                  <h4 className="font-semibold text-gray-700 mb-2">Coverage Status:</h4>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs px-2 py-1 rounded-full font-semibold bg-green-50 text-green-600">✓ Available</span>
+                      <span className="text-gray-600">Service is active</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs px-2 py-1 rounded-full font-semibold bg-gray-50 text-gray-500">✗ N/A</span>
+                      <span className="text-gray-600">Not offered</span>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-700 mb-2">Carrier Status:</h4>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs px-2 py-1 rounded-full font-semibold bg-orange-50 text-orange-600">Turned Off</span>
+                      <span className="text-gray-600">Temporarily disabled</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs px-2 py-1 rounded-full font-semibold bg-red-50 text-red-600">Blocked</span>
+                      <span className="text-gray-600">Restricted</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs px-2 py-1 rounded-full font-semibold bg-blue-50 text-blue-600">In Backlog</span>
+                      <span className="text-gray-600">Pending setup</span>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-700 mb-2">UIM Relationships:</h4>
+                  <div className="space-y-1 text-sm text-gray-600">
+                    <div><span className="font-medium">Included:</span> Bundled with UM at same limits</div>
+                    <div><span className="font-medium">Separate:</span> Independent limits from UM</div>
+                    <div><span className="font-medium">N/A:</span> Not offered or special rules</div>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 pt-3 border-t border-indigo-200 text-xs text-gray-600">
+                <p>⚠️ Note: Auto Liability coverage is not currently offered in Connecticut, Kansas, Kentucky, Massachusetts, New York, and Wyoming.</p>
+              </div>
+            </div>
+
             {/* Footer */}
+            <div className="mt-8 bg-indigo-50 rounded-lg p-6">
+              <h3 className="text-lg font-bold mb-3 text-indigo-800">📖 Status Legend</h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <h4 className="font-semibold text-gray-700 mb-2">Coverage Status:</h4>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs px-2 py-1 rounded-full font-semibold bg-green-50 text-green-600">✓ Available</span>
+                      <span className="text-gray-600">Service is currently active and available</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs px-2 py-1 rounded-full font-semibold bg-gray-50 text-gray-500">✗ N/A</span>
+                      <span className="text-gray-600">Service not offered in this state</span>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-700 mb-2">Carrier Status:</h4>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs px-2 py-1 rounded-full font-semibold bg-orange-50 text-orange-600">Turned Off</span>
+                      <span className="text-gray-600">Temporarily disabled</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs px-2 py-1 rounded-full font-semibold bg-red-50 text-red-600">Blocked</span>
+                      <span className="text-gray-600">Currently restricted/unavailable</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs px-2 py-1 rounded-full font-semibold bg-blue-50 text-blue-600">In Backlog</span>
+                      <span className="text-gray-600">Pending implementation/setup</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div className="mt-8 text-center text-sm text-gray-500">
               <p>Core Systems Management Tool • Enhanced Coverage Assessment Platform</p>
               <p className="mt-1">Includes AL, APD, MTC, NTL, TGL Lines of Business • UIIA, Hotshots, DS&G Operations</p>
