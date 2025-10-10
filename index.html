@@ -1,438 +1,422 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Coverages by State Tool</title>
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- React + ReactDOM -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-  <!-- Babel for in-browser JSX transform -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <style>
-    body { background: #faf7ff; }
-    .badge { font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 9999px; }
-  </style>
-</head>
-<body>
-  <div id="root"></div>
+import { useState, useMemo } from "react";
 
-  <script type="text/babel">
-    const { useState, useMemo } = React;
+const SUBCOVERAGES = ["UMBI", "UMPD", "UIMBI", "UIMPD", "Medpay", "PIP"];
 
-    const SUBCOVERAGES = ["UMBI", "UMPD", "UIMBI", "UIMPD", "Medpay", "PIP"];
+const formatLimit = (value) => {
+  if (value === undefined || value === null || value === "N/A") return "N/A";
+  if (value === "INCLUDED") return "Included with UM/UMPD";
+  if (typeof value === "string" && value.includes("/")) return value;
+  if (typeof value === "number") return `$${value.toLocaleString()}`;
+  if (typeof value === "string") {
+    if (value.startsWith("$")) return value;
+    if (/^\d/.test(value)) return `$${value}`;
+    return value;
+  }
+  return String(value);
+};
 
-    const formatLimit = (value) => {
-      if (value === undefined || value === null || value === "N/A") return "N/A";
-      if (value === "INCLUDED") return "Included with UM/UMPD";
-      if (typeof value === "string" && value.includes("/")) return value;
-      if (typeof value === "number") return `$${value.toLocaleString()}`;
-      if (typeof value === "string") {
-        if (value.startsWith("$")) return value;
-        if (/^\d/.test(value)) return `$${value}`;
-        return value;
-      }
-      return String(value);
-    };
+const getCoverageType = (admitted, es) => {
+  if (admitted === "X" && es === "X") return "Both Admitted & E&S";
+  if (admitted === "X") return "Admitted";
+  if (es === "X") return "E&S (Excess & Surplus)";
+  return "Not Specified";
+};
 
-    const getCoverageType = (admitted, es) => {
-      if (admitted === "X" && es === "X") return "Both Admitted & E&S";
-      if (admitted === "X") return "Admitted";
-      if (es === "X") return "E&S (Excess & Surplus)";
-      return "Not Specified";
-    };
+const getCoverageStatus = (coverage, mandatory, optional) => {
+  if (mandatory && mandatory !== "N/A" && mandatory.includes(coverage)) {
+    return { status: "Mandatory", color: "text-red-600" };
+  }
+  if (optional && optional !== "N/A" && optional.includes(coverage)) {
+    return { status: "Optional", color: "text-yellow-600" };
+  }
+  return { status: "Not Required", color: "text-gray-500" };
+};
 
-    const getCoverageStatus = (coverage, mandatory, optional) => {
-      if (mandatory && mandatory !== "N/A" && mandatory.includes(coverage)) {
-        return { status: "Mandatory", color: "text-red-600" };
-      }
-      if (optional && optional !== "N/A" && optional.includes(coverage)) {
-        return { status: "Optional", color: "text-yellow-600" };
-      }
-      return { status: "Not Required", color: "text-gray-500" };
-    };
+const stateData = [
+  {"State":"Alabama","State Abbrev.":"AL","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI","Deductible":"N/A","Notes":"Currently set up Accept or Reject UMBI"},
+  {"State":"Arizona","State Abbrev.":"AZ","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UIMBI","Deductible":"N/A","Notes":"Currently set up as 'accept all' or 'reject all'"},
+  {"State":"Arkansas","State Abbrev.":"AR","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":25000,"UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD/UIMBI","Deductible":"UMPD: $200","Notes":"Currently set up to accept UMBI/UMPD/UIMBI or reject both"},
+  {"State":"California","State Abbrev.":"CA","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":60000,"UMPD":3500,"UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD","Deductible":"N/A","Notes":"Currently set up to accept UMBI/UMPD or reject both"},
+  {"State":"Colorado","State Abbrev.":"CO","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":15000,"UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UIMBI","Deductible":"UMPD: $250","Notes":"Currently set up to accept UMBI/UIMBI or reject both"},
+  {"State":"Delaware","State Abbrev.":"DE","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":60000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":30000,"Medpay":"N/A","Mandatory (On Platform)":"UMBI/UMPD/UIMBI/PIP","Deductible":"UMPD: $250","Notes":"No Selection/Rejection form available for UM"},
+  {"State":"Florida","State Abbrev.":"FL","Admitted":"X","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":10000,"Medpay":"N/A","Mandatory (On Platform)":"PIP","Optional (On Platform)":"UMBI","Deductible":"N/A","Notes":"Currently set up to accept UMBI or reject"},
+  {"State":"Georgia","State Abbrev.":"GA","Admitted":"X","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":75000,"UMPD":75000,"UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD","Deductible":"N/A","Notes":"N/A"},
+  {"State":"Idaho","State Abbrev.":"ID","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UIMBI","Deductible":"N/A","Notes":"Set up to Accept or Reject UMBI/UIMBI"},
+  {"State":"Illinois","State Abbrev.":"IL","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI","Optional (On Platform)":"N/A","Deductible":"N/A","Notes":"Currently set up to only accept UMBI"},
+  {"State":"Indiana","State Abbrev.":"IN","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":1000000,"UMPD":50000,"UIMBI":1000000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD/UIMBI","Deductible":"N/A","Notes":"Currently set up to accept UMBI/UMPD/UIMBI or reject both; IN UM select/reject form does not coincide w/ limits provided"},
+  {"State":"Iowa","State Abbrev.":"IA","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":40000,"UMPD":"N/A","UIMBI":40000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UIMBI","Deductible":"N/A","Notes":"Accept all/Reject all UMBI/UIMBI"},
+  {"State":"Maine","State Abbrev.":"ME","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":100000,"UMPD":"N/A","UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":2000,"Mandatory (On Platform)":"UMBI/UIMBI","Optional (On Platform)":"N/A","Deductible":"N/A"},
+  {"State":"Maryland","State Abbrev.":"MD","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":75000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":2500,"Medpay":"N/A","Mandatory (On Platform)":"UMBI/UMPD/UIMBI/PIP","Optional (On Platform)":"N/A","Deductible":"N/A","Notes":"Mandatory Accept UMBI/UMPD/UIMBI"},
+  {"State":"Michigan","State Abbrev.":"MI","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":"N/A","UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":250000,"Medpay":"N/A","Mandatory (On Platform)":"PIP","Optional (On Platform)":"N/A","Deductible":"N/A","Notes":"UM/UIM Coverage not being offered on the platform"},
+  {"State":"Minnesota","State Abbrev.":"MN","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":40000,"Medpay":"N/A","Mandatory (On Platform)":"UMBI/UIMBI/PIP","Optional (On Platform)":"N/A","Deductible":"N/A","Notes":"Mandatory Accept UMBI/UIMBI/PIP"},
+  {"State":"Mississippi","State Abbrev.":"MS","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":300000,"UMPD":300000,"UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD","Optional (On Platform)":"N/A","Deductible":"N/A","Notes":"Currently set up to mandatory accept UMBI/UMPD"},
+  {"State":"Missouri","State Abbrev.":"MO","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":100000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI","Optional (On Platform)":"N/A","Deductible":"N/A","Notes":"Currently No option provided to reject UMBI set up"},
+  {"State":"Montana","State Abbrev.":"MT","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UIMBI","Deductible":"N/A","Notes":"N/A"},
+  {"State":"Nebraska","State Abbrev.":"NE","Admitted":"X","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UIMBI","Optional (On Platform)":"N/A","Deductible":"N/A","Notes":"Mandatory Accept UMBI/UIMBI"},
+  {"State":"Nevada","State Abbrev.":"NV","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI","Notes":"Currently set up Accept or Reject UMBI"},
+  {"State":"New Hampshire","State Abbrev.":"NH","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":25000,"UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/UIMBI","Optional (On Platform)":"N/A","Notes":"Mandatory Accept UMBI/UMPD/UIMBI"},
+  {"State":"New Jersey","State Abbrev.":"NJ","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIM Limit Included or Separate from UM":"Included","PIP":15000,"Medpay":"N/A","Mandatory (On Platform)":"UMBI/UMPD/UIMBI/UIMPD/PIP","Optional (On Platform)":"N/A","Notes":"Unclear if we're offering UIMPD, however UMBI,UMPD, UIMBI,UIMPD all mandatory"},
+  {"State":"New Mexico","State Abbrev.":"NM","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":60000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD/UIMBI","Deductible":"N/A","Notes":"N/A"},
+  {"State":"North Carolina","State Abbrev.":"NC","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":100000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/UIMBI","Optional (On Platform)":"N/A","Notes":"Mandatory Accept UMBI/UIMBI"},
+  {"State":"North Dakota","State Abbrev.":"ND","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":30000,"Medpay":"N/A","Mandatory (On Platform)":"UMBI/UIMBI","Optional (On Platform)":"N/A","Deductible":"N/A","Notes":"Mandatory Accept UMBI/UIMBI"},
+  {"State":"Ohio","State Abbrev.":"OH","Admitted":"X","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":"50000 (E&S) / 100000 (Admitted)","UMPD":"7500 (E&S) / 25000 (Admitted)","UIMBI":"50000 (E&S) / 100000 (Admitted)","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/UIMBI (Admitted only)","Optional (On Platform)":"UMBI/UMPD/UIMBI (E&S only)","Notes":"E&S: Accept/Reject UMBI/UMPD/UIMBI. Admitted: Mandatory Accept UMBI/UMPD/UIMBI"},
+  {"State":"Oklahoma","State Abbrev.":"OK","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI","Notes":"Currently set up Accept or Reject UMBI"},
+  {"State":"Oregon","State Abbrev.":"OR","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":15000,"Medpay":"N/A","Mandatory (On Platform)":"UMBI/UIMBI/PIP","Optional (On Platform)":"N/A","Deductible":"N/A","Notes":"Mandatory Accept UMBI/UIMBI"},
+  {"State":"Pennsylvania","State Abbrev.":"PA","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":35000,"UMPD":"N/A","UIMBI":35000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":5000,"Medpay":"N/A","Mandatory (On Platform)":"PIP","Optional (On Platform)":"UMBI/UIMBI","Notes":"Currently set up Accept or Reject UMBI /UIMBI"},
+  {"State":"Rhode Island","State Abbrev.":"RI","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":25000,"UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":2500,"Mandatory (On Platform)":"UMBI/UIMBI","Optional (On Platform)":"N/A","Deductible":"N/A","Notes":"Mandatory Accept UMBI/UIMBI, Mandatory Reject UMPD"},
+  {"State":"South Carolina","State Abbrev.":"SC","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":75000,"UMPD":75000,"UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD","Optional (On Platform)":"N/A","Deductible":"N/A","Notes":"Mandatory Accept UMBI/UMPD"},
+  {"State":"South Dakota","State Abbrev.":"SD","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":300000,"UMPD":"N/A","UIMBI":300000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UIMBI","Optional (On Platform)":"N/A","Deductible":"N/A","Notes":"Mandatory Accept UMBI/UIMBI"},
+  {"State":"Tennessee","State Abbrev.":"TN","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":65000,"UMPD":65000,"UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD","Deductible":"UMPD: $200","Notes":"Can accept/reject UMBI/UMPD"},
+  {"State":"Texas","State Abbrev.":"TX","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":85000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIM Limit Included or Separate from UM":"Included","PIP":2500,"Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD/UIMBI/PIP (If no PIP, then Medpay)","Notes":"Accept all/Reject all (UMBI/UMPD/UIMBI)"},
+  {"State":"Utah","State Abbrev.":"UT","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":80000,"UMPD":"N/A","UIMBI":20000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":3000,"Medpay":"N/A","Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UIMBI","Deductible":"N/A","Notes":"Accept/Reject UMBI/UIMBI"},
+  {"State":"Vermont","State Abbrev.":"VT","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":100000,"UMPD":10000,"UIMBI":"INCLUDED","UIMPD":10000,"UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/UIMBI/UIMPD","Optional (On Platform)":"N/A","Notes":"Mandatory Accept"},
+  {"State":"Virginia","State Abbrev.":"VA","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":80000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIMPD":"INCLUDED","UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/UIMBI/UIMPD","Optional (On Platform)":"N/A","Notes":"See SDR-1195 - should be mandatory accept all ($80,000 CSL)"},
+  {"State":"Washington","State Abbrev.":"WA","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":60000,"UMPD":60000,"UIMBI":60000,"UIMPD":60000,"UIM Limit Included or Separate from UM":"Included","PIP":10000,"Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD/UIMBI/UIMPD/PIP (If no PIP, then Medpay)","Deductible":"N/A","Notes":"N/A"},
+  {"State":"West Virginia","State Abbrev.":"WV","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":75000,"UMPD":75000,"UIMBI":75000,"UIMPD":75000,"UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/UIMBI","Optional (On Platform)":"N/A","Deductible":"N/A","Notes":"UMBI/UMPD/UIMBI Mandatory"},
+  {"State":"Wisconsin","State Abbrev.":"WI","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":100000,"UMPD":"N/A","UIMBI":100000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI","Optional (On Platform)":"UIMBI","Notes":"Mandatory Accept UMBI/ Option to Accept/Reject UIMBI"}
+];
 
-    // Data (WA tweaked to E&S only: removed Admitted:"X")
-    const stateData = [
-      {"State":"Alabama","State Abbrev.":"AL","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI","Deductible":"N/A","Notes":"Currently set up Accept or Reject UMBI"},
-      {"State":"Arizona","State Abbrev.":"AZ","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UIMBI","Deductible":"N/A","Notes":"Currently set up as 'accept all' or 'reject all'"},
-      {"State":"Arkansas","State Abbrev.":"AR","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":25000,"UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD/UIMBI","Deductible":"UMPD: $200","Notes":"Currently set up to accept UMBI/UMPD/UIMBI or reject both"},
-      {"State":"California","State Abbrev.":"CA","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":60000,"UMPD":3500,"UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD","Deductible":"N/A","Notes":"Currently set up to accept UMBI/UMPD or reject both"},
-      {"State":"Colorado","State Abbrev.":"CO","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":15000,"UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UIMBI","Deductible":"UMPD: $250","Notes":"Currently set up to accept UMBI/UIMBI or reject both"},
-      {"State":"Delaware","State Abbrev.":"DE","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":60000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":30000,"Medpay":"N/A","Mandatory (On Platform)":"UMBI/UMPD/UIMBI/PIP","Deductible":"UMPD: $250","Notes":"No Selection/Rejection form available for UM"},
-      {"State":"Florida","State Abbrev.":"FL","Admitted":"X","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":10000,"Medpay":"N/A","Mandatory (On Platform)":"PIP","Optional (On Platform)":"UMBI","Deductible":"N/A","Notes":"Currently set up to accept UMBI or reject"},
-      {"State":"Georgia","State Abbrev.":"GA","Admitted":"X","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":75000,"UMPD":75000,"UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD","Deductible":"N/A"},
-      {"State":"Idaho","State Abbrev.":"ID","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","Medpay":5000,"Optional (On Platform)":"UMBI/UIMBI","Deductible":"N/A","Notes":"Set up to Accept or Reject UMBI/UIMBI"},
-      {"State":"Illinois","State Abbrev.":"IL","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI","Optional (On Platform)":"N/A","Deductible":"N/A","Notes":"Currently set up to only accept UMBI"},
-      {"State":"Indiana","State Abbrev.":"IN","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":1000000,"UMPD":50000,"UIMBI":1000000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD/UIMBI","Deductible":"N/A","Notes":"Currently set up to accept UMBI/UMPD/UIMBI or reject both; IN UM select/reject form does not coincide w/ limits provided"},
-      {"State":"Iowa","State Abbrev.":"IA","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":40000,"UMPD":"N/A","UIMBI":40000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","Medpay":5000,"Optional (On Platform)":"UMBI/UIMBI","Deductible":"N/A","Notes":"Accept all/Reject all UMBI/UIMBI"},
-      {"State":"Maine","State Abbrev.":"ME","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":100000,"UMPD":"N/A","UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":2000,"Mandatory (On Platform)":"UMBI/UIMBI","Optional (On Platform)":"N/A","Deductible":"N/A"},
-      {"State":"Maryland","State Abbrev.":"MD","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":75000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":2500,"Medpay":"N/A","Mandatory (On Platform)":"UMBI/UMPD/UIMBI/PIP","Optional (On Platform)":"N/A","Notes":"Mandatory Accept UMBI/UMPD/UIMBI"},
-      {"State":"Michigan","State Abbrev.":"MI","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":"N/A","UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","PIP":250000,"Medpay":"N/A","Mandatory (On Platform)":"PIP","Optional (On Platform)":"N/A","Notes":"UM/UIM Coverage not being offered on the platform"},
-      {"State":"Minnesota","State Abbrev.":"MN","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":40000,"Medpay":"N/A","Mandatory (On Platform)":"UMBI/UIMBI/PIP","Notes":"Mandatory Accept UMBI/UIMBI/PIP"},
-      {"State":"Mississippi","State Abbrev.":"MS","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":300000,"UMPD":300000,"UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD","Notes":"Currently set up to mandatory accept UMBI/UMPD"},
-      {"State":"Missouri","State Abbrev.":"MO","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":100000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI","Notes":"Currently No option provided to reject UMBI set up"},
-      {"State":"Montana","State Abbrev.":"MT","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Optional (On Platform)":"UMBI/UIMBI"},
-      {"State":"Nebraska","State Abbrev.":"NE","Admitted":"X","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UIMBI","Notes":"Mandatory Accept UMBI/UIMBI"},
-      {"State":"Nevada","State Abbrev.":"NV","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI","Notes":"Currently set up Accept or Reject UMBI"},
-      {"State":"New Hampshire","State Abbrev.":"NH","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":25000,"UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/UIMBI","Optional (On Platform)":"N/A","Notes":"Mandatory Accept UMBI/UMPD/UIMBI"},
-      {"State":"New Jersey","State Abbrev.":"NJ","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIM Limit Included or Separate from UM":"Included","PIP":15000,"Medpay":"N/A","Mandatory (On Platform)":"UMBI/UMPD/UIMBI/UIMPD/PIP","Optional (On Platform)":"N/A","Notes":"Unclear if we're offering UIMPD, however UMBI,UMPD, UIMBI,UIMPD all mandatory"},
-      {"State":"New Mexico","State Abbrev.":"NM","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":60000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":5000,"Optional (On Platform)":"UMBI/UMPD/UIMBI"},
-      {"State":"New York","State Abbrev.":"NY","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":"$25,000/$50,000","UMPD":10000,"UIMBI":"$25,000/$50,000","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":50000},
-      {"State":"North Carolina","State Abbrev.":"NC","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":100000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/UIMBI","Optional (On Platform)":"N/A","Notes":"Mandatory Accept UMBI/UIMBI"},
-      {"State":"North Dakota","State Abbrev.":"ND","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":30000,"Medpay":"N/A","Mandatory (On Platform)":"UMBI/UIMBI","Notes":"Mandatory Accept UMBI/UIMBI"},
-      {"State":"Ohio","State Abbrev.":"OH","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":7500,"UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD/UIMBI","Notes":"Accept/Reject UMBI/UMPD/UIMBI"},
-      {"State":"Ohio Admitted","State Abbrev.":"OH","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":100000,"UMPD":25000,"UIMBI":100000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/UIMBI","Notes":"Mandatory Accept UMBI/UMPD/UIMBI"},
-      {"State":"Oklahoma","State Abbrev.":"OK","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI","Notes":"Currently set up Accept or Reject UMBI"},
-      {"State":"Oregon","State Abbrev.":"OR","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":15000,"Medpay":"N/A","Mandatory (On Platform)":"UMBI/UIMBI/PIP","Notes":"Mandatory Accept UMBI/UIMBI"},
-      {"State":"Pennsylvania","State Abbrev.":"PA","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":35000,"UMPD":"N/A","UIMBI":35000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":5000,"Medpay":"N/A","Mandatory (On Platform)":"PIP","Optional (On Platform)":"UMBI/UIMBI","Notes":"Currently set up Accept or Reject UMBI /UIMBI"},
-      {"State":"Rhode Island","State Abbrev.":"RI","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":25000,"UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":2500,"Mandatory (On Platform)":"UMBI/UIMBI","Notes":"Mandatory Accept UMBI/UIMBI, Mandatory Reject UMPD"},
-      {"State":"South Carolina","State Abbrev.":"SC","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":75000,"UMPD":75000,"UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD","Optional (On Platform)":"N/A","Notes":"Mandatory Accept UMBI/UMPD"},
-      {"State":"South Dakota","State Abbrev.":"SD","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":300000,"UMPD":"N/A","UIMBI":300000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UIMBI","Notes":"Mandatory Accept UMBI/UIMBI"},
-      {"State":"Tennessee","State Abbrev.":"TN","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":65000,"UMPD":65000,"UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD","Deductible":"UMPD: $200","Notes":"Can accept/reject UMBI/UMPD"},
-      {"State":"Texas","State Abbrev.":"TX","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":85000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIM Limit Included or Separate from UM":"Included","PIP":2500,"Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD/UIMBI/PIP (If no PIP, then Medpay)","Notes":"Accept all/Reject all (UMBI/UMPD/UIMBI)"},
-      {"State":"Utah","State Abbrev.":"UT","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":80000,"UMPD":"N/A","UIMBI":20000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":3000,"Medpay":"N/A","Optional (On Platform)":"UMBI/UIMBI","Notes":"Accept/Reject UMBI/UIMBI"},
-      {"State":"Vermont","State Abbrev.":"VT","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":100000,"UMPD":10000,"UIMBI":"INCLUDED","UIMPD":10000,"UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/UIMBI/UIMPD","Optional (On Platform)":"N/A","Notes":"Mandatory Accept"},
-      {"State":"Virginia","State Abbrev.":"VA","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":80000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIMPD":"INCLUDED","UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/UIMBI/UIMPD","Optional (On Platform)":"N/A","Notes":"See SDR-1195 - should be mandatory accept all ($80,000 CSL)"},
-      {"State":"Washington","State Abbrev.":"WA","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":60000,"UMPD":60000,"UIMBI":60000,"UIMPD":60000,"UIM Limit Included or Separate from UM":"Included","PIP":10000,"Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD/UIMBI/UIMPD/PIP (If no PIP, then Medpay)"},
-      {"State":"West Virginia","State Abbrev.":"WV","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":75000,"UMPD":75000,"UIMBI":75000,"UIMPD":75000,"UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/UIMBI","Notes":"UMBI/UMPD/UIMBI Mandatory"},
-      {"State":"Wisconsin","State Abbrev.":"WI","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":100000,"UMPD":"N/A","UIMBI":100000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI","Optional (On Platform)":"UIMBI","Notes":"Mandatory Accept UMBI/ Option to Accept/Reject UIMBI"}
-    ];
+const hasCoverage = (state, coverage) => {
+  const v = state[coverage];
+  if (v === undefined || v === null) return false;
+  return v !== "N/A";
+};
 
-    const hasCoverage = (state, coverage) => {
-      const v = state[coverage];
-      if (v === undefined || v === null) return false;
-      return v !== "N/A";
-    };
+export default function App() {
+  const [selectedState, setSelectedState] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCoverages, setSelectedCoverages] = useState([]);
 
-    const App = () => {
-      const [selectedState, setSelectedState] = useState("");
-      const [searchTerm, setSearchTerm] = useState("");
-      const [selectedCoverages, setSelectedCoverages] = useState([]);
+  const selectedStateData = useMemo(() => {
+    return stateData.find(s => s["State Abbrev."] === selectedState);
+  }, [selectedState]);
 
-      const selectedStateData = useMemo(() => {
-        return stateData.find(s => s["State Abbrev."] === selectedState);
-      }, [selectedState]);
+  const uniqueStates = useMemo(() => {
+    const seen = new Set();
+    return stateData.filter(s => {
+      const key = s["State Abbrev."];
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, []);
 
-      const uniqueStates = useMemo(() => {
-        const seen = new Set();
-        return stateData.filter(s => {
-          const key = s["State Abbrev."];
-          if (seen.has(key)) return false;
-          seen.add(key);
-          return true;
-        });
-      }, []);
+  const toggleCoverage = (cov) => {
+    setSelectedCoverages(prev => prev.includes(cov) ? prev.filter(c => c !== cov) : [...prev, cov]);
+  };
 
-      const toggleCoverage = (cov) => {
-        setSelectedCoverages(prev => prev.includes(cov) ? prev.filter(c => c !== cov) : [...prev, cov]);
-      };
+  const coverageToStates = useMemo(() => {
+    const map = {};
+    SUBCOVERAGES.forEach(cov => {
+      map[cov] = uniqueStates.filter(s => hasCoverage(s, cov));
+    });
+    return map;
+  }, [uniqueStates]);
 
-      const coverageToStates = useMemo(() => {
-        const map = {};
-        SUBCOVERAGES.forEach(cov => {
-          map[cov] = uniqueStates.filter(s => hasCoverage(s, cov));
-        });
-        return map;
-      }, [uniqueStates]);
+  const intersectionStates = useMemo(() => {
+    if (selectedCoverages.length === 0) return [];
+    const lists = selectedCoverages.map(cov => new Set(coverageToStates[cov].map(s => s["State Abbrev."])));
+    const common = [...lists[0]].filter(abbr => lists.every(set => set.has(abbr)));
+    return uniqueStates.filter(s => common.includes(s["State Abbrev."]));
+  }, [selectedCoverages, coverageToStates, uniqueStates]);
 
-      const intersectionStates = useMemo(() => {
-        if (selectedCoverages.length === 0) return [];
-        const lists = selectedCoverages.map(cov => new Set(coverageToStates[cov].map(s => s["State Abbrev."])));
-        const common = [...lists[0]].filter(abbr => lists.every(set => set.has(abbr)));
-        return uniqueStates.filter(s => common.includes(s["State Abbrev."]));
-      }, [selectedCoverages, coverageToStates, uniqueStates]);
+  const formatCoverageLimit = (value, state) => {
+    if (state && state["State Abbrev."] === "OH" && typeof value === "string" && value.includes("(E&S)")) {
+      const esMatch = value.match(/(\d+) \(E&S\)/);
+      const admittedMatch = value.match(/(\d+) \(Admitted\)/);
+      const esValue = esMatch ? `${parseInt(esMatch[1]).toLocaleString()}` : "N/A";
+      const admittedValue = admittedMatch ? `${parseInt(admittedMatch[1]).toLocaleString()}` : "N/A";
+      return `E&S: ${esValue} / Admitted: ${admittedValue}`;
+    }
+    return formatLimit(value);
+  };
 
-      return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 p-6">
-          <div className="max-w-7xl mx-auto">
-            <div className="bg-white rounded-lg shadow-lg mb-8 overflow-hidden">
-              <div className="bg-gradient-to-r from-purple-700 to-purple-900 p-8 text-white">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="text-3xl">🛡️</div>
-                  <h1 className="text-3xl md:text-4xl font-bold">Coverages by State Tool</h1>
-                </div>
-                <p className="text-purple-100 text-lg">
-                  Auto Liability Subcoverages Assessment Platform
-                </p>
-              </div>
+  const getCoverageStatusForOhio = (coverage, mandatory, optional) => {
+    if (mandatory && mandatory.includes(coverage) && mandatory.includes("(Admitted only)")) {
+      return { status: "Mandatory (Admitted) / Optional (E&S)", color: "text-orange-600" };
+    }
+    return getCoverageStatus(coverage, mandatory, optional);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="bg-white rounded-lg shadow-lg mb-8 overflow-hidden">
+          <div className="bg-gradient-to-r from-purple-700 to-purple-900 p-8 text-white">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="text-3xl">🛡️</div>
+              <h1 className="text-3xl md:text-4xl font-bold">Coverages by State Tool</h1>
+            </div>
+            <p className="text-purple-100 text-lg">
+              Auto Liability Subcoverages Assessment Platform
+            </p>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+          <div className="grid lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-1">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                🔎 Search State
+              </label>
+              <input
+                type="text"
+                placeholder="Type state name or abbreviation..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-4 py-3 border-2 border-purple-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors bg-purple-50"
+              />
             </div>
 
-            <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-              <div className="grid lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-1">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    🔎 Search State
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Type state name or abbreviation..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-purple-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors"
-                    style={{ backgroundColor: '#f9f5ff' }}
-                  />
-                </div>
-
-                <div className="lg:col-span-1">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    📄 Select State
-                  </label>
-                  <select
-                    value={selectedState}
-                    onChange={(e) => setSelectedState(e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-purple-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors cursor-pointer"
-                    style={{ backgroundColor: '#f9f5ff' }}
-                  >
-                    <option value="">Choose a state...</option>
-                    {uniqueStates.filter(state =>
-                      state.State.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                      state["State Abbrev."].toLowerCase().includes(searchTerm.toLowerCase())
-                    ).map(state => (
-                      <option key={state["State Abbrev."]} value={state["State Abbrev."]}>
-                        {state.State} ({state["State Abbrev."]})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="lg:col-span-1">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    🧮 Filter by Subcoverages
-                  </label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {SUBCOVERAGES.map(cov => (
-                      <label key={cov} className="flex items-center gap-2 bg-purple-50 border border-purple-200 rounded-lg px-3 py-2 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={selectedCoverages.includes(cov)}
-                          onChange={() => toggleCoverage(cov)}
-                        />
-                        <span className="text-sm text-purple-900 font-medium">{cov}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6">
-                {selectedCoverages.length === 0 ? (
-                  <div className="text-sm text-gray-600">
-                    Select one or more subcoverages above to see which states provide them (based on non-"N/A" values).
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                      <h4 className="font-semibold text-purple-900 mb-2">
-                        States providing <span className="italic">{selectedCoverages.join(", ")}</span> (intersection)
-                        <span className="ml-2 badge bg-purple-200 text-purple-900">{intersectionStates.length}</span>
-                      </h4>
-                      {intersectionStates.length ? (
-                        <div className="flex flex-wrap gap-2">
-                          {intersectionStates.map(s => (
-                            <span key={s["State Abbrev."]} className="badge bg-white border border-purple-300 text-purple-800">
-                              {s.State} ({s["State Abbrev."]})
-                            </span>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-sm text-gray-700">No states match all selected subcoverages.</p>
-                      )}
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-4">
-                      {selectedCoverages.map(cov => (
-                        <div key={cov} className="bg-white border border-purple-100 rounded-lg p-4">
-                          <h5 className="font-semibold text-gray-800 mb-2">
-                            States with {cov}
-                            <span className="ml-2 badge bg-purple-100 text-purple-900">{coverageToStates[cov].length}</span>
-                          </h5>
-                          <div className="flex flex-wrap gap-2">
-                            {coverageToStates[cov].map(s => (
-                              <button
-                                key={s["State Abbrev."] + cov}
-                                className="badge bg-purple-50 border border-purple-200 text-purple-900 hover:bg-purple-100"
-                                onClick={() => setSelectedState(s["State Abbrev."])}
-                                title={`Open ${s.State}`}
-                              >
-                                {s.State} ({s["State Abbrev."]})
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
+            <div className="lg:col-span-1">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                📄 Select State
+              </label>
+              <select
+                value={selectedState}
+                onChange={(e) => setSelectedState(e.target.value)}
+                className="w-full px-4 py-3 border-2 border-purple-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors cursor-pointer bg-purple-50"
+              >
+                <option value="">Choose a state...</option>
+                {uniqueStates.filter(state =>
+                  state.State.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  state["State Abbrev."].toLowerCase().includes(searchTerm.toLowerCase())
+                ).map(state => (
+                  <option key={state["State Abbrev."]} value={state["State Abbrev."]}>
+                    {state.State} ({state["State Abbrev."]})
+                  </option>
+                ))}
+              </select>
             </div>
 
-            {selectedStateData ? (
-              <div className="space-y-6">
-                <div className="bg-white rounded-lg shadow-lg p-6">
-                  <h2 className="text-2xl font-bold mb-6 flex items-center gap-2" style={{ color: '#7E369F' }}>
-                    ℹ️ {selectedStateData.State} Coverage Information
-                  </h2>
+            <div className="lg:col-span-1">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                🧮 Filter by Subcoverages
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {SUBCOVERAGES.map(cov => (
+                  <label key={cov} className="flex items-center gap-2 bg-purple-50 border border-purple-200 rounded-lg px-3 py-2 cursor-pointer hover:bg-purple-100">
+                    <input
+                      type="checkbox"
+                      checked={selectedCoverages.includes(cov)}
+                      onChange={() => toggleCoverage(cov)}
+                      className="cursor-pointer"
+                    />
+                    <span className="text-sm text-purple-900 font-medium">{cov}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
 
-                  <div className="grid md:grid-cols-3 gap-6 mb-6">
-                    <div className="bg-purple-50 p-4 rounded-lg">
-                      <p className="text-sm font-semibold text-gray-600 mb-1">Coverage Type</p>
-                      <p className="text-lg font-bold" style={{ color: '#7E369F' }}>
-                        {getCoverageType(selectedStateData.Admitted, selectedStateData["E&S"])}
-                      </p>
-                    </div>
-
-                    <div className="bg-purple-50 p-4 rounded-lg">
-                      <p className="text-sm font-semibold text-gray-600 mb-1">AL CSL Limit</p>
-                      <p className="text-lg font-bold" style={{ color: '#7E369F' }}>
-                        {formatLimit(selectedStateData["AL CSL Limit"])}
-                      </p>
-                    </div>
-
-                    <div className="bg-purple-50 p-4 rounded-lg relative">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <p className="text-sm font-semibold text-gray-600 mb-1">UIM Limit Relationship</p>
-                          <p className="text-lg font-bold" style={{ color: '#7E369F' }}>
-                            {selectedStateData["UIM Limit Included or Separate from UM"] || "N/A"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-lg shadow-lg p-6">
-                  <h3 className="text-xl font-bold mb-6" style={{ color: '#7E369F' }}>Coverage Limits & Requirements</h3>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {SUBCOVERAGES.map(cov => {
-                      const status = getCoverageStatus(cov, selectedStateData["Mandatory (On Platform)"], selectedStateData["Optional (On Platform)"]);
-                      return (
-                        <div key={cov} className="border-2 border-purple-100 rounded-lg p-4 hover:shadow-md transition-shadow">
-                          <div className="flex justify-between items-start mb-2">
-                            <h4 className="font-semibold text-gray-700">{cov}</h4>
-                            <div className={`flex items-center gap-2 ${status.color}`}>
-                              <span className="text-xs font-semibold">{status.status}</span>
-                            </div>
-                          </div>
-                          <p className="text-sm text-gray-500 mb-1">
-                            {cov === "UMBI" && "Uninsured Motorist Bodily Injury"}
-                            {cov === "UMPD" && "Uninsured Motorist Property Damage"}
-                            {cov === "UIMBI" && "Underinsured Motorist Bodily Injury"}
-                            {cov === "UIMPD" && "Underinsured Motorist Property Damage"}
-                            {cov === "PIP" && "Personal Injury Protection"}
-                            {cov === "Medpay" && "Medical Payments"}
-                          </p>
-                          <p className="font-bold text-lg" style={{ color: '#7E369F' }}>
-                            {formatLimit(selectedStateData[cov])}
-                          </p>
-                          {selectedStateData[cov] === "INCLUDED" && (
-                            <p className="text-xs text-purple-600 mt-1">
-                              Bundled with UM/UMPD
-                            </p>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="bg-white rounded-lg shadow-lg p-6">
-                    <h3 className="text-xl font-bold mb-4 flex items-center gap-2" style={{ color: '#7E369F' }}>
-                      ⚠️ Deductibles
-                    </h3>
-                    <div className="bg-purple-50 p-4 rounded-lg">
-                      <p className="text-gray-700">
-                        {selectedStateData.Deductible && selectedStateData.Deductible !== "N/A"
-                          ? selectedStateData.Deductible
-                          : "No deductibles apply for this state"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="bg-white rounded-lg shadow-lg p-6">
-                    <h3 className="text-xl font-bold mb-4 flex items-center gap-2" style={{ color: '#7E369F' }}>
-                      🧾 Platform Requirements
-                    </h3>
-                    <div className="space-y-3">
-                      <div className="bg-red-50 p-3 rounded-lg">
-                        <p className="text-sm font-semibold text-red-700 mb-1">Mandatory Coverages:</p>
-                        <p className="text-gray-700">
-                          {selectedStateData["Mandatory (On Platform)"] && selectedStateData["Mandatory (On Platform)"] !== "N/A"
-                            ? selectedStateData["Mandatory (On Platform)"]
-                            : "None"}
-                        </p>
-                      </div>
-                      <div className="bg-yellow-50 p-3 rounded-lg">
-                        <p className="text-sm font-semibold text-yellow-700 mb-1">Optional Coverages:</p>
-                        <p className="text-gray-700">
-                          {selectedStateData["Optional (On Platform)"] && selectedStateData["Optional (On Platform)"] !== "N/A"
-                            ? selectedStateData["Optional (On Platform)"]
-                            : "None"}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {selectedStateData.Notes && selectedStateData.Notes !== "N/A" && (
-                  <div className="bg-gradient-to-r from-purple-100 to-purple-50 rounded-lg shadow-lg p-6">
-                    <h3 className="text-xl font-bold mb-4" style={{ color: '#7E369F' }}>
-                      📝 Important Notes
-                    </h3>
-                    <p className="text-gray-700 bg-white p-4 rounded-lg">
-                      {selectedStateData.Notes}
-                    </p>
-                  </div>
-                )}
+          <div className="mt-6">
+            {selectedCoverages.length === 0 ? (
+              <div className="text-sm text-gray-600">
+                Select one or more subcoverages above to see which states provide them (based on non-"N/A" values).
               </div>
             ) : (
-              <div className="bg-white rounded-lg shadow-lg p-12 text-center">
-                <div className="text-5xl mb-4">🛡️</div>
-                <h3 className="text-xl font-semibold text-gray-600 mb-2">No State Selected</h3>
-                <p className="text-gray-500">
-                  Please select a state from the dropdown above to view coverage information
+              <div className="space-y-6">
+                <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                  <h4 className="font-semibold text-purple-900 mb-2">
+                    States providing <span className="italic">{selectedCoverages.join(", ")}</span> (intersection)
+                    <span className="ml-2 text-xs px-2 py-1 bg-purple-200 text-purple-900 rounded-full">{intersectionStates.length}</span>
+                  </h4>
+                  {intersectionStates.length ? (
+                    <div className="flex flex-wrap gap-2">
+                      {intersectionStates.map(s => (
+                        <span key={s["State Abbrev."]} className="text-xs px-3 py-1 bg-white border border-purple-300 text-purple-800 rounded-full">
+                          {s.State} ({s["State Abbrev."]})
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-700">No states match all selected subcoverages.</p>
+                  )}
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  {selectedCoverages.map(cov => (
+                    <div key={cov} className="bg-white border border-purple-100 rounded-lg p-4">
+                      <h5 className="font-semibold text-gray-800 mb-2">
+                        States with {cov}
+                        <span className="ml-2 text-xs px-2 py-1 bg-purple-100 text-purple-900 rounded-full">{coverageToStates[cov].length}</span>
+                      </h5>
+                      <div className="flex flex-wrap gap-2">
+                        {coverageToStates[cov].map(s => (
+                          <button
+                            key={s["State Abbrev."] + cov}
+                            className="text-xs px-3 py-1 bg-purple-50 border border-purple-200 text-purple-900 rounded-full hover:bg-purple-100 cursor-pointer"
+                            onClick={() => setSelectedState(s["State Abbrev."])}
+                            title={`Open ${s.State}`}
+                          >
+                            {s.State} ({s["State Abbrev."]})
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {selectedStateData ? (
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-purple-800">
+                ℹ️ {selectedStateData.State} Coverage Information
+              </h2>
+
+              <div className="grid md:grid-cols-3 gap-6 mb-6">
+                <div className="bg-purple-50 p-4 rounded-lg">
+                  <p className="text-sm font-semibold text-gray-600 mb-1">Coverage Type</p>
+                  <p className="text-lg font-bold text-purple-800">
+                    {getCoverageType(selectedStateData.Admitted, selectedStateData["E&S"])}
+                  </p>
+                </div>
+
+                <div className="bg-purple-50 p-4 rounded-lg">
+                  <p className="text-sm font-semibold text-gray-600 mb-1">AL CSL Limit</p>
+                  <p className="text-lg font-bold text-purple-800">
+                    {formatLimit(selectedStateData["AL CSL Limit"])}
+                  </p>
+                </div>
+
+                <div className="bg-purple-50 p-4 rounded-lg">
+                  <p className="text-sm font-semibold text-gray-600 mb-1">UIM Limit Relationship</p>
+                  <p className="text-lg font-bold text-purple-800">
+                    {selectedStateData["UIM Limit Included or Separate from UM"] || "N/A"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h3 className="text-xl font-bold mb-6 text-purple-800">Coverage Limits & Requirements</h3>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {SUBCOVERAGES.map(cov => {
+                  const status = selectedStateData["State Abbrev."] === "OH" 
+                    ? getCoverageStatusForOhio(cov, selectedStateData["Mandatory (On Platform)"], selectedStateData["Optional (On Platform)"])
+                    : getCoverageStatus(cov, selectedStateData["Mandatory (On Platform)"], selectedStateData["Optional (On Platform)"]);
+                  return (
+                    <div key={cov} className="border-2 border-purple-100 rounded-lg p-4 hover:shadow-md transition-shadow">
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="font-semibold text-gray-700">{cov}</h4>
+                        <div className={`flex items-center gap-2 ${status.color}`}>
+                          <span className="text-xs font-semibold">{status.status}</span>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-500 mb-1">
+                        {cov === "UMBI" && "Uninsured Motorist Bodily Injury"}
+                        {cov === "UMPD" && "Uninsured Motorist Property Damage"}
+                        {cov === "UIMBI" && "Underinsured Motorist Bodily Injury"}
+                        {cov === "UIMPD" && "Underinsured Motorist Property Damage"}
+                        {cov === "PIP" && "Personal Injury Protection"}
+                        {cov === "Medpay" && "Medical Payments"}
+                      </p>
+                      <p className="font-bold text-lg text-purple-800">
+                        {formatCoverageLimit(selectedStateData[cov], selectedStateData)}
+                      </p>
+                      {selectedStateData[cov] === "INCLUDED" && (
+                        <p className="text-xs text-purple-600 mt-1">
+                          Bundled with UM/UMPD
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-white rounded-lg shadow-lg p-6">
+                <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-purple-800">
+                  ⚠️ Deductibles
+                </h3>
+                <div className="bg-purple-50 p-4 rounded-lg">
+                  <p className="text-gray-700">
+                    {selectedStateData.Deductible && selectedStateData.Deductible !== "N/A"
+                      ? selectedStateData.Deductible
+                      : "No deductibles apply for this state"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg shadow-lg p-6">
+                <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-purple-800">
+                  🧾 Platform Requirements
+                </h3>
+                <div className="space-y-3">
+                  <div className="bg-red-50 p-3 rounded-lg">
+                    <p className="text-sm font-semibold text-red-700 mb-1">Mandatory Coverages:</p>
+                    <p className="text-gray-700">
+                      {selectedStateData["Mandatory (On Platform)"] && selectedStateData["Mandatory (On Platform)"] !== "N/A"
+                        ? selectedStateData["Mandatory (On Platform)"]
+                        : "None"}
+                    </p>
+                  </div>
+                  <div className="bg-yellow-50 p-3 rounded-lg">
+                    <p className="text-sm font-semibold text-yellow-700 mb-1">Optional Coverages:</p>
+                    <p className="text-gray-700">
+                      {selectedStateData["Optional (On Platform)"] && selectedStateData["Optional (On Platform)"] !== "N/A"
+                        ? selectedStateData["Optional (On Platform)"]
+                        : "None"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {selectedStateData.Notes && selectedStateData.Notes !== "N/A" && (
+              <div className="bg-gradient-to-r from-purple-100 to-purple-50 rounded-lg shadow-lg p-6">
+                <h3 className="text-xl font-bold mb-4 text-purple-800">
+                  📝 Important Notes
+                </h3>
+                <p className="text-gray-700 bg-white p-4 rounded-lg">
+                  {selectedStateData.Notes}
                 </p>
               </div>
             )}
+          </div>
+        ) : (
+          <div className="bg-white rounded-lg shadow-lg p-12 text-center">
+            <div className="text-5xl mb-4">🛡️</div>
+            <h3 className="text-xl font-semibold text-gray-600 mb-2">No State Selected</h3>
+            <p className="text-gray-500">
+              Please select a state from the dropdown above to view coverage information
+            </p>
+          </div>
+        )}
 
-            <div className="mt-8 bg-purple-50 rounded-lg p-6">
-              <h3 className="text-lg font-bold mb-3" style={{ color: '#7E369F' }}>
-                ℹ️ Understanding UIM Limit Relationships
-              </h3>
-              <div className="space-y-3 text-sm">
-                <div className="flex items-start gap-2">
-                  <span className="font-semibold text-purple-700 min-w-[100px]">Included:</span>
-                  <span className="text-gray-700">UIM coverage is bundled with UM coverage at the same limits. When you see "INCLUDED" as a coverage value, it means that coverage is automatically included with the corresponding UM coverage.</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="font-semibold text-purple-700 min-w-[100px]">Separate:</span>
-                  <span className="text-gray-700">UIM and UM coverages are independent and can have different limit amounts.</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="font-semibold text-purple-700 min-w-[100px]">N/A:</span>
-                  <span className="text-gray-700">UIM coverage is not offered or has special circumstances in this state.</span>
-                </div>
-                <div className="mt-4 pt-3 border-t border-purple-200 text-xs text-gray-600">
-                  <p>Note: Auto Liability coverage is not currently offered in Connecticut, Kansas, Kentucky, Massachusetts, and Wyoming.</p>
-                </div>
-              </div>
+        <div className="mt-8 bg-purple-50 rounded-lg p-6">
+          <h3 className="text-lg font-bold mb-3 text-purple-800">
+            ℹ️ Understanding UIM Limit Relationships
+          </h3>
+          <div className="space-y-3 text-sm">
+            <div className="flex items-start gap-2">
+              <span className="font-semibold text-purple-700 min-w-[100px]">Included:</span>
+              <span className="text-gray-700">UIM coverage is bundled with UM coverage at the same limits. When you see "INCLUDED" as a coverage value, it means that coverage is automatically included with the corresponding UM coverage.</span>
             </div>
-
-            <div className="mt-8 text-center text-sm text-gray-500">
-              <p>Core Systems Management Tool • Auto Liability Coverage Assessment Platform</p>
-              <p className="mt-1">Data current as of the latest spreadsheet update • 43 states included</p>
+            <div className="flex items-start gap-2">
+              <span className="font-semibold text-purple-700 min-w-[100px]">Separate:</span>
+              <span className="text-gray-700">UIM and UM coverages are independent and can have different limit amounts.</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="font-semibold text-purple-700 min-w-[100px]">N/A:</span>
+              <span className="text-gray-700">UIM coverage is not offered or has special circumstances in this state.</span>
+            </div>
+            <div className="mt-4 pt-3 border-t border-purple-200 text-xs text-gray-600">
+              <p>Note: Auto Liability coverage is not currently offered in Connecticut, Kansas, Kentucky, Massachusetts, New York, and Wyoming.</p>
             </div>
           </div>
         </div>
-      );
-    };
 
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
-  </script>
-</body>
-</html>
+        <div className="mt-8 text-center text-sm text-gray-500">
+          <p>Core Systems Management Tool • Auto Liability Coverage Assessment Platform</p>
+          <p className="mt-1">Data current as of the latest spreadsheet update • 42 states included</p>
+        </div>
+      </div>
+    </div>
+  );
+}
