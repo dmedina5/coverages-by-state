@@ -85,9 +85,11 @@
     ];
 
     // LOB and Operations data (AL operations + Other LOBs which are E&S only)
+    // APD, MTC, NTL, TGL available in 45 states (excluding AK, HI, KS, MA, NY)
+    // UIIA and Hotshots available in 41 states
     const lobOpsData = {
       "AL": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
-      "AK": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "AK": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"N/A","MTC":"N/A","NTL":"N/A","TGL":"N/A"},
       "AZ": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
       "AR": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
       "CA": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
@@ -96,17 +98,17 @@
       "DE": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
       "FL": {"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
       "GA": {"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
-      "HI": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "HI": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"N/A","MTC":"N/A","NTL":"N/A","TGL":"N/A"},
       "ID": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
       "IL": {"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"Y","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
       "IN": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
       "IA": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
-      "KS": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "KS": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"N/A","MTC":"N/A","NTL":"N/A","TGL":"N/A"},
       "KY": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
       "LA": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
       "ME": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
       "MD": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
-      "MA": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "MA": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"N/A","MTC":"N/A","NTL":"N/A","TGL":"N/A"},
       "MI": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
       "MN": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
       "MS": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
@@ -117,7 +119,7 @@
       "NH": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
       "NJ": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
       "NM": {"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"Y","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
-      "NY": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
+      "NY": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"N/A","MTC":"N/A","NTL":"N/A","TGL":"N/A"},
       "NC": {"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
       "ND": {"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
       "OH": {"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},
@@ -267,21 +269,29 @@
       const filteredStates = useMemo(() => {
         let states = Object.keys(lobOpsData);
         
-        // Filter by LOBs
+        // Filter by LOBs - only filter if something is selected
         if (lobFilter.length > 0) {
           states = states.filter(state => {
-            return lobFilter.every(lob => lobOpsData[state][lob] === "Y");
+            const stateData = lobOpsData[state];
+            // Check if state has all selected LOBs
+            return lobFilter.every(lob => stateData[lob] === "Y");
           });
         }
         
-        // Filter by Operations (AL-specific)
+        // Filter by Operations (AL-specific) - only filter if something is selected
         if (opsFilter.length > 0) {
           states = states.filter(state => {
             const data = lobOpsData[state];
             return opsFilter.every(op => {
-              if (op === "UIIA") return data["Admitted AL UIIA"] === "Y" || data["Non-Admitted AL (including UIIA & Hotshots)"] === "Y";
-              if (op === "Hotshots") return data["Admitted AL Hotshots"] === "Y" || data["Non-Admitted AL (including UIIA & Hotshots)"] === "Y";
-              if (op === "DS&G") return data["Non-Admitted AL DS&G"] === "Y";
+              if (op === "UIIA") {
+                return data["Admitted AL UIIA"] === "Y" || data["Non-Admitted AL (including UIIA & Hotshots)"] === "Y";
+              }
+              if (op === "Hotshots") {
+                return data["Admitted AL Hotshots"] === "Y" || data["Non-Admitted AL (including UIIA & Hotshots)"] === "Y";
+              }
+              if (op === "DS&G") {
+                return data["Non-Admitted AL DS&G"] === "Y";
+              }
               return false;
             });
           });
@@ -541,6 +551,9 @@
       };
 
       const renderStateAvailability = () => {
+        // Get active filters count
+        const activeFiltersCount = lobFilter.length + opsFilter.length;
+        
         return (
           <div className="space-y-6 fade-in">
             <div className="bg-white rounded-lg shadow-lg p-6">
@@ -549,7 +562,7 @@
               <div className="grid md:grid-cols-2 gap-6 mb-6">
                 <div>
                   <h4 className="font-semibold text-gray-700 mb-3">Lines of Business (E&S Only)</h4>
-                  <p className="text-xs text-gray-500 mb-2 italic">APD, MTC, NTL, TGL are non-admitted only</p>
+                  <p className="text-xs text-gray-500 mb-2 italic">APD, MTC, NTL, TGL are non-admitted only - Available in 45 states</p>
                   <div className="flex flex-wrap gap-2">
                     {LINES_OF_BUSINESS.map(lob => (
                       <button
@@ -557,7 +570,7 @@
                         onClick={() => toggleLobFilter(lob)}
                         className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                           lobFilter.includes(lob)
-                            ? 'bg-indigo-600 text-white'
+                            ? 'bg-indigo-600 text-white shadow-md'
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }`}
                       >
@@ -569,7 +582,7 @@
 
                 <div>
                   <h4 className="font-semibold text-gray-700 mb-3">Permitted AL Operations</h4>
-                  <p className="text-xs text-gray-500 mb-2 italic">These operations apply to Auto Liability coverage only</p>
+                  <p className="text-xs text-gray-500 mb-2 italic">UIIA & Hotshots available in 41 states. AL coverage only.</p>
                   <div className="flex flex-wrap gap-2">
                     {AL_OPERATIONS.map(op => (
                       <button
@@ -577,7 +590,7 @@
                         onClick={() => toggleOpsFilter(op)}
                         className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                           opsFilter.includes(op)
-                            ? 'bg-purple-600 text-white'
+                            ? 'bg-purple-600 text-white shadow-md'
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }`}
                       >
@@ -588,26 +601,49 @@
                 </div>
               </div>
 
+              {activeFiltersCount > 0 && (
+                <div className="mb-4 flex items-center justify-between bg-indigo-50 p-3 rounded-lg">
+                  <p className="text-sm text-indigo-700 font-medium">
+                    {activeFiltersCount} filter{activeFiltersCount > 1 ? 's' : ''} active
+                  </p>
+                  <button
+                    onClick={() => {
+                      setLobFilter([]);
+                      setOpsFilter([]);
+                    }}
+                    className="text-sm px-3 py-1 bg-white text-indigo-600 rounded-md hover:bg-indigo-100 transition-colors"
+                  >
+                    Clear all filters
+                  </button>
+                </div>
+              )}
+
               <div className="border-t pt-6">
                 <h4 className="font-semibold text-gray-700 mb-3">
                   States Matching Criteria ({filteredStates.length} of 50)
                 </h4>
                 <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-2">
-                  {filteredStates.map(state => (
-                    <button
-                      key={state}
-                      onClick={() => {
-                        setSelectedState(state);
-                        setActiveTab("dashboard");
-                      }}
-                      className="p-3 bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg hover:from-indigo-100 hover:to-purple-100 transition-colors cursor-pointer"
-                    >
-                      <p className="font-bold text-indigo-700">{state}</p>
-                      <p className="text-xs text-gray-600">
-                        {Object.values(lobOpsData[state] || {}).filter(v => v === "Y").length} services
-                      </p>
-                    </button>
-                  ))}
+                  {filteredStates.map(state => {
+                    const serviceCount = Object.entries(lobOpsData[state] || {})
+                      .filter(([key, value]) => value === "Y")
+                      .length;
+                    
+                    return (
+                      <button
+                        key={state}
+                        onClick={() => {
+                          setSelectedState(state);
+                          setActiveTab("dashboard");
+                        }}
+                        className="p-3 bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg hover:from-indigo-100 hover:to-purple-100 transition-colors cursor-pointer"
+                      >
+                        <p className="font-bold text-indigo-700">{state}</p>
+                        <p className="text-xs text-gray-600">
+                          {serviceCount} service{serviceCount !== 1 ? 's' : ''}
+                        </p>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -744,57 +780,15 @@
                 </div>
               </div>
               <div className="mt-4 pt-3 border-t border-indigo-200 text-xs text-gray-600 space-y-2">
-                <p><span className="font-semibold">Important:</span> APD, MTC, NTL, and TGL are offered on a non-admitted (E&S) basis only across all states.</p>
-                <p><span className="font-semibold">AL Operations:</span> UIIA, Hotshots, and DS&G operations are applicable to Auto Liability coverage only.</p>
-                <p>⚠️ <span className="font-semibold">Note:</span> Auto Liability coverage is not currently offered in Connecticut, Hawaii, Kansas, Kentucky, Louisiana, Massachusetts, New York, and Wyoming. However, E&S-only lines (APD, MTC, NTL, TGL) remain available in these states.</p>
-              </div>
-            </div>
-
-            {/* Footer */}
-            <div className="mt-8 bg-indigo-50 rounded-lg p-6">
-              <h3 className="text-lg font-bold mb-3 text-indigo-800">📖 Reference Guide</h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <h4 className="font-semibold text-gray-700 mb-2">Coverage Status:</h4>
-                  <div className="space-y-1 text-sm">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs px-2 py-1 rounded-full font-semibold bg-green-50 text-green-600">✓ Available</span>
-                      <span className="text-gray-600">Service is currently active and available</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs px-2 py-1 rounded-full font-semibold bg-gray-50 text-gray-500">✗ N/A</span>
-                      <span className="text-gray-600">Service not offered in this state</span>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-700 mb-2">Carrier Status:</h4>
-                  <div className="space-y-1 text-sm">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs px-2 py-1 rounded-full font-semibold bg-orange-50 text-orange-600">Turned Off</span>
-                      <span className="text-gray-600">Temporarily disabled</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs px-2 py-1 rounded-full font-semibold bg-red-50 text-red-600">Blocked</span>
-                      <span className="text-gray-600">Currently restricted/unavailable</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs px-2 py-1 rounded-full font-semibold bg-blue-50 text-blue-600">In Backlog</span>
-                      <span className="text-gray-600">Pending implementation/setup</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="mt-4 pt-3 border-t border-indigo-200 text-xs text-gray-600 space-y-2">
-                <p><span className="font-semibold">Lines of Business:</span> APD, MTC, NTL, and TGL are offered on a non-admitted (E&S) basis only.</p>
-                <p><span className="font-semibold">AL Operations:</span> UIIA, Hotshots, and DS&G operations are applicable to Auto Liability only.</p>
-                <p>⚠️ <span className="font-semibold">No AL Coverage:</span> Auto Liability is not currently offered in CT, HI, KS, KY, LA, MA, NY, and WY. However, E&S-only lines (APD, MTC, NTL, TGL) remain available.</p>
+                <p><span className="font-semibold">Important:</span> APD, MTC, NTL, and TGL are offered on a non-admitted (E&S) basis only in 45 states (excluding AK, HI, KS, MA, NY).</p>
+                <p><span className="font-semibold">AL Operations:</span> UIIA and Hotshots available in 41 states. DS&G operations are applicable to Auto Liability coverage only.</p>
+                <p>⚠️ <span className="font-semibold">Note:</span> Auto Liability coverage is not currently offered in Connecticut, Hawaii, Kansas, Kentucky, Louisiana, Massachusetts, New York, and Wyoming.</p>
               </div>
             </div>
 
             <div className="mt-8 text-center text-sm text-gray-500">
               <p>Core Systems Management Tool • Enhanced Coverage Assessment Platform</p>
-              <p className="mt-1">Includes Auto Liability • APD, MTC, NTL, TGL (E&S Only) • UIIA, Hotshots, DS&G AL Operations</p>
+              <p className="mt-1">Includes Auto Liability • APD, MTC, NTL, TGL (E&S - 45 States) • UIIA, Hotshots (41 States), DS&G AL Operations</p>
               <p className="mt-1">Data current as of latest spreadsheet update • 50 states included</p>
             </div>
           </div>
