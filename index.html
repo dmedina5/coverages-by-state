@@ -27,13 +27,16 @@
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    .dropdown-item:hover {
+      background-color: #EEF2FF;
+    }
   </style>
 </head>
 <body>
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useMemo } = React;
+    const { useState, useMemo, useRef, useEffect } = React;
 
     const SUBCOVERAGES = ["UMBI", "UMPD", "UIMBI", "UIMPD", "Medpay", "PIP"];
     const LINES_OF_BUSINESS = ["APD", "MTC", "NTL", "TGL"];
@@ -91,9 +94,12 @@
     function App() {
       const [selectedState, setSelectedState] = useState("");
       const [searchTerm, setSearchTerm] = useState("");
+      const [showDropdown, setShowDropdown] = useState(false);
       const [activeTab, setActiveTab] = useState("dashboard");
       const [lobFilter, setLobFilter] = useState([]);
       const [opsFilter, setOpsFilter] = useState([]);
+      const searchInputRef = useRef(null);
+      const dropdownRef = useRef(null);
 
       const selectedStateData = useMemo(() => {
         const coverage = stateData.find(s => s["State Abbrev."] === selectedState);
@@ -111,6 +117,38 @@
           return true;
         });
       }, []);
+
+      const filteredSearchStates = useMemo(() => {
+        if (!searchTerm.trim()) return [];
+        return uniqueStates.filter(state =>
+          state.State.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          state["State Abbrev."].toLowerCase().includes(searchTerm.toLowerCase())
+        ).slice(0, 8); // Limit to 8 results for better UX
+      }, [searchTerm, uniqueStates]);
+
+      // Close dropdown when clicking outside
+      useEffect(() => {
+        const handleClickOutside = (event) => {
+          if (dropdownRef.current && !dropdownRef.current.contains(event.target) &&
+              searchInputRef.current && !searchInputRef.current.contains(event.target)) {
+            setShowDropdown(false);
+          }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+      }, []);
+
+      const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value);
+        setShowDropdown(true);
+      };
+
+      const handleStateSelect = (stateAbbrev) => {
+        setSelectedState(stateAbbrev);
+        setSearchTerm("");
+        setShowDropdown(false);
+      };
 
       const toggleLobFilter = (lob) => {
         setLobFilter(prev => prev.includes(lob) ? prev.filter(l => l !== lob) : [...prev, lob]);
@@ -521,17 +559,40 @@
             {/* State Selection */}
             <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
               <div className="grid lg:grid-cols-2 gap-6">
-                <div>
+                <div className="relative">
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     🔎 Search State
                   </label>
                   <input
+                    ref={searchInputRef}
                     type="text"
                     placeholder="Type state name or abbreviation..."
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={handleSearchChange}
+                    onFocus={() => searchTerm && setShowDropdown(true)}
                     className="w-full px-4 py-3 border-2 border-indigo-200 rounded-lg focus:border-indigo-500 focus:outline-none transition-colors bg-indigo-50"
                   />
+                  
+                  {/* Dropdown */}
+                  {showDropdown && filteredSearchStates.length > 0 && (
+                    <div 
+                      ref={dropdownRef}
+                      className="absolute z-10 w-full mt-1 bg-white border-2 border-indigo-200 rounded-lg shadow-lg max-h-64 overflow-y-auto"
+                    >
+                      {filteredSearchStates.map(state => (
+                        <div
+                          key={state["State Abbrev."]}
+                          onClick={() => handleStateSelect(state["State Abbrev."])}
+                          className="dropdown-item px-4 py-3 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-medium text-gray-800">{state.State}</span>
+                            <span className="text-sm text-indigo-600 font-semibold">{state["State Abbrev."]}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -544,10 +605,7 @@
                     className="w-full px-4 py-3 border-2 border-indigo-200 rounded-lg focus:border-indigo-500 focus:outline-none transition-colors cursor-pointer bg-indigo-50"
                   >
                     <option value="">Choose a state...</option>
-                    {uniqueStates.filter(state =>
-                      state.State.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                      state["State Abbrev."].toLowerCase().includes(searchTerm.toLowerCase())
-                    ).map(state => (
+                    {uniqueStates.map(state => (
                       <option key={state["State Abbrev."]} value={state["State Abbrev."]}>
                         {state.State} ({state["State Abbrev."]})
                       </option>
@@ -642,9 +700,9 @@
             </div>
 
             <div className="mt-8 text-center text-sm text-gray-500">
-              <p>Core Systems Management Tool • Enhanced Coverage Assessment Platform v2.0</p>
+              <p>Core Systems Management Tool • Enhanced Coverage Assessment Platform v2.1</p>
               <p className="mt-1">Includes Auto Liability • APD, MTC, NTL, TGL (E&S - 45 States) • UIIA, Hotshots (41 States), DS&G AL Operations</p>
-              <p className="mt-1">Data current as of latest spreadsheet update • 50 states included • Updated Accredited Non-Admitted 1st Program carrier status</p>
+              <p className="mt-1">Data current as of latest spreadsheet update • 50 states included • Enhanced search with autocomplete dropdown</p>
             </div>
           </div>
         </div>
