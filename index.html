@@ -40,7 +40,13 @@
 
     const SUBCOVERAGES = ["UMBI", "UMPD", "UIMBI", "UIMPD", "Medpay", "PIP"];
     const LINES_OF_BUSINESS = ["APD", "MTC", "NTL", "TGL"];
-    const AL_OPERATIONS = ["UIIA", "Hotshots", "DS&G"];
+    const AL_OPERATIONS = [
+      "Admitted UIIA",
+      "Non-Admitted UIIA", 
+      "Admitted Hotshots",
+      "Non-Admitted Hotshots",
+      "DS&G"
+    ];
 
     // Complete state data from updated spreadsheet
     const stateData = [{"State":"Alabama","State Abbrev.":"AL","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI","Deductible":"N/A","Notes":"Currently set up Accept or Reject UMBI"},{"State":"Arizona","State Abbrev.":"AZ","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UIMBI","Deductible":"N/A","Notes":"Currently set up as 'accept all' or 'reject all'"},{"State":"Arkansas","State Abbrev.":"AR","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":25000,"UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD/UIMBI","Deductible":"UMPD: $200","Notes":"Currently set up to accept UMBI/UMPD/UIMBI or reject both"},{"State":"California","State Abbrev.":"CA","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":60000,"UMPD":3500,"UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD","Deductible":"N/A","Notes":"Currently set up to accept UMBI/UMPD or reject both"},{"State":"Colorado","State Abbrev.":"CO","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":15000,"UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UIMBI","Deductible":"UMPD: $250","Notes":"Currently set up to accept UMBI/UIMBI or reject both"},{"State":"Delaware","State Abbrev.":"DE","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":60000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":30000,"Medpay":"N/A","Mandatory (On Platform)":"UMBI/UMPD/UIMBI/PIP","Deductible":"UMPD: $250","Notes":"No Selection/Rejection form available for UM"},{"State":"Florida","State Abbrev.":"FL","Admitted":"X","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":10000,"Medpay":"N/A","Mandatory (On Platform)":"PIP","Optional (On Platform)":"UMBI","Deductible":"N/A","Notes":"Currently set up to accept UMBI or reject "},{"State":"Georgia","State Abbrev.":"GA","Admitted":"X","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":75000,"UMPD":75000,"UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD","Deductible":"N/A"},{"State":"Idaho","State Abbrev.":"ID","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","Medpay":5000,"Optional (On Platform)":"UMBI/UIMBI","Deductible":"N/A","Notes":"Set up to Accept or Reject UMBI/UIMBI"},{"State":"Illinois","State Abbrev.":"IL","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI","Optional (On Platform)":"N/A","Deductible":"N/A","Notes":"Currently set up to only accept UMBI"},{"State":"Indiana","State Abbrev.":"IN","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":1000000,"UMPD":50000,"UIMBI":1000000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD/UIMBI","Deductible":"N/A","Notes":"Currently set up to accept UMBI/UMPD/UIMBI or reject both; IN UM select/reject form does not coincide w/ limits provided"},{"State":"Iowa","State Abbrev.":"IA","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":40000,"UMPD":"N/A","UIMBI":40000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","Medpay":5000,"Optional (On Platform)":"UMBI/UIMBI","Deductible":"N/A","Notes":"Accept all/Reject all UMBI/UIMBI"},{"State":"Maine","State Abbrev.":"ME","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":100000,"UMPD":"N/A","UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":2000,"Mandatory (On Platform)":"UMBI/UIMBI","Optional (On Platform)":"N/A","Deductible":"N/A"},{"State":"Maryland","State Abbrev.":"MD","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":75000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":2500,"Medpay":"N/A","Mandatory (On Platform)":"UMBI/UMPD/UIMBI/PIP","Optional (On Platform)":"N/A","Notes":"Mandatory Accept UMBI/UMPD/UIMBI"},{"State":"Michigan","State Abbrev.":"MI","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":"N/A","UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","PIP":250000,"Medpay":"N/A","Mandatory (On Platform)":"PIP","Optional (On Platform)":"N/A","Notes":"UM/UIM Coverage not being offered on the platform"},{"State":"Minnesota","State Abbrev.":"MN","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":40000,"Medpay":"N/A","Mandatory (On Platform)":"UMBI/UIMBI/PIP","Notes":"Mandatory Accept UMBI/UIMBI/PIP"},{"State":"Mississippi","State Abbrev.":"MS","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":300000,"UMPD":300000,"UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD","Notes":"Currently set up to mandatory accept UMBI/UMPD"},{"State":"Missouri","State Abbrev.":"MO","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":100000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI","Notes":"Currently No option provided to reject UMBI set up"},{"State":"Montana","State Abbrev.":"MT","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Optional (On Platform)":"UMBI/UIMBI"},{"State":"Nebraska","State Abbrev.":"NE","Admitted":"X","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UIMBI","Notes":"Mandatory Accept UMBI/UIMBI"},{"State":"Nevada","State Abbrev.":"NV","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI","Notes":"Currently set up Accept or Reject UMBI"},{"State":"New Hampshire","State Abbrev.":"NH","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":25000,"UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/UIMBI","Optional (On Platform)":"N/A","Notes":"Mandatory Accept UMBI/UMPD/UIMBI"},{"State":"New Jersey","State Abbrev.":"NJ","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIM Limit Included or Separate from UM":"Included","PIP":15000,"Medpay":"N/A","Mandatory (On Platform)":"UMBI/UMPD/UIMBI/UIMPD/PIP","Optional (On Platform)":"N/A","Notes":"Unclear if we're offering UIMPD, however UMBI,UMPD, UIMBI,UIMPD all mandatory"},{"State":"New Mexico","State Abbrev.":"NM","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":60000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":5000,"Optional (On Platform)":"UMBI/UMPD/UIMBI"},{"State":"North Carolina","State Abbrev.":"NC","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":100000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/UIMBI","Optional (On Platform)":"N/A","Notes":"Mandatory Accept UMBI/UIMBI"},{"State":"North Dakota","State Abbrev.":"ND","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":30000,"Medpay":"N/A","Mandatory (On Platform)":"UMBI/UIMBI","Notes":"Mandatory Accept UMBI/UIMBI"},{"State":"Ohio","State Abbrev.":"OH","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":7500,"UIMBI":50000,"UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD/UIMBI","Notes":"Accept/Reject UMBI/UMPD/UIMBI"},{"State":"Ohio Admitted","State Abbrev.":"OH","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":100000,"UMPD":25000,"UIMBI":100000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/UIMBI","Notes":"Mandatory Accept UMBI/UMPD/UIMBI"},{"State":"Oklahoma","State Abbrev.":"OK","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI","Notes":"Currently set up Accept or Reject UMBI"},{"State":"Oregon","State Abbrev.":"OR","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":15000,"Medpay":"N/A","Mandatory (On Platform)":"UMBI/UIMBI/PIP","Notes":"Mandatory Accept UMBI/UIMBI"},{"State":"Pennsylvania","State Abbrev.":"PA","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":35000,"UMPD":"N/A","UIMBI":35000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":5000,"Medpay":"N/A","Mandatory (On Platform)":"PIP","Optional (On Platform)":"UMBI/UIMBI","Notes":"Currently set up Accept or Reject UMBI /UIMBI"},{"State":"Rhode Island","State Abbrev.":"RI","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":25000,"UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":2500,"Mandatory (On Platform)":"UMBI/UIMBI","Notes":"Mandatory Accept UMBI/UIMBI, Mandatory Reject UMPD"},{"State":"South Carolina","State Abbrev.":"SC","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":75000,"UMPD":75000,"UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD","Optional (On Platform)":"N/A","Notes":"Mandatory Accept UMBI/UMPD"},{"State":"South Dakota","State Abbrev.":"SD","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":300000,"UMPD":"N/A","UIMBI":300000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UIMBI","Notes":"Mandatory Accept UMBI/UIMBI"},{"State":"Tennessee","State Abbrev.":"TN","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":65000,"UMPD":65000,"UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD","Deductible":"UMPD: $200","Notes":"Can accept/reject UMBI/UMPD"},{"State":"Texas","State Abbrev.":"TX","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":85000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIM Limit Included or Separate from UM":"Included","PIP":2500,"Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD/UIMBI/PIP (If no PIP, then Medpay)","Notes":"Accept all/Reject all (UMBI/UMPD/UIMBI)"},{"State":"Utah","State Abbrev.":"UT","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":80000,"UMPD":"N/A","UIMBI":20000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":3000,"Medpay":"N/A","Optional (On Platform)":"UMBI/UIMBI","Notes":"Accept/Reject UMBI/UIMBI"},{"State":"Vermont","State Abbrev.":"VT","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":100000,"UMPD":10000,"UIMBI":"INCLUDED","UIMPD":10000,"UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/UIMBI/UIMPD","Optional (On Platform)":"N/A","Notes":"Mandatory Accept"},{"State":"Virginia","State Abbrev.":"VA","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":80000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIMPD":"INCLUDED","UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/UIMBI/UIMPD","Optional (On Platform)":"N/A","Notes":"See SDR-1195 - should be mandatory accept all ($80,000 CSL)"},{"State":"Washington","State Abbrev.":"WA","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":60000,"UMPD":60000,"UIMBI":60000,"UIMPD":60000,"UIM Limit Included or Separate from UM":"Included","PIP":10000,"Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD/UIMBI/UIMPD/PIP (If no PIP, then Medpay)"},{"State":"West Virginia","State Abbrev.":"WV","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":75000,"UMPD":75000,"UIMBI":75000,"UIMPD":75000,"UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/UIMBI","Notes":"UMBI/UMPD/UIMBI Mandatory"},{"State":"Wisconsin","State Abbrev.":"WI","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":100000,"UMPD":"N/A","UIMBI":100000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI","Optional (On Platform)":"UIMBI","Notes":"Mandatory Accept UMBI/ Option to Accept/Reject UIMBI"}];
@@ -177,11 +183,17 @@
           states = states.filter(state => {
             const data = lobOpsData[state];
             return opsFilter.every(op => {
-              if (op === "UIIA") {
-                return data["Admitted AL UIIA"] === "Y" || data["Non-Admitted AL (including UIIA & Hotshots)"] === "Y";
+              if (op === "Admitted UIIA") {
+                return data["Admitted AL UIIA"] === "Y";
               }
-              if (op === "Hotshots") {
-                return data["Admitted AL Hotshots"] === "Y" || data["Non-Admitted AL (including UIIA & Hotshots)"] === "Y";
+              if (op === "Non-Admitted UIIA") {
+                return data["Non-Admitted AL (including UIIA & Hotshots)"] === "Y";
+              }
+              if (op === "Admitted Hotshots") {
+                return data["Admitted AL Hotshots"] === "Y";
+              }
+              if (op === "Non-Admitted Hotshots") {
+                return data["Non-Admitted AL (including UIIA & Hotshots)"] === "Y";
               }
               if (op === "DS&G") {
                 return data["Non-Admitted AL DS&G"] === "Y";
@@ -201,8 +213,11 @@
               const optional = coverage["Optional (On Platform)"] || "";
               const coverageValue = coverage[cov];
 
-              // Check if coverage exists (not N/A)
-              const coverageExists = coverageValue && coverageValue !== "N/A";
+              // Check if coverage exists (not N/A and has a value)
+              const coverageExists = coverageValue && 
+                                    coverageValue !== "N/A" && 
+                                    (typeof coverageValue === 'number' || 
+                                     (typeof coverageValue === 'string' && coverageValue !== "N/A"));
               
               if (!coverageExists) return false;
 
@@ -210,8 +225,10 @@
                 return mandatory.includes(cov);
               } else if (coverageRequirement === "optional") {
                 return optional.includes(cov);
-              } else { // "any"
-                return mandatory.includes(cov) || optional.includes(cov);
+              } else { // "any" - coverage is available (has a value), regardless of mandatory/optional listing
+                // For "any", we accept states where coverage exists with a limit
+                // This is especially important for Medpay which often has limits but isn't explicitly listed
+                return true;
               }
             });
           });
@@ -495,21 +512,50 @@
 
                 <div>
                   <h4 className="font-semibold text-gray-700 mb-3">Permitted AL Operations</h4>
-                  <p className="text-xs text-gray-500 mb-2 italic">UIIA & Hotshots available in 41 states. AL coverage only.</p>
-                  <div className="flex flex-wrap gap-2">
-                    {AL_OPERATIONS.map(op => (
+                  <p className="text-xs text-gray-500 mb-2 italic">Granular filtering by admitted vs non-admitted operations</p>
+                  <div className="space-y-2">
+                    <div className="flex flex-wrap gap-2">
+                      {["Admitted UIIA", "Non-Admitted UIIA"].map(op => (
+                        <button
+                          key={op}
+                          onClick={() => toggleOpsFilter(op)}
+                          className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                            opsFilter.includes(op)
+                              ? 'bg-purple-600 text-white shadow-md'
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          }`}
+                        >
+                          {op}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {["Admitted Hotshots", "Non-Admitted Hotshots"].map(op => (
+                        <button
+                          key={op}
+                          onClick={() => toggleOpsFilter(op)}
+                          className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                            opsFilter.includes(op)
+                              ? 'bg-purple-600 text-white shadow-md'
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          }`}
+                        >
+                          {op}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="flex flex-wrap gap-2">
                       <button
-                        key={op}
-                        onClick={() => toggleOpsFilter(op)}
-                        className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                          opsFilter.includes(op)
+                        onClick={() => toggleOpsFilter("DS&G")}
+                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                          opsFilter.includes("DS&G")
                             ? 'bg-purple-600 text-white shadow-md'
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }`}
                       >
-                        {op}
+                        DS&G (Non-Admitted)
                       </button>
-                    ))}
+                    </div>
                   </div>
                 </div>
 
@@ -523,10 +569,14 @@
                       onChange={(e) => setCoverageRequirement(e.target.value)}
                       className="w-full text-xs px-2 py-1 border border-gray-300 rounded mb-2"
                     >
-                      <option value="any">Any (Mandatory or Optional)</option>
+                      <option value="any">Any (Coverage Available)</option>
                       <option value="mandatory">Mandatory Only</option>
                       <option value="optional">Optional Only</option>
                     </select>
+                    <p className="text-xs text-gray-500 italic">
+                      "Any" shows states where coverage has a limit value. 
+                      Useful for Medpay which often isn't listed as mandatory/optional.
+                    </p>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-2">
@@ -744,17 +794,18 @@
               </div>
               <div className="mt-4 pt-3 border-t border-indigo-200 text-xs text-gray-600 space-y-2">
                 <p><span className="font-semibold">Important:</span> APD, MTC, NTL, and TGL are offered on a non-admitted (E&S) basis only in 45 states (excluding AK, HI, KS, MA, NY).</p>
-                <p><span className="font-semibold">AL Operations:</span> UIIA and Hotshots available in 41 states. DS&G operations are applicable to Auto Liability coverage only.</p>
+                <p><span className="font-semibold">AL Operations:</span> Admitted UIIA available in 3 states (IL, NV, WI, SC, NM). Admitted Hotshots available in 7 states. Non-Admitted UIIA & Hotshots available in 36 states. DS&G (Non-Admitted only) available in 10 states.</p>
                 <p><span className="font-semibold">Carrier Status Note:</span> "Turned Off (Temp)" carriers may return to service. "Turned Off (Perm)" carriers will not return.</p>
                 <p><span className="font-semibold">Coverage Filtering:</span> Use the State Availability Matrix to find states that offer specific subcoverages (UMBI, UMPD, UIMBI, UIMPD, PIP, Medpay) as mandatory or optional.</p>
+                <p><span className="font-semibold">Operations Filtering:</span> NEW - Filter by Admitted vs Non-Admitted UIIA and Hotshots separately for precise state selection.</p>
                 <p>⚠️ <span className="font-semibold">Note:</span> Auto Liability coverage is not currently offered in Connecticut, Hawaii, Kansas, Kentucky, Louisiana, Massachusetts, New York, and Wyoming.</p>
               </div>
             </div>
 
             <div className="mt-8 text-center text-sm text-gray-500">
-              <p>Core Systems Management Tool • Enhanced Coverage Assessment Platform v2.2</p>
-              <p className="mt-1">Includes Auto Liability • APD, MTC, NTL, TGL (E&S - 45 States) • UIIA, Hotshots (41 States), DS&G AL Operations</p>
-              <p className="mt-1">NEW: Advanced filtering by subcoverages (UMBI, UMPD, UIMBI, UIMPD, PIP, Medpay) with mandatory/optional requirement selection</p>
+              <p>Core Systems Management Tool • Enhanced Coverage Assessment Platform v3.0</p>
+              <p className="mt-1">Includes Auto Liability • APD, MTC, NTL, TGL (E&S - 45 States) • Granular AL Operations Filtering</p>
+              <p className="mt-1">NEW: Filter by Admitted/Non-Admitted UIIA & Hotshots separately • Advanced subcoverage filtering</p>
               <p className="mt-1">Data current as of latest spreadsheet update • 50 states included • Enhanced search with autocomplete dropdown</p>
             </div>
           </div>
