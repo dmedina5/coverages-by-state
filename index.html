@@ -55,14 +55,16 @@
       "DS&G"
     ];
 
-    // Carrier names as they appear in the data
+    // Carrier names - mapped to exact column names from spreadsheet
     const CARRIERS = [
-      "Everspan Admitted (MunichRe)",
-      "Everspan Non-Admitted (MunichRe)",
-      "Accredited Non-Admitted (New Program)",
-      "Accredited Non-Admitted (1st Program)",
-      "Knight Non-Admitted",
-      "Ascot Non-Admitted"
+      { display: "Everspan Admitted (GenRe)", key: "Everspan Admitted GenRe" },
+      { display: "Everspan Non-Admitted (GenRe)", key: "Everspan Non-Admitted GenRe" },
+      { display: "Everspan Admitted (MunichRe)", key: "Everspan Admitted MunichRe" },
+      { display: "Everspan Non-Admitted (MunichRe)", key: "Everspan Non-Admitted MunichRe" },
+      { display: "Accredited Non-Admitted (1st Program)", key: "Accredited Non-Admitted 1st" },
+      { display: "Accredited Non-Admitted (New Program)", key: "Accredited Non-Admitted New" },
+      { display: "Knight Non-Admitted", key: "Knight Non-Admitted" },
+      { display: "Ascot Non-Admitted", key: "Ascot Non-Admitted" }
     ];
 
     // Carrier capabilities for AL operations
@@ -332,14 +334,8 @@
         if (carrierFilter.length > 0) {
           states = states.filter(stateAbbrev => {
             const carriers = carrierData[stateAbbrev] || {};
-            return carrierFilter.every(carrier => {
-              const carrierKey = carrier === "Everspan Admitted (MunichRe)" ? "Everspan Admitted MunichRe" :
-                                carrier === "Everspan Non-Admitted (MunichRe)" ? "Everspan Non-Admitted MunichRe" :
-                                carrier === "Accredited Non-Admitted (New Program)" ? "Accredited Non-Admitted New" :
-                                carrier === "Accredited Non-Admitted (1st Program)" ? "Accredited Non-Admitted 1st" :
-                                carrier === "Knight Non-Admitted" ? "Knight Non-Admitted" :
-                                carrier === "Ascot Non-Admitted" ? "Ascot Non-Admitted" : null;
-
+            return carrierFilter.every(carrierKey => {
+              // Use the key directly since we now store the key in the filter
               return carriers[carrierKey] === "Y";
             });
           });
@@ -735,21 +731,40 @@
                 <div>
                   <h4 className="font-semibold text-gray-700 mb-3">Active Carriers</h4>
                   <p className="text-xs text-gray-500 mb-2 italic">Filter states where specific carriers are active</p>
+                  <div className="mb-2 p-2 bg-amber-50 border border-amber-200 rounded text-xs text-amber-800">
+                    <strong>Note:</strong> Currently only Accredited Non-Admitted (New Program) is active. Other carriers are turned off or blocked.
+                  </div>
 
                   <div className="space-y-2 max-h-64 overflow-y-auto">
-                    {CARRIERS.map(carrier => (
-                      <button
-                        key={carrier}
-                        onClick={() => toggleCarrierFilter(carrier)}
-                        className={`w-full px-3 py-2 rounded-lg text-sm font-medium transition-colors text-left ${
-                          carrierFilter.includes(carrier)
-                            ? 'bg-emerald-600 text-white shadow-md'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        }`}
-                      >
-                        {carrier}
-                      </button>
-                    ))}
+                    {CARRIERS.map(carrier => {
+                      // Check if this carrier is actually active in any state
+                      const activeStates = Object.values(carrierData).filter(stateCarriers =>
+                        stateCarriers[carrier.key] === "Y"
+                      ).length;
+
+                      return (
+                        <button
+                          key={carrier.key}
+                          onClick={() => toggleCarrierFilter(carrier.key)}
+                          className={`w-full px-3 py-2 rounded-lg text-sm font-medium transition-colors text-left ${
+                            carrierFilter.includes(carrier.key)
+                              ? 'bg-emerald-600 text-white shadow-md'
+                              : activeStates > 0
+                                ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                : 'bg-gray-50 text-gray-400 cursor-not-allowed opacity-50'
+                          }`}
+                          disabled={activeStates === 0}
+                        >
+                          <span>{carrier.display}</span>
+                          {activeStates > 0 && (
+                            <span className="ml-2 text-xs opacity-75">({activeStates} states)</span>
+                          )}
+                          {activeStates === 0 && (
+                            <span className="ml-2 text-xs">(Not active)</span>
+                          )}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -1018,7 +1033,7 @@
               <div className="mt-4 pt-3 border-t border-indigo-200 text-xs text-gray-600 space-y-2">
                 <p><span className="font-semibold">✅ NEW FEATURES:</span> AL states snapshot, carrier capability matrix, and filter by active carrier</p>
                 <p><span className="font-semibold">Important:</span> APD, MTC, NTL, and TGL are offered on a non-admitted (E&S) basis only in 45 states (excluding AK, HI, KS, MA, NY).</p>
-                <p><span className="font-semibold">Carrier Note:</span> Knight Non-Admitted is permanently turned off for new business but continues to endorse existing policies.</p>
+                <p><span className="font-semibold">Carrier Status Update:</span> Currently, only <strong>Accredited Non-Admitted (New Program)</strong> is active (Y status) in 36 states. All other carriers are either turned off, blocked, or N/A. Knight Non-Admitted is permanently turned off for new business but continues to endorse existing policies.</p>
                 <p>⚠️ <span className="font-semibold">Note:</span> Auto Liability coverage is not currently offered in Connecticut, Hawaii, Kansas, Kentucky, Louisiana, Massachusetts, New York, and Wyoming.</p>
               </div>
             </div>
