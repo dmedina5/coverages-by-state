@@ -4,19 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Coverages by State Tool by JJ & D³</title>
-  
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
+
   <!-- React + ReactDOM -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  
+
   <!-- Babel for in-browser JSX transform -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  
+
   <style>
-    body { 
+    body {
       margin: 0;
       padding: 0;
     }
@@ -30,6 +30,13 @@
     .dropdown-item:hover {
       background-color: #EEF2FF;
     }
+    .stat-card {
+      transition: all 0.3s ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
   </style>
 </head>
 <body>
@@ -42,11 +49,81 @@
     const LINES_OF_BUSINESS = ["APD", "MTC", "NTL", "TGL"];
     const AL_OPERATIONS = [
       "Admitted UIIA",
-      "Non-Admitted UIIA", 
+      "Non-Admitted UIIA",
       "Admitted Hotshots",
       "Non-Admitted Hotshots",
       "DS&G"
     ];
+
+    // Carrier names as they appear in the data
+    const CARRIERS = [
+      "Everspan Admitted (MunichRe)",
+      "Everspan Non-Admitted (MunichRe)",
+      "Accredited Non-Admitted (New Program)",
+      "Accredited Non-Admitted (1st Program)",
+      "Knight Non-Admitted",
+      "Ascot Non-Admitted"
+    ];
+
+    // Carrier capabilities for AL operations
+    const carrierCapabilities = {
+      "Accredited Non-Admitted (1st Program)": {
+        "Admitted AL": "N",
+        "Admitted AL Hotshots": "N",
+        "Admitted AL UIIA": "N",
+        "Non-Admitted AL": "Y",
+        "Non-Admitted AL DS&G": "Y"
+      },
+      "Accredited Non-Admitted (New Program)": {
+        "Admitted AL": "N",
+        "Admitted AL Hotshots": "N",
+        "Admitted AL UIIA": "N",
+        "Non-Admitted AL": "Y",
+        "Non-Admitted AL DS&G": "Y"
+      },
+      "Ascot Non-Admitted": {
+        "Admitted AL": "N",
+        "Admitted AL Hotshots": "N",
+        "Admitted AL UIIA": "N",
+        "Non-Admitted AL": "Y",
+        "Non-Admitted AL DS&G": "Y"
+      },
+      "Everspan Admitted GenRe)": {
+        "Admitted AL": "disabled",
+        "Admitted AL Hotshots": "disabled",
+        "Admitted AL UIIA": "disabled",
+        "Non-Admitted AL": "disabled",
+        "Non-Admitted AL DS&G": "disabled"
+      },
+      "Everspan Admitted (MunichRe)": {
+        "Admitted AL": "Y",
+        "Admitted AL Hotshots": "Y",
+        "Admitted AL UIIA": "Y",
+        "Non-Admitted AL": "N",
+        "Non-Admitted AL DS&G": "N"
+      },
+      "Everspan Non-Admitted GenRe": {
+        "Admitted AL": "disabled",
+        "Admitted AL Hotshots": "disabled",
+        "Admitted AL UIIA": "disabled",
+        "Non-Admitted AL": "disabled",
+        "Non-Admitted AL DS&G": "disabled"
+      },
+      "Everspan Non-Admitted (MunichRe)": {
+        "Admitted AL": "N",
+        "Admitted AL Hotshots": "N",
+        "Admitted AL UIIA": "N",
+        "Non-Admitted AL": "Y",
+        "Non-Admitted AL DS&G": "N"
+      },
+      "Knight Non-Admitted": {
+        "Admitted AL": "N",
+        "Admitted AL Hotshots": "N",
+        "Admitted AL UIIA": "N",
+        "Non-Admitted AL": "UIIA only",
+        "Non-Admitted AL DS&G": "disabled"
+      }
+    };
 
     // CORRECTED state data from spreadsheet
     const stateData = [{"State":"Alabama","State Abbrev.":"AL","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"Medpay","Optional (On Platform)":"UMBI","Deductible":"N/A","Notes":"Currently set up Accept or Reject UMBI"},{"State":"Arizona","State Abbrev.":"AZ","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"Medpay","Optional (On Platform)":"UMBI/UIMBI","Deductible":"N/A","Notes":"Currently set up as 'accept all' or 'reject all'"},{"State":"Arkansas","State Abbrev.":"AR","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":25000,"UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"Medpay","Optional (On Platform)":"UMBI/UMPD/UIMBI","Deductible":"UMPD: $200","Notes":"Currently set up to accept UMBI/UMPD/UIMBI or reject both"},{"State":"California","State Abbrev.":"CA","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":60000,"UMPD":3500,"UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"Medpay","Optional (On Platform)":"UMBI/UMPD","Deductible":"N/A","Notes":"Currently set up to accept UMBI/UMPD or reject both"},{"State":"Colorado","State Abbrev.":"CO","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":15000,"UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"Medpay","Optional (On Platform)":"UMBI/UIMBI","Deductible":"UMPD: $250","Notes":"Currently set up to accept UMBI/UIMBI or reject both"},{"State":"Delaware","State Abbrev.":"DE","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":60000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":30000,"Medpay":"N/A","Mandatory (On Platform)":"UMBI/UMPD/UIMBI/PIP","Deductible":"UMPD: $250","Notes":"No Selection/Rejection form available for UM"},{"State":"Florida","State Abbrev.":"FL","Admitted":"X","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":10000,"Medpay":"N/A","Mandatory (On Platform)":"PIP","Optional (On Platform)":"UMBI","Deductible":"N/A","Notes":"Currently set up to accept UMBI or reject "},{"State":"Georgia","State Abbrev.":"GA","Admitted":"X","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":75000,"UMPD":75000,"UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"Medpay","Optional (On Platform)":"UMBI/UMPD","Deductible":"N/A"},{"State":"Idaho","State Abbrev.":"ID","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","Medpay":5000,"Mandatory (On Platform)":"Medpay","Optional (On Platform)":"UMBI/UIMBI","Deductible":"N/A","Notes":"Set up to Accept or Reject UMBI/UIMBI"},{"State":"Illinois","State Abbrev.":"IL","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/Medpay","Optional (On Platform)":"N/A","Deductible":"N/A","Notes":"Currently set up to only accept UMBI"},{"State":"Indiana","State Abbrev.":"IN","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":1000000,"UMPD":50000,"UIMBI":1000000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"Medpay","Optional (On Platform)":"UMBI/UMPD/UIMBI","Deductible":"N/A","Notes":"Currently set up to accept UMBI/UMPD/UIMBI or reject both; IN UM select/reject form does not coincide w/ limits provided"},{"State":"Iowa","State Abbrev.":"IA","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":40000,"UMPD":"N/A","UIMBI":40000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","Medpay":5000,"Mandatory (On Platform)":"Medpay","Optional (On Platform)":"UMBI/UIMBI","Deductible":"N/A","Notes":"Accept all/Reject all UMBI/UIMBI"},{"State":"Maine","State Abbrev.":"ME","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":100000,"UMPD":"N/A","UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":2000,"Mandatory (On Platform)":"UMBI/UIMBI/Medpay","Optional (On Platform)":"N/A","Deductible":"N/A"},{"State":"Maryland","State Abbrev.":"MD","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":75000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":2500,"Medpay":"N/A","Mandatory (On Platform)":"UMBI/UMPD/UIMBI/PIP","Optional (On Platform)":"N/A","Notes":"Mandatory Accept UMBI/UMPD/UIMBI"},{"State":"Michigan","State Abbrev.":"MI","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":"N/A","UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","PIP":250000,"Medpay":"N/A","Mandatory (On Platform)":"PIP","Optional (On Platform)":"N/A","Notes":"UM/UIM Coverage not being offered on the platform"},{"State":"Minnesota","State Abbrev.":"MN","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":40000,"Medpay":"N/A","Mandatory (On Platform)":"UMBI/UIMBI/PIP","Notes":"Mandatory Accept UMBI/UIMBI/PIP"},{"State":"Mississippi","State Abbrev.":"MS","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":300000,"UMPD":300000,"UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/Medpay","Notes":"Currently set up to mandatory accept UMBI/UMPD"},{"State":"Missouri","State Abbrev.":"MO","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":100000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/Medpay","Notes":"Currently No option provided to reject UMBI set up"},{"State":"Montana","State Abbrev.":"MT","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"Medpay","Optional (On Platform)":"UMBI/UIMBI"},{"State":"Nebraska","State Abbrev.":"NE","Admitted":"X","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UIMBI/Medpay","Notes":"Mandatory Accept UMBI/UIMBI"},{"State":"Nevada","State Abbrev.":"NV","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"Medpay","Optional (On Platform)":"UMBI","Notes":"Currently set up Accept or Reject UMBI"},{"State":"New Hampshire","State Abbrev.":"NH","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":25000,"UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/UIMBI/Medpay","Optional (On Platform)":"N/A","Notes":"Mandatory Accept UMBI/UMPD/UIMBI"},{"State":"New Jersey","State Abbrev.":"NJ","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIM Limit Included or Separate from UM":"Included","PIP":15000,"Medpay":"N/A","Mandatory (On Platform)":"UMBI/UMPD/UIMBI/UIMPD/PIP","Optional (On Platform)":"N/A","Notes":"Unclear if we're offering UIMPD, however UMBI,UMPD, UIMBI,UIMPD all mandatory"},{"State":"New Mexico","State Abbrev.":"NM","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":60000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"Medpay","Optional (On Platform)":"UMBI/UMPD/UIMBI"},{"State":"North Carolina","State Abbrev.":"NC","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":100000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/UIMBI/Medpay","Optional (On Platform)":"N/A","Notes":"Mandatory Accept UMBI/UIMBI"},{"State":"North Dakota","State Abbrev.":"ND","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":50000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":30000,"Medpay":"N/A","Mandatory (On Platform)":"UMBI/UIMBI/PIP","Notes":"Mandatory Accept UMBI/UIMBI"},{"State":"Ohio","State Abbrev.":"OH","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":7500,"UIMBI":50000,"UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"Medpay","Optional (On Platform)":"UMBI/UMPD/UIMBI","Notes":"Accept/Reject UMBI/UMPD/UIMBI"},{"State":"Ohio Admitted","State Abbrev.":"OH","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":100000,"UMPD":25000,"UIMBI":100000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/UIMBI/Medpay","Notes":"Mandatory Accept UMBI/UMPD/UIMBI"},{"State":"Oklahoma","State Abbrev.":"OK","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"Medpay","Optional (On Platform)":"UMBI","Notes":"Currently set up Accept or Reject UMBI"},{"State":"Oregon","State Abbrev.":"OR","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":"N/A","UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":15000,"Medpay":"N/A","Mandatory (On Platform)":"UMBI/UIMBI/PIP","Notes":"Mandatory Accept UMBI/UIMBI"},{"State":"Pennsylvania","State Abbrev.":"PA","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":35000,"UMPD":"N/A","UIMBI":35000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":5000,"Medpay":"N/A","Mandatory (On Platform)":"PIP","Optional (On Platform)":"UMBI/UIMBI","Notes":"Currently set up Accept or Reject UMBI /UIMBI"},{"State":"Rhode Island","State Abbrev.":"RI","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":50000,"UMPD":25000,"UIMBI":"INCLUDED","UIMPD":"N/A","UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":2500,"Mandatory (On Platform)":"UMBI/UIMBI/Medpay","Notes":"Mandatory Accept UMBI/UIMBI, Mandatory Reject UMPD"},{"State":"South Carolina","State Abbrev.":"SC","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":75000,"UMPD":75000,"UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/Medpay","Optional (On Platform)":"N/A","Notes":"Mandatory Accept UMBI/UMPD"},{"State":"South Dakota","State Abbrev.":"SD","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":300000,"UMPD":"N/A","UIMBI":300000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UIMBI/Medpay","Notes":"Mandatory Accept UMBI/UIMBI"},{"State":"Tennessee","State Abbrev.":"TN","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":65000,"UMPD":65000,"UIMBI":"N/A","UIMPD":"N/A","UIM Limit Included or Separate from UM":"N/A","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"Medpay","Optional (On Platform)":"UMBI/UMPD","Deductible":"UMPD: $200","Notes":"Can accept/reject UMBI/UMPD"},{"State":"Texas","State Abbrev.":"TX","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":85000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIM Limit Included or Separate from UM":"Included","PIP":2500,"Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD/UIMBI/PIP (If no PIP, then Medpay)","Notes":"Accept all/Reject all (UMBI/UMPD/UIMBI)"},{"State":"Utah","State Abbrev.":"UT","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":80000,"UMPD":"N/A","UIMBI":20000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":3000,"Medpay":"N/A","Mandatory (On Platform)":"PIP","Optional (On Platform)":"UMBI/UIMBI","Notes":"Accept/Reject UMBI/UIMBI"},{"State":"Vermont","State Abbrev.":"VT","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":100000,"UMPD":10000,"UIMBI":"INCLUDED","UIMPD":10000,"UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/UIMBI/UIMPD/Medpay","Optional (On Platform)":"N/A","Notes":"Mandatory Accept"},{"State":"Virginia","State Abbrev.":"VA","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":80000,"UMPD":"INCLUDED","UIMBI":"INCLUDED","UIMPD":"INCLUDED","UIM Limit Included or Separate from UM":"Included","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/UIMBI/UIMPD/Medpay","Optional (On Platform)":"N/A","Notes":"See SDR-1195 - should be mandatory accept all ($80,000 CSL)"},{"State":"Washington","State Abbrev.":"WA","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":60000,"UMPD":60000,"UIMBI":60000,"UIMPD":60000,"UIM Limit Included or Separate from UM":"Included","PIP":10000,"Medpay":5000,"Mandatory (On Platform)":"N/A","Optional (On Platform)":"UMBI/UMPD/UIMBI/UIMPD/PIP (If no PIP, then Medpay)"},{"State":"West Virginia","State Abbrev.":"WV","E&S":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":75000,"UMPD":75000,"UIMBI":75000,"UIMPD":75000,"UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/UMPD/UIMBI/Medpay","Notes":"UMBI/UMPD/UIMBI Mandatory"},{"State":"Wisconsin","State Abbrev.":"WI","Admitted":"X","AL CSL Limit":"750,000 or 1,000,000","UMBI":100000,"UMPD":"N/A","UIMBI":100000,"UIMPD":"N/A","UIM Limit Included or Separate from UM":"Separate","PIP":"N/A","Medpay":5000,"Mandatory (On Platform)":"UMBI/Medpay","Optional (On Platform)":"UIMBI","Notes":"Mandatory Accept UMBI/ Option to Accept/Reject UIMBI"}];
@@ -54,7 +131,7 @@
     // LOB and Operations data
     const lobOpsData = {"AL":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"AK":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"N/A","MTC":"N/A","NTL":"N/A","TGL":"N/A"},"AZ":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"AR":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"CA":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"CO":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"CT":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"DE":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"FL":{"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"GA":{"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"HI":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"N/A","MTC":"N/A","NTL":"N/A","TGL":"N/A"},"ID":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"IL":{"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"Y","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"IN":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"IA":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"KS":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"N/A","MTC":"N/A","NTL":"N/A","TGL":"N/A"},"KY":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"LA":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"ME":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"MD":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"MA":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"N/A","MTC":"N/A","NTL":"N/A","TGL":"N/A"},"MI":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"MN":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"MS":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"MO":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"MT":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"NE":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"NV":{"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"Y","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"NH":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"NJ":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"NM":{"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"Y","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"NY":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"N/A","MTC":"N/A","NTL":"N/A","TGL":"N/A"},"NC":{"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"ND":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"OH":{"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"OK":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"OR":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"PA":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"RI":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"SC":{"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"Y","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"SD":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"TN":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"TX":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"UT":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"VT":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"VA":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"WA":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"Y","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"WV":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"Y","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"WI":{"Admitted AL":"Y","Admitted AL Hotshots":"Y","Admitted AL UIIA":"Y","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"},"WY":{"Admitted AL":"N/A","Admitted AL Hotshots":"N/A","Admitted AL UIIA":"N/A","Non-Admitted AL (including UIIA & Hotshots)":"N/A","Non-Admitted AL DS&G":"N/A","APD":"Y","MTC":"Y","NTL":"Y","TGL":"Y"}};
 
-    // Carrier data
+    // Carrier data by state
     const carrierData = {"AL":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"blocked"},"AK":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},"AZ":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"turned off"},"AR":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"blocked"},"CA":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"turned off"},"CO":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"turned off"},"CT":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},"DE":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"blocked"},"FL":{"Everspan Admitted GenRe":"turned off permanently","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"turned off","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"blocked","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"blocked"},"GA":{"Everspan Admitted GenRe":"turned off permanently","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"turned off","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"turned off"},"HI":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},"ID":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"blocked"},"IL":{"Everspan Admitted GenRe":"turned off permanently","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"turned off","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},"IN":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"turned off"},"IA":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"turned off"},"KS":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},"KY":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},"LA":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},"ME":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"blocked"},"MD":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"blocked"},"MA":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},"MI":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"blocked","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"blocked"},"MN":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"blocked","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"blocked"},"MS":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"blocked"},"MO":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"blocked"},"MT":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"blocked"},"NE":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"turned off"},"NV":{"Everspan Admitted GenRe":"turned off permanently","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"turned off","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},"NH":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"turned off"},"NJ":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"blocked"},"NM":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"turned off","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},"NY":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},"NC":{"Everspan Admitted GenRe":"turned off permanently","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"turned off","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},"ND":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"blocked"},"OH":{"Everspan Admitted GenRe":"turned off permanently","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"turned off","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"blocked"},"OK":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"turned off"},"OR":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"turned off"},"PA":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"blocked"},"RI":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"blocked"},"SC":{"Everspan Admitted GenRe":"turned off permanently","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"turned off","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},"SD":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"blocked"},"TN":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"blocked"},"TX":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"turned off"},"UT":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"blocked"},"VT":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"blocked"},"VA":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"N/A"},"WA":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},"WV":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"turned off permanently","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"turned off","Accredited Non-Admitted 1st":"turned off","Accredited Non-Admitted New":"Y","Knight Non-Admitted":"turned off permanently","Ascot Non-Admitted":"blocked"},"WI":{"Everspan Admitted GenRe":"turned off permanently","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"turned off","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"},"WY":{"Everspan Admitted GenRe":"N/A","Everspan Non-Admitted GenRe":"N/A","Everspan Admitted MunichRe":"N/A","Everspan Non-Admitted MunichRe":"N/A","Accredited Non-Admitted 1st":"N/A","Accredited Non-Admitted New":"N/A","Knight Non-Admitted":"N/A","Ascot Non-Admitted":"N/A"}};
 
     // Helper functions
@@ -62,10 +139,10 @@
       if (value === undefined || value === null || value === "N/A") return "N/A";
       if (value === "INCLUDED") return "Included with UM/UMPD";
       if (typeof value === "string" && value.includes("/")) return value;
-      if (typeof value === "number") return `$${value.toLocaleString()}`;
+      if (typeof value === "number") return `${value.toLocaleString()}`;
       if (typeof value === "string") {
         if (value.startsWith("$")) return value;
-        if (/^\d/.test(value)) return `$${value}`;
+        if (/^\d/.test(value)) return `${value}`;
         return value;
       }
       return String(value);
@@ -81,7 +158,7 @@
     const getCoverageStatus = (coverage, mandatory, optional) => {
       const mandatoryStr = String(mandatory || "");
       const optionalStr = String(optional || "");
-      
+
       if (mandatoryStr && mandatoryStr !== "N/A" && mandatoryStr.includes(coverage)) {
         return { status: "Mandatory", color: "text-red-600" };
       }
@@ -100,6 +177,17 @@
       return { available: false, label: value || "N/A", className: "text-gray-500 bg-gray-50", icon: "?" };
     };
 
+    // Calculate AL states count
+    const countALStates = () => {
+      let count = 0;
+      Object.values(lobOpsData).forEach(stateData => {
+        const hasAL = stateData["Admitted AL"] === "Y" ||
+                      stateData["Non-Admitted AL (including UIIA & Hotshots)"] === "Y";
+        if (hasAL) count++;
+      });
+      return count;
+    };
+
     function App() {
       const [selectedState, setSelectedState] = useState("");
       const [searchTerm, setSearchTerm] = useState("");
@@ -109,8 +197,11 @@
       const [opsFilter, setOpsFilter] = useState([]);
       const [coverageFilter, setCoverageFilter] = useState([]);
       const [coverageRequirement, setCoverageRequirement] = useState("any");
+      const [carrierFilter, setCarrierFilter] = useState([]);
       const searchInputRef = useRef(null);
       const dropdownRef = useRef(null);
+
+      const alStatesCount = useMemo(() => countALStates(), []);
 
       const selectedStateData = useMemo(() => {
         const coverage = stateData.find(s => s["State Abbrev."] === selectedState);
@@ -172,16 +263,20 @@
         setCoverageFilter(prev => prev.includes(cov) ? prev.filter(c => c !== cov) : [...prev, cov]);
       };
 
+      const toggleCarrierFilter = (carrier) => {
+        setCarrierFilter(prev => prev.includes(carrier) ? prev.filter(c => c !== carrier) : [...prev, carrier]);
+      };
+
       const filteredStates = useMemo(() => {
         let states = Object.keys(lobOpsData);
-        
+
         if (lobFilter.length > 0) {
           states = states.filter(state => {
             const stateData = lobOpsData[state];
             return lobFilter.every(lob => stateData[lob] === "Y");
           });
         }
-        
+
         if (opsFilter.length > 0) {
           states = states.filter(state => {
             const data = lobOpsData[state];
@@ -216,27 +311,42 @@
               const optional = String(coverage["Optional (On Platform)"] || "");
               const coverageValue = coverage[cov];
 
-              // Check if coverage exists (not N/A and has a value)
-              const coverageExists = coverageValue && 
-                                    coverageValue !== "N/A" && 
-                                    (typeof coverageValue === 'number' || 
+              const coverageExists = coverageValue &&
+                                    coverageValue !== "N/A" &&
+                                    (typeof coverageValue === 'number' ||
                                      (typeof coverageValue === 'string' && coverageValue !== "N/A"));
-              
+
               if (!coverageExists) return false;
 
               if (coverageRequirement === "mandatory") {
                 return mandatory.includes(cov);
               } else if (coverageRequirement === "optional") {
                 return optional.includes(cov);
-              } else { // "any"
+              } else {
                 return mandatory.includes(cov) || optional.includes(cov) || coverageExists;
               }
             });
           });
         }
-        
+
+        if (carrierFilter.length > 0) {
+          states = states.filter(stateAbbrev => {
+            const carriers = carrierData[stateAbbrev] || {};
+            return carrierFilter.every(carrier => {
+              const carrierKey = carrier === "Everspan Admitted (MunichRe)" ? "Everspan Admitted MunichRe" :
+                                carrier === "Everspan Non-Admitted (MunichRe)" ? "Everspan Non-Admitted MunichRe" :
+                                carrier === "Accredited Non-Admitted (New Program)" ? "Accredited Non-Admitted New" :
+                                carrier === "Accredited Non-Admitted (1st Program)" ? "Accredited Non-Admitted 1st" :
+                                carrier === "Knight Non-Admitted" ? "Knight Non-Admitted" :
+                                carrier === "Ascot Non-Admitted" ? "Ascot Non-Admitted" : null;
+
+              return carriers[carrierKey] === "Y";
+            });
+          });
+        }
+
         return states.sort();
-      }, [lobFilter, opsFilter, coverageFilter, coverageRequirement]);
+      }, [lobFilter, opsFilter, coverageFilter, coverageRequirement, carrierFilter]);
 
       const renderDashboard = () => {
         if (!selectedStateData.coverage) {
@@ -357,12 +467,12 @@
               <h3 className="text-xl font-bold mb-4 text-indigo-800 flex items-center gap-2">
                 <span>🏢</span> Carrier Availability
               </h3>
-              
+
               {(() => {
                 const turnedOffTempCarriers = [];
                 const turnedOffPermCarriers = [];
                 const blockedCarriers = [];
-                
+
                 const carrierList = [
                   { key: "Everspan Admitted GenRe", label: "Everspan Admitted (GenRe)" },
                   { key: "Everspan Non-Admitted GenRe", label: "Everspan Non-Admitted (GenRe)" },
@@ -373,14 +483,14 @@
                   { key: "Knight Non-Admitted", label: "Knight Non-Admitted" },
                   { key: "Ascot Non-Admitted", label: "Ascot Non-Admitted" }
                 ];
-                
+
                 carrierList.forEach(carrier => {
                   const status = selectedStateData.carriers[carrier.key];
                   if (status === "turned off") turnedOffTempCarriers.push(carrier.label);
                   else if (status === "turned off permanently") turnedOffPermCarriers.push(carrier.label);
                   else if (status === "blocked") blockedCarriers.push(carrier.label);
                 });
-                
+
                 return (
                   <>
                     {turnedOffTempCarriers.length > 0 && (
@@ -390,15 +500,15 @@
                         <p className="text-xs text-orange-600 mt-1 italic">These carriers may return to service in the future</p>
                       </div>
                     )}
-                    
+
                     {turnedOffPermCarriers.length > 0 && (
                       <div className="mb-4 p-4 bg-rose-50 border-l-4 border-rose-500 rounded">
                         <p className="font-semibold text-rose-800 mb-2">⊗ Carriers Permanently Turned Off in {selectedStateData.coverage.State}:</p>
                         <p className="text-sm text-rose-700">{turnedOffPermCarriers.join(", ")}</p>
-                        <p className="text-xs text-rose-600 mt-1 italic">These carriers will not return to service</p>
+                        <p className="text-xs text-rose-600 mt-1 italic">These carriers will not return to service. Note: Knight continues to endorse existing policies.</p>
                       </div>
                     )}
-                    
+
                     {blockedCarriers.length > 0 && (
                       <div className="mb-4 p-4 bg-red-50 border-l-4 border-red-500 rounded">
                         <p className="font-semibold text-red-800 mb-2">🚫 Carriers Blocked in {selectedStateData.coverage.State}:</p>
@@ -408,7 +518,7 @@
                   </>
                 );
               })()}
-              
+
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
                   { key: "Everspan Admitted GenRe", label: "Everspan Admitted (GenRe)" },
@@ -483,14 +593,43 @@
       };
 
       const renderStateAvailability = () => {
-        const activeFiltersCount = lobFilter.length + opsFilter.length + coverageFilter.length;
-        
+        const activeFiltersCount = lobFilter.length + opsFilter.length + coverageFilter.length + carrierFilter.length;
+
         return (
           <div className="space-y-6 fade-in">
+            {/* AL Snapshot Summary */}
+            <div className="bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg shadow-lg p-6 text-white">
+              <h3 className="text-2xl font-bold mb-4">Auto Liability Coverage Snapshot</h3>
+              <div className="grid md:grid-cols-4 gap-4">
+                <div className="stat-card bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
+                  <div className="text-3xl font-bold">{alStatesCount}</div>
+                  <div className="text-sm opacity-90">States with AL Coverage</div>
+                </div>
+                <div className="stat-card bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
+                  <div className="text-3xl font-bold">
+                    {Object.values(lobOpsData).filter(s => s["Admitted AL"] === "Y").length}
+                  </div>
+                  <div className="text-sm opacity-90">Admitted AL States</div>
+                </div>
+                <div className="stat-card bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
+                  <div className="text-3xl font-bold">
+                    {Object.values(lobOpsData).filter(s => s["Non-Admitted AL (including UIIA & Hotshots)"] === "Y").length}
+                  </div>
+                  <div className="text-sm opacity-90">Non-Admitted AL States</div>
+                </div>
+                <div className="stat-card bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
+                  <div className="text-3xl font-bold">
+                    {Object.values(lobOpsData).filter(s => s["Admitted AL UIIA"] === "Y").length}
+                  </div>
+                  <div className="text-sm opacity-90">Admitted UIIA States</div>
+                </div>
+              </div>
+            </div>
+
             <div className="bg-white rounded-lg shadow-lg p-6">
               <h3 className="text-2xl font-bold mb-6 text-indigo-800">Filter States by Available Services</h3>
-              
-              <div className="grid md:grid-cols-3 gap-6 mb-6">
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                 <div>
                   <h4 className="font-semibold text-gray-700 mb-3">Lines of Business (E&S Only)</h4>
                   <p className="text-xs text-gray-500 mb-2 italic">APD, MTC, NTL, TGL are non-admitted only - Available in 45 states</p>
@@ -563,9 +702,9 @@
                 <div>
                   <h4 className="font-semibold text-gray-700 mb-3">Subcoverages</h4>
                   <p className="text-xs text-gray-500 mb-2 italic">Filter states by available subcoverages</p>
-                  
+
                   <div className="mb-3">
-                    <select 
+                    <select
                       value={coverageRequirement}
                       onChange={(e) => setCoverageRequirement(e.target.value)}
                       className="w-full text-xs px-2 py-1 border border-gray-300 rounded mb-2"
@@ -575,7 +714,7 @@
                       <option value="optional">Optional Only</option>
                     </select>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-2">
                     {SUBCOVERAGES.map(cov => (
                       <button
@@ -588,6 +727,27 @@
                         }`}
                       >
                         {cov}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold text-gray-700 mb-3">Active Carriers</h4>
+                  <p className="text-xs text-gray-500 mb-2 italic">Filter states where specific carriers are active</p>
+
+                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                    {CARRIERS.map(carrier => (
+                      <button
+                        key={carrier}
+                        onClick={() => toggleCarrierFilter(carrier)}
+                        className={`w-full px-3 py-2 rounded-lg text-sm font-medium transition-colors text-left ${
+                          carrierFilter.includes(carrier)
+                            ? 'bg-emerald-600 text-white shadow-md'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        {carrier}
                       </button>
                     ))}
                   </div>
@@ -606,6 +766,7 @@
                       setOpsFilter([]);
                       setCoverageFilter([]);
                       setCoverageRequirement("any");
+                      setCarrierFilter([]);
                     }}
                     className="text-sm px-3 py-1 bg-white text-indigo-600 rounded-md hover:bg-indigo-100 transition-colors"
                   >
@@ -623,7 +784,7 @@
                     const serviceCount = Object.entries(lobOpsData[state] || {})
                       .filter(([key, value]) => value === "Y")
                       .length;
-                    
+
                     return (
                       <button
                         key={state}
@@ -643,6 +804,71 @@
                 </div>
               </div>
             </div>
+
+            {/* Carrier Capability Matrix */}
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h3 className="text-2xl font-bold mb-6 text-indigo-800">Carrier Capability Matrix for AL Operations</h3>
+              <p className="text-sm text-gray-600 mb-4 italic">View which carriers can write specific AL operations</p>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+                      <th className="p-3 text-left font-semibold">Carrier</th>
+                      <th className="p-3 text-center font-semibold">Admitted AL</th>
+                      <th className="p-3 text-center font-semibold">Admitted Hotshots</th>
+                      <th className="p-3 text-center font-semibold">Admitted UIIA</th>
+                      <th className="p-3 text-center font-semibold">Non-Admitted AL</th>
+                      <th className="p-3 text-center font-semibold">DS&G</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.entries(carrierCapabilities).map(([carrier, capabilities], idx) => (
+                      <tr key={carrier} className={idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                        <td className="p-3 font-medium text-gray-800 border-r border-gray-200">{carrier}</td>
+                        <td className="p-3 text-center">
+                          {capabilities["Admitted AL"] === "Y" && <span className="text-green-600 text-xl">✓</span>}
+                          {capabilities["Admitted AL"] === "N" && <span className="text-gray-400">—</span>}
+                          {capabilities["Admitted AL"] === "disabled" && <span className="text-red-500 text-xs">Disabled</span>}
+                        </td>
+                        <td className="p-3 text-center">
+                          {capabilities["Admitted AL Hotshots"] === "Y" && <span className="text-green-600 text-xl">✓</span>}
+                          {capabilities["Admitted AL Hotshots"] === "N" && <span className="text-gray-400">—</span>}
+                          {capabilities["Admitted AL Hotshots"] === "disabled" && <span className="text-red-500 text-xs">Disabled</span>}
+                        </td>
+                        <td className="p-3 text-center">
+                          {capabilities["Admitted AL UIIA"] === "Y" && <span className="text-green-600 text-xl">✓</span>}
+                          {capabilities["Admitted AL UIIA"] === "N" && <span className="text-gray-400">—</span>}
+                          {capabilities["Admitted AL UIIA"] === "disabled" && <span className="text-red-500 text-xs">Disabled</span>}
+                        </td>
+                        <td className="p-3 text-center">
+                          {capabilities["Non-Admitted AL"] === "Y" && <span className="text-green-600 text-xl">✓</span>}
+                          {capabilities["Non-Admitted AL"] === "UIIA only" && <span className="text-blue-600 text-xs font-semibold">UIIA Only</span>}
+                          {capabilities["Non-Admitted AL"] === "N" && <span className="text-gray-400">—</span>}
+                          {capabilities["Non-Admitted AL"] === "disabled" && <span className="text-red-500 text-xs">Disabled</span>}
+                        </td>
+                        <td className="p-3 text-center">
+                          {capabilities["Non-Admitted AL DS&G"] === "Y" && <span className="text-green-600 text-xl">✓</span>}
+                          {capabilities["Non-Admitted AL DS&G"] === "N" && <span className="text-gray-400">—</span>}
+                          {capabilities["Non-Admitted AL DS&G"] === "disabled" && <span className="text-red-500 text-xs">Disabled</span>}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <p className="text-sm font-semibold text-blue-900 mb-2">Legend:</p>
+                <div className="grid md:grid-cols-2 gap-2 text-sm text-blue-800">
+                  <div><span className="text-green-600 text-lg">✓</span> = Carrier can write this operation</div>
+                  <div><span className="text-gray-400">—</span> = Carrier cannot write this operation</div>
+                  <div><span className="text-red-500 font-semibold">Disabled</span> = Currently disabled for all operations</div>
+                  <div><span className="text-blue-600 font-semibold">UIIA Only</span> = Restricted to UIIA operations only</div>
+                </div>
+                <p className="text-xs text-blue-700 mt-2 italic">Note: Knight Non-Admitted is permanently turned off for new business but continues to endorse existing policies.</p>
+              </div>
+            </div>
           </div>
         );
       };
@@ -657,7 +883,7 @@
                   <h1 className="text-3xl md:text-4xl font-bold">Coverages by State Tool by JJ & D³</h1>
                 </div>
                 <p className="text-indigo-100 text-lg">
-                 Comprehensive state-by-state coverage analysis with permitted AL operations
+                  Comprehensive state-by-state coverage analysis with carrier capabilities and AL operations
                 </p>
               </div>
             </div>
@@ -677,9 +903,9 @@
                     onFocus={() => searchTerm && setShowDropdown(true)}
                     className="w-full px-4 py-3 border-2 border-indigo-200 rounded-lg focus:border-indigo-500 focus:outline-none transition-colors bg-indigo-50"
                   />
-                  
+
                   {showDropdown && filteredSearchStates.length > 0 && (
-                    <div 
+                    <div
                       ref={dropdownRef}
                       className="absolute z-10 w-full mt-1 bg-white border-2 border-indigo-200 rounded-lg shadow-lg max-h-64 overflow-y-auto"
                     >
@@ -739,7 +965,7 @@
                       : 'text-gray-600 hover:bg-gray-100'
                   }`}
                 >
-                  🗺️ State Availability Matrix
+                  🗺️ State Availability & Carrier Matrix
                 </button>
               </div>
             </div>
@@ -781,28 +1007,27 @@
                   </div>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-700 mb-2">Medpay Coverage:</h4>
+                  <h4 className="font-semibold text-gray-700 mb-2">AL Operations:</h4>
                   <div className="space-y-1 text-sm text-gray-600">
-                    <div><span className="font-medium">Mandatory:</span> 33 states (AL, AZ, AR, CA, CO, GA, ID, IL, IN, IA, ME, MS, MO, MT, NE, NV, NH, NM, NC, OH, OK, RI, SC, SD, TN, VT, VA, WV, WI)</div>
-                    <div><span className="font-medium">Optional:</span> 2 states (TX, WA)</div>
-                    <div><span className="font-medium">N/A:</span> 7 states (DE, FL, MD, MI, MN, NJ, ND, OR, PA, UT)</div>
+                    <div><span className="font-medium">Admitted UIIA:</span> 5 states (IL, NV, SC, WI, NM)</div>
+                    <div><span className="font-medium">Non-Admitted:</span> 36 states available</div>
+                    <div><span className="font-medium">Total AL States:</span> {alStatesCount} of 50</div>
                   </div>
                 </div>
               </div>
               <div className="mt-4 pt-3 border-t border-indigo-200 text-xs text-gray-600 space-y-2">
-                <p><span className="font-semibold">✅ DATA CORRECTED:</span> Medpay coverage data now accurately reflects the source spreadsheet. Medpay is MANDATORY in 33 states, optional in TX and WA.</p>
+                <p><span className="font-semibold">✅ NEW FEATURES:</span> AL states snapshot, carrier capability matrix, and filter by active carrier</p>
                 <p><span className="font-semibold">Important:</span> APD, MTC, NTL, and TGL are offered on a non-admitted (E&S) basis only in 45 states (excluding AK, HI, KS, MA, NY).</p>
-                <p><span className="font-semibold">AL Operations:</span> Admitted UIIA available in 5 states (IL, NV, SC, WI, NM). Admitted Hotshots available in 7 states. Non-Admitted UIIA & Hotshots available in 36 states.</p>
-                <p><span className="font-semibold">Operations Filtering:</span> Filter by Admitted vs Non-Admitted UIIA and Hotshots separately for precise state selection.</p>
+                <p><span className="font-semibold">Carrier Note:</span> Knight Non-Admitted is permanently turned off for new business but continues to endorse existing policies.</p>
                 <p>⚠️ <span className="font-semibold">Note:</span> Auto Liability coverage is not currently offered in Connecticut, Hawaii, Kansas, Kentucky, Louisiana, Massachusetts, New York, and Wyoming.</p>
               </div>
             </div>
 
             <div className="mt-8 text-center text-sm text-gray-500">
-              <p>Core Systems Management Tool • Enhanced Coverage Assessment Platform v3.1</p>
-              <p className="mt-1">✅ CORRECTED DATA: Medpay mandatory/optional status now accurate per source spreadsheet</p>
-              <p className="mt-1">Includes Auto Liability • APD, MTC, NTL, TGL (E&S - 45 States) • Granular AL Operations Filtering</p>
-              <p className="mt-1">Data current as of latest spreadsheet update • 50 states included</p>
+              <p>Core Systems Management Tool • Enhanced Coverage Assessment Platform v4.0</p>
+              <p className="mt-1">✅ ENHANCED: AL States Snapshot • Carrier Capability Matrix • Active Carrier Filtering</p>
+              <p className="mt-1">Includes Auto Liability • APD, MTC, NTL, TGL (E&S - 45 States) • Carrier Operations Analysis</p>
+              <p className="mt-1">Data current as of latest spreadsheet update • 50 states included • 8 carriers tracked</p>
             </div>
           </div>
         </div>
