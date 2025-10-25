@@ -67,4 +67,10 @@ class CoverWhaleAuth {
 }
 
 // Initialize auth
-const auth = new CoverWhaleAuth();
+const auth = new CoverWhaleAuth()
+  // Token expires after 24h, auto-refresh if needed
+setInterval(() => {
+  auth.verifyToken().then(valid => {
+    if (!valid) auth.login();
+  });
+}, 60 * 60 * 1000); // Check every hour;
