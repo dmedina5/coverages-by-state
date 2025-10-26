@@ -51,7 +51,8 @@ class CoverWhaleAuth {
   }
   
   login() {
-    window.location.href = `${AUTH_BACKEND}/api/auth`;
+    const returnUrl = encodeURIComponent(window.location.origin + window.location.pathname);
+    window.location.href = `${AUTH_BACKEND}/api/auth?return_url=${returnUrl}`;
   }
   
   logout() {
