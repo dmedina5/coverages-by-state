@@ -1,4 +1,4 @@
-const AUTH_BACKEND = 'https://coverwhale-auth-fs5tj697m-dmedina5s-projects.vercel.app';
+const AUTH_BACKEND = 'https://coverwhale-auth.vercel.app';
 
 class CoverWhaleAuth {
   constructor() {
