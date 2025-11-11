@@ -211,13 +211,23 @@
 
     // Calculate AL states count
     const countALStates = () => {
-      let count = 0;
+      let totalAL = 0;
+      let admittedAL = 0;
+      let nonAdmittedAL = 0;
+      let admittedUIIA = 0;
+
       Object.values(lobOpsData).forEach(stateData => {
-        const hasAL = stateData["Admitted AL"] === "Y" ||
-                      stateData["Non-Admitted AL (including UIIA & Hotshots)"] === "Y";
-        if (hasAL) count++;
+        const hasAdmitted = stateData["Admitted AL"] === "Y";
+        const hasNonAdmitted = stateData["Non-Admitted AL (including UIIA & Hotshots)"] === "Y";
+        const hasAdmittedUIIA = stateData["Admitted AL UIIA"] === "Y";
+
+        if (hasAdmitted || hasNonAdmitted) totalAL++;
+        if (hasAdmitted) admittedAL++;
+        if (hasNonAdmitted) nonAdmittedAL++;
+        if (hasAdmittedUIIA) admittedUIIA++;
       });
-      return count;
+
+      return { totalAL, admittedAL, nonAdmittedAL, admittedUIIA };
     };
 
     function App() {
@@ -234,7 +244,7 @@
       const searchInputRef = useRef(null);
       const dropdownRef = useRef(null);
 
-      const alStatesCount = useMemo(() => countALStates(), []);
+      const alCounts = useMemo(() => countALStates(), []);
 
       const selectedStateData = useMemo(() => {
         const coverage = stateData.find(s => s["State Abbrev."] === selectedState);
@@ -1164,7 +1174,7 @@
                   <div className="space-y-1 text-sm text-gray-600">
                     <div><span className="font-medium">Admitted UIIA:</span> 5 states (IL, NV, SC, WI, NM)</div>
                     <div><span className="font-medium">Non-Admitted:</span> 36 states available</div>
-                    <div><span className="font-medium">Total AL States:</span> {alStatesCount} of 50</div>
+                    <div><span className="font-medium">Total AL States:</span> {alCounts.totalAL} of 50</div>
                   </div>
                 </div>
               </div>
