@@ -353,8 +353,8 @@
         if (opsFilter.length > 0) {
           states = states.filter(state => {
             const data = lobOpsData[state];
-            // Use .some() for 'all-al' filter (any AL operation), .every() for others (all selected operations)
-            const matchFn = alSnapshotFilter === 'all-al' ? 'some' : 'every';
+            // Use .some() for AL snapshot filters (any matching operation), .every() for manual multi-select
+            const matchFn = (alSnapshotFilter === 'all-al' || alSnapshotFilter === 'admitted-al' || alSnapshotFilter === 'non-admitted-al') ? 'some' : 'every';
             return opsFilter[matchFn](op => {
               if (op === "Admitted UIIA") {
                 return data["Admitted AL UIIA"] === "Y";
