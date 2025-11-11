@@ -701,27 +701,37 @@
               <h3 className="text-2xl font-bold mb-4">Auto Liability Coverage Snapshot</h3>
                 <p className="text-sm text-purple-100 mb-4 italic">Click any card below to filter states by that AL category</p>
               <div className="grid md:grid-cols-4 gap-4">
-                <div className="stat-card bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
-                  <div className="text-3xl font-bold">{alStatesCount}</div>
+                <div 
+                  onClick={() => handleALSnapshotClick('all-al')}
+                  className={`stat-card bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm ${alSnapshotFilter === 'all-al' ? 'active ring-4 ring-purple-300' : ''}`}
+                >
+                  <div className="text-3xl font-bold">{alCounts.totalAL}</div>
                   <div className="text-sm opacity-90">States with AL Coverage</div>
+                  <div className="text-xs opacity-75 mt-1">Click to filter</div>
                 </div>
-                <div className="stat-card bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
-                  <div className="text-3xl font-bold">
-                    {Object.values(lobOpsData).filter(s => s["Admitted AL"] === "Y").length}
-                  </div>
+                <div 
+                  onClick={() => handleALSnapshotClick('admitted-al')}
+                  className={`stat-card bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm ${alSnapshotFilter === 'admitted-al' ? 'active ring-4 ring-purple-300' : ''}`}
+                >
+                  <div className="text-3xl font-bold">{alCounts.admittedAL}</div>
                   <div className="text-sm opacity-90">Admitted AL States</div>
+                  <div className="text-xs opacity-75 mt-1">Click to filter</div>
                 </div>
-                <div className="stat-card bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
-                  <div className="text-3xl font-bold">
-                    {Object.values(lobOpsData).filter(s => s["Non-Admitted AL (including UIIA & Hotshots)"] === "Y").length}
-                  </div>
+                <div 
+                  onClick={() => handleALSnapshotClick('non-admitted-al')}
+                  className={`stat-card bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm ${alSnapshotFilter === 'non-admitted-al' ? 'active ring-4 ring-purple-300' : ''}`}
+                >
+                  <div className="text-3xl font-bold">{alCounts.nonAdmittedAL}</div>
                   <div className="text-sm opacity-90">Non-Admitted AL States</div>
+                  <div className="text-xs opacity-75 mt-1">Click to filter</div>
                 </div>
-                <div className="stat-card bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
-                  <div className="text-3xl font-bold">
-                    {Object.values(lobOpsData).filter(s => s["Admitted AL UIIA"] === "Y").length}
-                  </div>
+                <div 
+                  onClick={() => handleALSnapshotClick('admitted-uiia')}
+                  className={`stat-card bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm ${alSnapshotFilter === 'admitted-uiia' ? 'active ring-4 ring-purple-300' : ''}`}
+                >
+                  <div className="text-3xl font-bold">{alCounts.admittedUIIA}</div>
                   <div className="text-sm opacity-90">Admitted UIIA States</div>
+                  <div className="text-xs opacity-75 mt-1">Click to filter</div>
                 </div>
               </div>
               {alSnapshotFilter && (
