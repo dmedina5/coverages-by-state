@@ -230,6 +230,7 @@
       const [coverageFilter, setCoverageFilter] = useState([]);
       const [coverageRequirement, setCoverageRequirement] = useState("any");
       const [carrierFilter, setCarrierFilter] = useState([]);
+  const [alSnapshotFilter, setAlSnapshotFilter] = useState(null);
       const searchInputRef = useRef(null);
       const dropdownRef = useRef(null);
 
@@ -295,7 +296,37 @@
         setCoverageFilter(prev => prev.includes(cov) ? prev.filter(c => c !== cov) : [...prev, cov]);
       };
 
-      const toggleCarrierFilter = (carrier) => {
+      
+  const handleALSnapshotClick = (filterType) => {
+    setLobFilter([]);
+    setCoverageFilter([]);
+    setCarrierFilter([]);
+    setCoverageRequirement("any");
+    setAlSnapshotFilter(alSnapshotFilter === filterType ? null : filterType);
+    if (alSnapshotFilter === filterType) {
+      setOpsFilter([]);
+    } else {
+      switch(filterType) {
+        case 'all-al':
+          setOpsFilter(["Admitted UIIA", "Non-Admitted UIIA", "Admitted Hotshots", "Non-Admitted Hotshots"]);
+          break;
+        case 'admitted-al':
+          setOpsFilter(["Admitted UIIA", "Admitted Hotshots"]);
+          break;
+        case 'non-admitted-al':
+          setOpsFilter(["Non-Admitted UIIA", "Non-Admitted Hotshots"]);
+          break;
+        case 'admitted-uiia':
+          setOpsFilter(["Admitted UIIA"]);
+          break;
+        default:
+          setOpsFilter([]);
+      }
+    }
+    setActiveTab("availability");
+  };
+
+  const toggleCarrierFilter = (carrier) => {
         setCarrierFilter(prev => prev.includes(carrier) ? prev.filter(c => c !== carrier) : [...prev, carrier]);
       };
 
@@ -407,7 +438,7 @@
 
             <div className="grid lg:grid-cols-2 gap-6">
               <div className="bg-white rounded-lg shadow-lg p-6">
-                <h3 className="text-xl font-bold mb-4 text-indigo-800 flex items-center gap-2">
+                <h3 className="text-xl font-bold mb-4 text-purple-800 flex items-center gap-2">
                   <span>📦</span> Other Lines of Business (E&S Only)
                 </h3>
                 <p className="text-sm text-gray-600 mb-4 italic">All non-AL lines of business are offered on a non-admitted (E&S) basis only.</p>
@@ -438,13 +469,13 @@
               </div>
 
               <div className="bg-white rounded-lg shadow-lg p-6">
-                <h3 className="text-xl font-bold mb-4 text-indigo-800 flex items-center gap-2">
+                <h3 className="text-xl font-bold mb-4 text-purple-800 flex items-center gap-2">
                   <span>🚚</span> Permitted AL Operations
                 </h3>
                 <p className="text-sm text-gray-600 mb-4 italic">These operations apply to Auto Liability coverage only.</p>
                 <div className="space-y-4">
-                  <div className="p-4 rounded-lg bg-blue-50 border border-blue-200">
-                    <p className="font-semibold text-blue-900 mb-2">UIIA (Trailer Interchange)</p>
+                  <div className="p-4 rounded-lg bg-purple-50 border border-purple-200">
+                    <p className="font-semibold text-purple-900 mb-2">UIIA (Trailer Interchange)</p>
                     <div className="text-sm space-y-1">
                       <p className="flex items-center gap-2">
                         <span className={`px-2 py-1 rounded text-xs font-semibold ${selectedStateData.lob["Admitted AL UIIA"] === "Y" ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
@@ -487,10 +518,31 @@
                   </div>
                 </div>
               </div>
+              {alSnapshotFilter && (
+                <div className="mt-4 p-3 bg-purple-600 bg-opacity-30 rounded-lg border border-purple-300">
+                  <p className="text-sm font-medium">
+                    Active Filter: {
+                      alSnapshotFilter === 'all-al' ? 'All AL Coverage States' :
+                      alSnapshotFilter === 'admitted-al' ? 'Admitted AL States Only' :
+                      alSnapshotFilter === 'non-admitted-al' ? 'Non-Admitted AL States Only' :
+                      'Admitted UIIA States Only'
+                    }
+                  </p>
+                  <button 
+                    onClick={() => {
+                      setAlSnapshotFilter(null);
+                      setOpsFilter([]);
+                    }}
+                    className="mt-2 text-xs px-3 py-1 bg-white text-purple-700 rounded-md hover:bg-purple-100 transition-colors"
+                  >
+                    Clear AL filter
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-xl font-bold mb-4 text-indigo-800 flex items-center gap-2">
+              <h3 className="text-xl font-bold mb-4 text-purple-800 flex items-center gap-2">
                 <span>🏢</span> Carrier Availability
               </h3>
 
@@ -568,15 +620,36 @@
                   );
                 })}
               </div>
+              {alSnapshotFilter && (
+                <div className="mt-4 p-3 bg-purple-600 bg-opacity-30 rounded-lg border border-purple-300">
+                  <p className="text-sm font-medium">
+                    Active Filter: {
+                      alSnapshotFilter === 'all-al' ? 'All AL Coverage States' :
+                      alSnapshotFilter === 'admitted-al' ? 'Admitted AL States Only' :
+                      alSnapshotFilter === 'non-admitted-al' ? 'Non-Admitted AL States Only' :
+                      'Admitted UIIA States Only'
+                    }
+                  </p>
+                  <button 
+                    onClick={() => {
+                      setAlSnapshotFilter(null);
+                      setOpsFilter([]);
+                    }}
+                    className="mt-2 text-xs px-3 py-1 bg-white text-purple-700 rounded-md hover:bg-purple-100 transition-colors"
+                  >
+                    Clear AL filter
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-xl font-bold mb-4 text-indigo-800">Coverage Limits & Requirements</h3>
+              <h3 className="text-xl font-bold mb-4 text-purple-800">Coverage Limits & Requirements</h3>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {SUBCOVERAGES.map(cov => {
                   const status = getCoverageStatus(cov, selectedStateData.coverage["Mandatory (On Platform)"], selectedStateData.coverage["Optional (On Platform)"]);
                   return (
-                    <div key={cov} className="border-2 border-indigo-100 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div key={cov} className="border-2 border-purple-100 rounded-lg p-4 hover:shadow-md transition-shadow">
                       <div className="flex justify-between items-start mb-2">
                         <h4 className="font-semibold text-gray-700">{cov}</h4>
                         <span className={`text-xs font-semibold ${status.color}`}>{status.status}</span>
@@ -589,7 +662,7 @@
                         {cov === "PIP" && "Personal Injury Protection"}
                         {cov === "Medpay" && "Medical Payments"}
                       </p>
-                      <p className="font-bold text-lg text-indigo-800">
+                      <p className="font-bold text-lg text-purple-800">
                         {formatLimit(selectedStateData.coverage[cov])}
                       </p>
                     </div>
@@ -607,8 +680,8 @@
                   </div>
                 )}
                 {selectedStateData.coverage.Notes && selectedStateData.coverage.Notes !== "N/A" && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                    <h3 className="text-lg font-bold mb-3 text-blue-800">📝 Important Notes</h3>
+                  <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
+                    <h3 className="text-lg font-bold mb-3 text-purple-800">📝 Important Notes</h3>
                     <p className="text-gray-700">{selectedStateData.coverage.Notes}</p>
                   </div>
                 )}
@@ -624,8 +697,9 @@
         return (
           <div className="space-y-6 fade-in">
             {/* AL Snapshot Summary */}
-            <div className="bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg shadow-lg p-6 text-white">
+            <div className="bg-gradient-to-r from-purple-500 to-purple-700 rounded-lg shadow-lg p-6 text-white">
               <h3 className="text-2xl font-bold mb-4">Auto Liability Coverage Snapshot</h3>
+                <p className="text-sm text-purple-100 mb-4 italic">Click any card below to filter states by that AL category</p>
               <div className="grid md:grid-cols-4 gap-4">
                 <div className="stat-card bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
                   <div className="text-3xl font-bold">{alStatesCount}</div>
@@ -650,10 +724,31 @@
                   <div className="text-sm opacity-90">Admitted UIIA States</div>
                 </div>
               </div>
+              {alSnapshotFilter && (
+                <div className="mt-4 p-3 bg-purple-600 bg-opacity-30 rounded-lg border border-purple-300">
+                  <p className="text-sm font-medium">
+                    Active Filter: {
+                      alSnapshotFilter === 'all-al' ? 'All AL Coverage States' :
+                      alSnapshotFilter === 'admitted-al' ? 'Admitted AL States Only' :
+                      alSnapshotFilter === 'non-admitted-al' ? 'Non-Admitted AL States Only' :
+                      'Admitted UIIA States Only'
+                    }
+                  </p>
+                  <button 
+                    onClick={() => {
+                      setAlSnapshotFilter(null);
+                      setOpsFilter([]);
+                    }}
+                    className="mt-2 text-xs px-3 py-1 bg-white text-purple-700 rounded-md hover:bg-purple-100 transition-colors"
+                  >
+                    Clear AL filter
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-2xl font-bold mb-6 text-indigo-800">Filter States by Available Services</h3>
+              <h3 className="text-2xl font-bold mb-6 text-purple-800">Filter States by Available Services</h3>
 
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                 <div>
@@ -666,7 +761,7 @@
                         onClick={() => toggleLobFilter(lob)}
                         className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                           lobFilter.includes(lob)
-                            ? 'bg-indigo-600 text-white shadow-md'
+                            ? 'bg-purple-600 text-white shadow-md'
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }`}
                       >
@@ -800,8 +895,8 @@
               </div>
 
               {activeFiltersCount > 0 && (
-                <div className="mb-4 flex items-center justify-between bg-indigo-50 p-3 rounded-lg">
-                  <p className="text-sm text-indigo-700 font-medium">
+                <div className="mb-4 flex items-center justify-between bg-purple-50 p-3 rounded-lg">
+                  <p className="text-sm text-purple-700 font-medium">
                     {activeFiltersCount} filter{activeFiltersCount > 1 ? 's' : ''} active
                     {coverageFilter.length > 0 && <span className="ml-2">({coverageRequirement} requirement)</span>}
                   </p>
@@ -813,7 +908,7 @@
                       setCoverageRequirement("any");
                       setCarrierFilter([]);
                     }}
-                    className="text-sm px-3 py-1 bg-white text-indigo-600 rounded-md hover:bg-indigo-100 transition-colors"
+                    className="text-sm px-3 py-1 bg-white text-purple-600 rounded-md hover:bg-purple-100 transition-colors"
                   >
                     Clear all filters
                   </button>
@@ -837,9 +932,9 @@
                           setSelectedState(state);
                           setActiveTab("dashboard");
                         }}
-                        className="p-3 bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg hover:from-indigo-100 hover:to-purple-100 transition-colors cursor-pointer"
+                        className="p-3 bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg hover:from-indigo-100 hover:to-purple-100 transition-colors cursor-pointer"
                       >
-                        <p className="font-bold text-indigo-700">{state}</p>
+                        <p className="font-bold text-purple-700">{state}</p>
                         <p className="text-xs text-gray-600">
                           {serviceCount} service{serviceCount !== 1 ? 's' : ''}
                         </p>
@@ -852,13 +947,13 @@
 
             {/* Carrier Capability Matrix */}
             <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-2xl font-bold mb-6 text-indigo-800">Carrier Capability Matrix for AL Operations</h3>
+              <h3 className="text-2xl font-bold mb-6 text-purple-800">Carrier Capability Matrix for AL Operations</h3>
               <p className="text-sm text-gray-600 mb-4 italic">View which carriers can write specific AL operations</p>
 
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+                    <tr className="bg-gradient-to-r from-purple-600 to-purple-800 text-white">
                       <th className="p-3 text-left font-semibold">Carrier</th>
                       <th className="p-3 text-center font-semibold">Admitted AL</th>
                       <th className="p-3 text-center font-semibold">Admitted Hotshots</th>
@@ -888,7 +983,7 @@
                         </td>
                         <td className="p-3 text-center">
                           {capabilities["Non-Admitted AL"] === "Y" && <span className="text-green-600 text-xl">✓</span>}
-                          {capabilities["Non-Admitted AL"] === "UIIA only" && <span className="text-blue-600 text-xs font-semibold">UIIA Only</span>}
+                          {capabilities["Non-Admitted AL"] === "UIIA only" && <span className="text-purple-600 text-xs font-semibold">UIIA Only</span>}
                           {capabilities["Non-Admitted AL"] === "N" && <span className="text-gray-400">—</span>}
                           {capabilities["Non-Admitted AL"] === "disabled" && <span className="text-red-500 text-xs">Disabled</span>}
                         </td>
@@ -903,15 +998,15 @@
                 </table>
               </div>
 
-              <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <p className="text-sm font-semibold text-blue-900 mb-2">Legend:</p>
-                <div className="grid md:grid-cols-2 gap-2 text-sm text-blue-800">
+              <div className="mt-4 p-4 bg-purple-50 rounded-lg border border-purple-200">
+                <p className="text-sm font-semibold text-purple-900 mb-2">Legend:</p>
+                <div className="grid md:grid-cols-2 gap-2 text-sm text-purple-800">
                   <div><span className="text-green-600 text-lg">✓</span> = Carrier can write this operation</div>
                   <div><span className="text-gray-400">—</span> = Carrier cannot write this operation</div>
                   <div><span className="text-red-500 font-semibold">Disabled</span> = Currently disabled for all operations</div>
-                  <div><span className="text-blue-600 font-semibold">UIIA Only</span> = Restricted to UIIA operations only</div>
+                  <div><span className="text-purple-600 font-semibold">UIIA Only</span> = Restricted to UIIA operations only</div>
                 </div>
-                <p className="text-xs text-blue-700 mt-2 italic">Note: Knight Non-Admitted is permanently turned off for new business but continues to endorse existing policies.</p>
+                <p className="text-xs text-purple-700 mt-2 italic">Note: Knight Non-Admitted is permanently turned off for new business but continues to endorse existing policies.</p>
               </div>
             </div>
           </div>
@@ -922,15 +1017,15 @@
         <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6">
           <div className="max-w-7xl mx-auto">
             <div className="bg-white rounded-lg shadow-lg mb-8 overflow-hidden">
-              <div className="bg-gradient-to-r from-indigo-700 to-purple-700 p-8 text-white">
+              <div className="bg-gradient-to-r from-purple-600 to-purple-800 p-8 text-white">
                 <div className="flex items-center gap-3 mb-2">
                   <div className="text-3xl">🛡️</div>
                   <div>
                     <h1 className="text-3xl md:text-4xl font-bold">Coverages by State Tool by JJ & D³</h1>
-                    <p className="text-xs text-indigo-200 mt-1">(For Internal Use Only)</p>
+                    <p className="text-xs text-purple-200 mt-1">(For Internal Use Only)</p>
                   </div>
                 </div>
-                <p className="text-indigo-100 text-lg">
+                <p className="text-purple-100 text-lg">
                   Comprehensive state-by-state coverage analysis with carrier capabilities and AL operations
                 </p>
               </div>
@@ -949,13 +1044,13 @@
                     value={searchTerm}
                     onChange={handleSearchChange}
                     onFocus={() => searchTerm && setShowDropdown(true)}
-                    className="w-full px-4 py-3 border-2 border-indigo-200 rounded-lg focus:border-indigo-500 focus:outline-none transition-colors bg-indigo-50"
+                    className="w-full px-4 py-3 border-2 border-purple-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors bg-purple-50"
                   />
 
                   {showDropdown && filteredSearchStates.length > 0 && (
                     <div
                       ref={dropdownRef}
-                      className="absolute z-10 w-full mt-1 bg-white border-2 border-indigo-200 rounded-lg shadow-lg max-h-64 overflow-y-auto"
+                      className="absolute z-10 w-full mt-1 bg-white border-2 border-purple-200 rounded-lg shadow-lg max-h-64 overflow-y-auto"
                     >
                       {filteredSearchStates.map(state => (
                         <div
@@ -965,7 +1060,7 @@
                         >
                           <div className="flex items-center justify-between">
                             <span className="font-medium text-gray-800">{state.State}</span>
-                            <span className="text-sm text-indigo-600 font-semibold">{state["State Abbrev."]}</span>
+                            <span className="text-sm text-purple-600 font-semibold">{state["State Abbrev."]}</span>
                           </div>
                         </div>
                       ))}
@@ -980,7 +1075,7 @@
                   <select
                     value={selectedState}
                     onChange={(e) => setSelectedState(e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-indigo-200 rounded-lg focus:border-indigo-500 focus:outline-none transition-colors cursor-pointer bg-indigo-50"
+                    className="w-full px-4 py-3 border-2 border-purple-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors cursor-pointer bg-purple-50"
                   >
                     <option value="">Choose a state...</option>
                     {uniqueStates.map(state => (
@@ -999,7 +1094,7 @@
                   onClick={() => setActiveTab("dashboard")}
                   className={`flex-1 px-4 py-3 rounded-lg font-medium transition-colors ${
                     activeTab === "dashboard"
-                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white'
+                      ? 'bg-gradient-to-r from-purple-600 to-purple-800 text-white'
                       : 'text-gray-600 hover:bg-gray-100'
                   }`}
                 >
@@ -1009,7 +1104,7 @@
                   onClick={() => setActiveTab("availability")}
                   className={`flex-1 px-4 py-3 rounded-lg font-medium transition-colors ${
                     activeTab === "availability"
-                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white'
+                      ? 'bg-gradient-to-r from-purple-600 to-purple-800 text-white'
                       : 'text-gray-600 hover:bg-gray-100'
                   }`}
                 >
@@ -1021,8 +1116,8 @@
             {activeTab === "dashboard" && renderDashboard()}
             {activeTab === "availability" && renderStateAvailability()}
 
-            <div className="mt-8 bg-indigo-50 rounded-lg p-6">
-              <h3 className="text-lg font-bold mb-3 text-indigo-800">📖 Reference Guide</h3>
+            <div className="mt-8 bg-purple-50 rounded-lg p-6">
+              <h3 className="text-lg font-bold mb-3 text-purple-800">📖 Reference Guide</h3>
               <div className="grid md:grid-cols-3 gap-4">
                 <div>
                   <h4 className="font-semibold text-gray-700 mb-2">Coverage Status:</h4>
@@ -1063,7 +1158,7 @@
                   </div>
                 </div>
               </div>
-              <div className="mt-4 pt-3 border-t border-indigo-200 text-xs text-gray-600 space-y-2">
+              <div className="mt-4 pt-3 border-t border-purple-200 text-xs text-gray-600 space-y-2">
                 <p><span className="font-semibold">✅ NEW FEATURES:</span> AL states snapshot, carrier capability matrix, and filter by active carrier</p>
                 <p><span className="font-semibold">Important:</span> APD, MTC, NTL, and TGL are offered on a non-admitted (E&S) basis only in 45 states (excluding AK, HI, KS, MA, NY).</p>
                 <p><span className="font-semibold">Carrier Status Update:</span> Currently, only <strong>Accredited Non-Admitted (New Program)</strong> is active (Y status) in 36 states. All other carriers are either turned off, blocked, or N/A. Knight Non-Admitted is permanently turned off for new business but continues to endorse existing policies.</p>
@@ -1072,8 +1167,8 @@
             </div>
 
             <div className="mt-8 text-center text-sm text-gray-500">
-              <p>Core Systems Management Tool • Enhanced Coverage Assessment Platform v4.0</p>
-              <p className="mt-1">✅ ENHANCED: AL States Snapshot • Carrier Capability Matrix • Active Carrier Filtering</p>
+              <p>Core Systems Management Tool • Enhanced Coverage Assessment Platform v4.1</p>
+              <p className="mt-1">✅ ENHANCED: Clickable AL Stat Cards • Muted Purple Theme • State Filtering</p>
               <p className="mt-1">Includes Auto Liability • APD, MTC, NTL, TGL (E&S - 45 States) • Carrier Operations Analysis</p>
               <p className="mt-1">Data current as of latest spreadsheet update • 50 states included • 8 carriers tracked</p>
             </div>
