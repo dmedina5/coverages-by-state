@@ -209,6 +209,38 @@
       const [user, setUser] = useState(null);
       const [authLoading, setAuthLoading] = useState(true);
 
+      const [selectedState, setSelectedState] = useState("");
+      const [searchTerm, setSearchTerm] = useState("");
+      const [showDropdown, setShowDropdown] = useState(false);
+      const [activeTab, setActiveTab] = useState("dashboard");
+      const [lobFilter, setLobFilter] = useState([]);
+      const [opsFilter, setOpsFilter] = useState([]);
+      const [coverageFilter, setCoverageFilter] = useState([]);
+      const [coverageRequirement, setCoverageRequirement] = useState("any");
+      const [carrierFilter, setCarrierFilter] = useState([]);
+      const [alSnapshotFilter, setAlSnapshotFilter] = useState(null);
+      const searchInputRef = useRef(null);
+      const dropdownRef = useRef(null);
+
+      const alCounts = useMemo(() => countALStates(), []);
+
+      const selectedStateData = useMemo(() => {
+        const coverage = stateData.find(s => s["State Abbrev."] === selectedState);
+        const lob = lobOpsData[selectedState] || {};
+        const carriers = carrierData[selectedState] || {};
+        return { coverage, lob, carriers };
+      }, [selectedState]);
+
+      const uniqueStates = useMemo(() => {
+        const seen = new Set();
+        return stateData.filter(s => {
+          const key = s["State Abbrev."];
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+      }, []);
+
       // Check authentication on mount
       useEffect(() => {
         async function checkAuth() {
@@ -226,19 +258,6 @@
         }
         checkAuth();
       }, []);
-
-      const [selectedState, setSelectedState] = useState("");
-      const [searchTerm, setSearchTerm] = useState("");
-      const [showDropdown, setShowDropdown] = useState(false);
-      const [activeTab, setActiveTab] = useState("dashboard");
-      const [lobFilter, setLobFilter] = useState([]);
-      const [opsFilter, setOpsFilter] = useState([]);
-      const [coverageFilter, setCoverageFilter] = useState([]);
-      const [coverageRequirement, setCoverageRequirement] = useState("any");
-      const [carrierFilter, setCarrierFilter] = useState([]);
-      const [alSnapshotFilter, setAlSnapshotFilter] = useState(null);
-      const searchInputRef = useRef(null);
-      const dropdownRef = useRef(null);
 
       // Show loading screen while checking auth
       if (authLoading) {
@@ -262,25 +281,6 @@
           </div>
         );
       }
-
-      const alCounts = useMemo(() => countALStates(), []);
-
-      const selectedStateData = useMemo(() => {
-        const coverage = stateData.find(s => s["State Abbrev."] === selectedState);
-        const lob = lobOpsData[selectedState] || {};
-        const carriers = carrierData[selectedState] || {};
-        return { coverage, lob, carriers };
-      }, [selectedState]);
-
-      const uniqueStates = useMemo(() => {
-        const seen = new Set();
-        return stateData.filter(s => {
-          const key = s["State Abbrev."];
-          if (seen.has(key)) return false;
-          seen.add(key);
-          return true;
-        });
-      }, []);
 
       const filteredSearchStates = useMemo(() => {
         if (!searchTerm.trim()) return [];
