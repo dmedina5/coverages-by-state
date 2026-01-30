@@ -3,11 +3,14 @@ const fs = require('fs').promises;
 const crypto = require('crypto');
 
 // Configuration from environment
+// Password is base64 encoded to preserve special characters
+const decodedPassword = Buffer.from(process.env.DB_PASSWORD, 'base64').toString('utf-8');
+
 const DB_CONFIG = {
   host: process.env.DB_HOST,
   port: parseInt(process.env.DB_PORT) || 3306,
   user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
+  password: decodedPassword,
   database: process.env.DB_NAME,
   connectTimeout: 30000,
   ssl: { rejectUnauthorized: false }
