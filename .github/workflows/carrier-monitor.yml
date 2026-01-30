@@ -110,15 +110,36 @@ jobs:
             return result;
           }
 
+          async function connectWithRetry(config, maxRetries = 3, delayMs = 5000) {
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+              try {
+                console.log(`Connection attempt ${attempt}/${maxRetries}...`);
+                const conn = await mysql.createConnection(config);
+                console.log('Connected successfully');
+                return conn;
+              } catch (err) {
+                console.log(`Attempt ${attempt} failed: ${err.message}`);
+                if (attempt === maxRetries) {
+                  throw err;
+                }
+                console.log(`Waiting ${delayMs/1000}s before retry...`);
+                await new Promise(r => setTimeout(r, delayMs));
+              }
+            }
+          }
+
           async function main() {
             console.log('Connecting to database...');
+            console.log(`Host: ${DB_CONFIG.host}`);
+            console.log(`Port: ${DB_CONFIG.port}`);
+            console.log(`User: ${DB_CONFIG.user}`);
+            console.log(`Database: ${DB_CONFIG.database}`);
 
             let connection;
             try {
-              connection = await mysql.createConnection(DB_CONFIG);
-              console.log('Connected successfully');
+              connection = await connectWithRetry(DB_CONFIG, 3, 5000);
             } catch (err) {
-              console.log('::error::Database connection failed: ' + err.message);
+              console.log('::error::Database connection failed after 3 attempts: ' + err.message);
               process.exit(1);
             }
 
