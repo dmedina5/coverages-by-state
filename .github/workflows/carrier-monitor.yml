@@ -35,12 +35,10 @@ jobs:
 
       - name: Commit and push changes
         if: success()
-        shell: pwsh
+        shell: cmd
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add index.html monitor_state.json
-          $changes = git diff --staged --quiet; if ($LASTEXITCODE -ne 0) {
-            git commit -m "Auto-sync: Carrier eligibility changes detected`n`nTriggered by GitHub Actions scheduled monitor.`n`nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>"
-            git push
-          }
+          git diff --staged --quiet || git commit -m "Auto-sync: Carrier eligibility changes detected"
+          git push
