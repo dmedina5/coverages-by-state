@@ -2,14 +2,17 @@ name: Carrier Eligibility Monitor
 
 on:
   schedule:
-    # Run every 5 minutes
     - cron: '*/5 * * * *'
   workflow_dispatch:
-    # Allow manual trigger from GitHub UI
+
+concurrency:
+  group: carrier-monitor
+  cancel-in-progress: true
 
 jobs:
   monitor:
     runs-on: self-hosted
+    timeout-minutes: 10
     permissions:
       contents: write
 
