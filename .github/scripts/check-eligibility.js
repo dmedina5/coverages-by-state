@@ -1,6 +1,7 @@
 const mysql = require('mysql2/promise');
 const fs = require('fs').promises;
 const crypto = require('crypto');
+const https = require('https');
 
 // Configuration from environment
 // Password is base64 encoded to preserve special characters
@@ -15,6 +16,10 @@ const DB_CONFIG = {
   connectTimeout: 30000,
   ssl: { rejectUnauthorized: false }
 };
+
+// Slack configuration
+const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;
+const TOOL_URL = 'https://dmedina5.github.io/coverages-by-state/';
 
 const COMPANY_ID_MAPPING = {
   5245: "Accredited Non-Admitted 1st",
@@ -78,6 +83,189 @@ function processCarrierData(rows) {
   return result;
 }
 
+/**
+ * Compute DS&G eligibility per state based on dsg_allowed column.
+ * Logic: If ANY carrier has dsg_allowed = 1 for a state, that state is enabled for DS&G ("Y")
+ *        If NO carriers have dsg_allowed = 1, the state shows "N/A"
+ */
+function computeDsgEligibility(dbResults) {
+  const stateDsgStatus = {};
+  for (const row of dbResults) {
+    const stateCode = row.code;
+    const dsgAllowed = row.dsg_allowed;
+    if (!stateCode) continue;
+    if (dsgAllowed === 1 || dsgAllowed === true) {
+      stateDsgStatus[stateCode] = "Y";
+    } else if (!(stateCode in stateDsgStatus)) {
+      stateDsgStatus[stateCode] = "N/A";
+    }
+  }
+  return stateDsgStatus;
+}
+
+/**
+ * Detect specific changes between old and new state
+ */
+function detectChanges(oldRows, newRows) {
+  const changes = [];
+  const oldMap = new Map();
+  for (const row of (oldRows || [])) {
+    const key = `${row.state_code}:${row.company_id}`;
+    oldMap.set(key, row);
+  }
+  const newMap = new Map();
+  for (const row of newRows) {
+    const key = `${row.state_code}:${row.company_id}`;
+    newMap.set(key, row);
+  }
+
+  for (const [key, newRow] of newMap) {
+    const oldRow = oldMap.get(key);
+    const carrierName = COMPANY_ID_MAPPING[newRow.company_id] || newRow.company_name;
+
+    if (!oldRow) {
+      changes.push({
+        type: 'NEW',
+        state: newRow.state_code,
+        carrier: carrierName,
+        message: `New entry: ${newRow.state_code} - ${carrierName}`
+      });
+    } else {
+      if (oldRow.active !== newRow.active) {
+        const oldStatus = oldRow.active ? 'enabled' : 'disabled';
+        const newStatus = newRow.active ? 'enabled' : 'disabled';
+        changes.push({
+          type: 'ACTIVE',
+          state: newRow.state_code,
+          carrier: carrierName,
+          oldValue: oldRow.active,
+          newValue: newRow.active,
+          message: `${newRow.state_code} - ${carrierName}: active ${oldStatus} → ${newStatus}`
+        });
+      }
+      if (oldRow.dsg_allowed !== newRow.dsg_allowed) {
+        const oldStatus = oldRow.dsg_allowed ? 'allowed' : 'not allowed';
+        const newStatus = newRow.dsg_allowed ? 'allowed' : 'not allowed';
+        changes.push({
+          type: 'DSG',
+          state: newRow.state_code,
+          carrier: carrierName,
+          oldValue: oldRow.dsg_allowed,
+          newValue: newRow.dsg_allowed,
+          message: `${newRow.state_code} - ${carrierName}: DSG ${oldStatus} → ${newStatus}`
+        });
+      }
+    }
+  }
+
+  for (const [key, oldRow] of oldMap) {
+    if (!newMap.has(key)) {
+      const carrierName = COMPANY_ID_MAPPING[oldRow.company_id] || oldRow.company_name;
+      changes.push({
+        type: 'REMOVED',
+        state: oldRow.state_code,
+        carrier: carrierName,
+        message: `Removed: ${oldRow.state_code} - ${carrierName}`
+      });
+    }
+  }
+  return changes;
+}
+
+/**
+ * Send a notification to Slack
+ */
+function sendSlackNotification(changes) {
+  return new Promise((resolve) => {
+    if (!SLACK_WEBHOOK_URL) {
+      console.log('No Slack webhook URL configured, skipping notification');
+      resolve(false);
+      return;
+    }
+
+    const changeLines = changes.slice(0, 15).map(c => {
+      if (c.type === 'ACTIVE') {
+        const status = c.newValue ? 'enabled ✅' : 'disabled ❌';
+        return `• ${c.state} - ${c.carrier}: ${status}`;
+      } else if (c.type === 'DSG') {
+        const status = c.newValue ? 'enabled ✅' : 'disabled ❌';
+        return `• ${c.state} - ${c.carrier}: DSG ${status}`;
+      } else if (c.type === 'NEW') {
+        return `• ${c.state} - ${c.carrier}: new entry`;
+      } else if (c.type === 'REMOVED') {
+        return `• ${c.state} - ${c.carrier}: removed`;
+      }
+      return `• ${c.message}`;
+    });
+
+    if (changes.length > 15) {
+      changeLines.push(`• ... and ${changes.length - 15} more changes`);
+    }
+
+    const message = {
+      blocks: [
+        {
+          type: "header",
+          text: {
+            type: "plain_text",
+            text: "🔔 Carrier Eligibility Update",
+            emoji: true
+          }
+        },
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `*${changes.length} change(s) detected and synced:*\n${changeLines.join('\n')}`
+          }
+        },
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `<${TOOL_URL}|View Coverages by State Tool>`
+          }
+        }
+      ]
+    };
+
+    const payload = JSON.stringify(message);
+    const url = new URL(SLACK_WEBHOOK_URL);
+
+    const options = {
+      hostname: url.hostname,
+      path: url.pathname,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(payload)
+      }
+    };
+
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        if (res.statusCode === 200) {
+          console.log('Slack notification sent successfully');
+          resolve(true);
+        } else {
+          console.log(`WARNING: Slack responded with ${res.statusCode}: ${data}`);
+          resolve(false);
+        }
+      });
+    });
+
+    req.on('error', (err) => {
+      console.log(`WARNING: Failed to send Slack notification: ${err.message}`);
+      resolve(false);
+    });
+
+    req.write(payload);
+    req.end();
+  });
+}
+
 async function connectWithRetry(config, maxRetries = 3, delayMs = 5000) {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
@@ -139,35 +327,93 @@ async function main() {
 
     console.log('Changes detected! Updating...');
 
+    // Detect specific changes for reporting
+    const changes = detectChanges(savedState?.data || [], stateRows);
+    console.log(`Detected ${changes.length} specific change(s)`);
+    for (const change of changes.slice(0, 10)) {
+      console.log(`  - ${change.message}`);
+    }
+    if (changes.length > 10) {
+      console.log(`  ... and ${changes.length - 10} more changes`);
+    }
+
     // Get full data for sync
     const [fullRows] = await connection.execute(CARRIER_QUERY);
     const carrierData = processCarrierData(fullRows);
 
+    // Compute DS&G eligibility
+    const dsgEligibility = computeDsgEligibility(fullRows);
+    const dsgEnabledStates = Object.entries(dsgEligibility).filter(([_, v]) => v === "Y").map(([k]) => k);
+    console.log(`DS&G enabled in ${dsgEnabledStates.length} states: ${dsgEnabledStates.join(', ')}`);
+
     // Update index.html
     let html = await fs.readFile('index.html', 'utf-8');
-    const pattern = /const carrierData = ({[^;]+});/s;
-    const match = html.match(pattern);
+    let updated = false;
 
-    if (!match) {
+    // Update carrierData
+    const carrierPattern = /const carrierData = ({[^;]+});/s;
+    const carrierMatch = html.match(carrierPattern);
+
+    if (!carrierMatch) {
       console.log('::error::Could not find carrierData in index.html');
       process.exit(1);
     }
 
-    const newHtml = html.replace(
-      `const carrierData = ${match[1]};`,
+    html = html.replace(
+      `const carrierData = ${carrierMatch[1]};`,
       `const carrierData = ${JSON.stringify(carrierData)};`
     );
+    updated = true;
+    console.log('Updated carrierData');
 
-    await fs.writeFile('index.html', newHtml);
+    // Update lobOpsData for DS&G eligibility
+    const lobPattern = /const lobOpsData = ({[^;]+});/s;
+    const lobMatch = html.match(lobPattern);
 
-    // Save new state
+    if (lobMatch) {
+      try {
+        const lobData = JSON.parse(lobMatch[1]);
+        let lobUpdated = false;
+
+        for (const [stateCode, dsgStatus] of Object.entries(dsgEligibility)) {
+          if (lobData[stateCode]) {
+            const currentDsg = lobData[stateCode]["Non-Admitted AL DS&G"];
+            if (currentDsg !== dsgStatus) {
+              console.log(`  DS&G: ${stateCode} ${currentDsg} → ${dsgStatus}`);
+              lobData[stateCode]["Non-Admitted AL DS&G"] = dsgStatus;
+              lobUpdated = true;
+            }
+          }
+        }
+
+        if (lobUpdated) {
+          html = html.replace(
+            `const lobOpsData = ${lobMatch[1]};`,
+            `const lobOpsData = ${JSON.stringify(lobData)};`
+          );
+          console.log('Updated lobOpsData (DS&G eligibility)');
+        }
+      } catch (e) {
+        console.log(`WARNING: Could not parse lobOpsData: ${e.message}`);
+      }
+    }
+
+    await fs.writeFile('index.html', html);
+
+    // Save new state with data for future change detection
     await fs.writeFile('monitor_state.json', JSON.stringify({
       hash: currentHash,
       timestamp: new Date().toISOString(),
-      rowCount: stateRows.length
+      rowCount: stateRows.length,
+      data: stateRows
     }, null, 2));
 
     console.log('Files updated successfully');
+
+    // Send Slack notification
+    if (changes.length > 0) {
+      await sendSlackNotification(changes);
+    }
 
   } finally {
     await connection.end();
