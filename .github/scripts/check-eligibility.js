@@ -18,8 +18,10 @@ const DB_CONFIG = {
 };
 
 // Slack configuration
-const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;
+const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;  // General channel
+const SLACK_APPROVAL_WEBHOOK_URL = process.env.SLACK_APPROVAL_WEBHOOK_URL;  // Daniel's DM for approval
 const TOOL_URL = 'https://dmedina5.github.io/coverages-by-state/';
+const APPROVED_MODE = process.env.APPROVED === 'true';  // Set via workflow_dispatch to send to general channel
 
 const COMPANY_ID_MAPPING = {
   5245: "Accredited Non-Admitted 1st",
@@ -264,9 +266,52 @@ function sendSlackNotification(changes, dsgEligibility) {
       }
     });
 
-    const message = { blocks };
+    // Determine which webhook to use based on approval mode
+    let webhookUrl;
+    let messageBlocks;
+
+    if (APPROVED_MODE) {
+      // Send to general channel (approved)
+      webhookUrl = SLACK_WEBHOOK_URL;
+      messageBlocks = blocks;
+      console.log('Sending APPROVED message to general channel');
+    } else {
+      // Send to Daniel for approval first
+      webhookUrl = SLACK_APPROVAL_WEBHOOK_URL || SLACK_WEBHOOK_URL;
+
+      // Add approval header and instructions
+      const approvalBlocks = [
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: "⏳ *PENDING APPROVAL* - Review the message below before sending to the general channel:"
+          }
+        },
+        { type: "divider" },
+        ...blocks,
+        { type: "divider" },
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: "✅ To approve and send to general channel, run:\n`gh workflow run carrier-monitor.yml -f approved=true`\n\n❌ To modify, edit the message in the script and re-run."
+          }
+        }
+      ];
+      messageBlocks = approvalBlocks;
+      console.log('Sending message to Daniel for approval');
+    }
+
+    if (!webhookUrl) {
+      console.log('No webhook URL configured');
+      resolve(false);
+      return;
+    }
+
+    const message = { blocks: messageBlocks };
     const payload = JSON.stringify(message);
-    const url = new URL(SLACK_WEBHOOK_URL);
+    const url = new URL(webhookUrl);
 
     const options = {
       hostname: url.hostname,

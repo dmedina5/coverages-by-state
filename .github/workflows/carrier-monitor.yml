@@ -4,6 +4,15 @@ on:
   schedule:
     - cron: '*/5 * * * *'
   workflow_dispatch:
+    inputs:
+      approved:
+        description: 'Set to true to send approved message to general channel'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
 
 concurrency:
   group: carrier-monitor
@@ -40,6 +49,8 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_NAME: ${{ secrets.DB_NAME }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_APPROVAL_WEBHOOK_URL: ${{ secrets.SLACK_APPROVAL_WEBHOOK_URL }}
+          APPROVED: ${{ github.event.inputs.approved || 'false' }}
         run: node .github/scripts/check-eligibility.js
 
       - name: Commit and push changes
