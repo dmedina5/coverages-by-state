@@ -1,5 +1,1190 @@
 {
-  "hash": "force-redetection",
-  "timestamp": "2026-02-03T16:33:14.571Z",
-  "rowCount": 169
+  "hash": "4d1bb59588e607cc77c7ce9451a4ff9b",
+  "timestamp": "2026-02-03T16:54:14.814Z",
+  "rowCount": 169,
+  "data": [
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "AK",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "AK",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "AK",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "AK",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "AL",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "AL",
+      "active": 0,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "AL",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "AL",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "AR",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "AR",
+      "active": 0,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "AR",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "AR",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "AZ",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "AZ",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "AZ",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "AZ",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "CA",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "CA",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "CA",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "CA",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "CO",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "CO",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "CO",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "CO",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "CT",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "CT",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "CT",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "CT",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "DC",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "DC",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "DC",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "DC",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "DE",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "DE",
+      "active": 0,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "DE",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "DE",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6156,
+      "company_name": "Everspan Insurance Company",
+      "state_code": "FL",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "GA",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "GA",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "GA",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "HI",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "HI",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "HI",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "HI",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "IA",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "IA",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "IA",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "IA",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "ID",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "ID",
+      "active": 0,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "ID",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "ID",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "IN",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "IN",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "IN",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "IN",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "KS",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "KS",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "KS",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "KS",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "KY",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "KY",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "KY",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "KY",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "LA",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "LA",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "LA",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "LA",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "MA",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "MA",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "MA",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "MA",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "MD",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "MD",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "MD",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "ME",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "ME",
+      "active": 0,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "ME",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "ME",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "MI",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "MI",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "MI",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "MN",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "MN",
+      "active": 0,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "MN",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "MN",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "MO",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "MO",
+      "active": 0,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "MO",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "MO",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "MS",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "MS",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "MS",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "MT",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "MT",
+      "active": 0,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "MT",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "MT",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "ND",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "ND",
+      "active": 0,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "ND",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "ND",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "NE",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "NE",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "NE",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "NE",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "NH",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "NH",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "NH",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "NH",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "NJ",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "NJ",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "NJ",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6156,
+      "company_name": "Everspan Insurance Company",
+      "state_code": "NM",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6156,
+      "company_name": "Everspan Insurance Company",
+      "state_code": "NV",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "NY",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "NY",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "NY",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "NY",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "OH",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "OH",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "OK",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "OK",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "OK",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "OK",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "OR",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "OR",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "OR",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "OR",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "PA",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "PA",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "PA",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "RI",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "RI",
+      "active": 0,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "RI",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "RI",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "SD",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "SD",
+      "active": 0,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "SD",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "SD",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "TN",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "TN",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "TN",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "TX",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "TX",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "TX",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "TX",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "UT",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "UT",
+      "active": 0,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "UT",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "UT",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "VA",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "VA",
+      "active": 0,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "VA",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "VA",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "VT",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "VT",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "VT",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "VT",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "WA",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "WA",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6156,
+      "company_name": "Everspan Insurance Company",
+      "state_code": "WI",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "WV",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "WV",
+      "active": 0,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "WV",
+      "active": 1,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "WV",
+      "active": 1,
+      "dsg_allowed": 1
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "WY",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "WY",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6155,
+      "company_name": "Everspan Indemnity Insurance Company",
+      "state_code": "WY",
+      "active": 0,
+      "dsg_allowed": 0
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "WY",
+      "active": 0,
+      "dsg_allowed": 0
+    }
+  ]
 }
