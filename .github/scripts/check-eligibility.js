@@ -183,14 +183,17 @@ function sendSlackNotification(changes, dsgEligibility) {
       return;
     }
 
-    // Get states where DSG is enabled
-    const dsgEnabledStates = Object.entries(dsgEligibility)
-      .filter(([_, status]) => status === "Y")
+    // States that were already enabled for DSG before this update
+    const PREVIOUSLY_ENABLED_DSG_STATES = ['AZ', 'CA', 'GA', 'IN', 'MD', 'MI', 'MS', 'OH', 'PA', 'TN', 'TX', 'WA'];
+
+    // Get NEW states where DSG is enabled (excluding previously enabled)
+    const newDsgEnabledStates = Object.entries(dsgEligibility)
+      .filter(([state, status]) => status === "Y" && !PREVIOUSLY_ENABLED_DSG_STATES.includes(state))
       .map(([state]) => state)
       .sort();
 
-    // Filter for DSG-specific changes
-    const dsgChanges = changes.filter(c => c.type === 'DSG');
+    // Filter for DSG-specific changes (only newly enabled, excluding previously enabled states)
+    const dsgChanges = changes.filter(c => c.type === 'DSG' && !PREVIOUSLY_ENABLED_DSG_STATES.includes(c.state));
     const activeChanges = changes.filter(c => c.type === 'ACTIVE');
 
     // Build message sections
@@ -205,13 +208,13 @@ function sendSlackNotification(changes, dsgEligibility) {
       }
     ];
 
-    // DSG enabled states summary
-    if (dsgEnabledStates.length > 0) {
+    // NEW DSG enabled states summary (excluding previously enabled)
+    if (newDsgEnabledStates.length > 0) {
       blocks.push({
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `*DS&G is now enabled in ${dsgEnabledStates.length} states:*\n${dsgEnabledStates.join(', ')}`
+          text: `*DS&G is now enabled in ${newDsgEnabledStates.length} NEW states:*\n${newDsgEnabledStates.join(', ')}`
         }
       });
     }
