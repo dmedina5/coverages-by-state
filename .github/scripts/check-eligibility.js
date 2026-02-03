@@ -173,9 +173,9 @@ function detectChanges(oldRows, newRows) {
 }
 
 /**
- * Send a notification to Slack
+ * Send a notification to Slack focusing on DSG eligibility
  */
-function sendSlackNotification(changes) {
+function sendSlackNotification(changes, dsgEligibility) {
   return new Promise((resolve) => {
     if (!SLACK_WEBHOOK_URL) {
       console.log('No Slack webhook URL configured, skipping notification');
@@ -183,52 +183,85 @@ function sendSlackNotification(changes) {
       return;
     }
 
-    const changeLines = changes.slice(0, 15).map(c => {
-      if (c.type === 'ACTIVE') {
-        const status = c.newValue ? 'enabled ✅' : 'disabled ❌';
-        return `• ${c.state} - ${c.carrier}: ${status}`;
-      } else if (c.type === 'DSG') {
-        const status = c.newValue ? 'enabled ✅' : 'disabled ❌';
-        return `• ${c.state} - ${c.carrier}: DSG ${status}`;
-      } else if (c.type === 'NEW') {
-        return `• ${c.state} - ${c.carrier}: new entry`;
-      } else if (c.type === 'REMOVED') {
-        return `• ${c.state} - ${c.carrier}: removed`;
-      }
-      return `• ${c.message}`;
-    });
+    // Get states where DSG is enabled
+    const dsgEnabledStates = Object.entries(dsgEligibility)
+      .filter(([_, status]) => status === "Y")
+      .map(([state]) => state)
+      .sort();
 
-    if (changes.length > 15) {
-      changeLines.push(`• ... and ${changes.length - 15} more changes`);
+    // Filter for DSG-specific changes
+    const dsgChanges = changes.filter(c => c.type === 'DSG');
+    const activeChanges = changes.filter(c => c.type === 'ACTIVE');
+
+    // Build message sections
+    const blocks = [
+      {
+        type: "header",
+        text: {
+          type: "plain_text",
+          text: "🔔 DS&G Eligibility Update",
+          emoji: true
+        }
+      }
+    ];
+
+    // DSG enabled states summary
+    if (dsgEnabledStates.length > 0) {
+      blocks.push({
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `*DS&G is now enabled in ${dsgEnabledStates.length} states:*\n${dsgEnabledStates.join(', ')}`
+        }
+      });
     }
 
-    const message = {
-      blocks: [
-        {
-          type: "header",
-          text: {
-            type: "plain_text",
-            text: "🔔 Carrier Eligibility Update",
-            emoji: true
-          }
-        },
-        {
-          type: "section",
-          text: {
-            type: "mrkdwn",
-            text: `*${changes.length} change(s) detected and synced:*\n${changeLines.join('\n')}`
-          }
-        },
-        {
-          type: "section",
-          text: {
-            type: "mrkdwn",
-            text: `<${TOOL_URL}|View Coverages by State Tool>`
-          }
+    // Show specific DSG changes if any
+    if (dsgChanges.length > 0) {
+      const dsgLines = dsgChanges.slice(0, 10).map(c => {
+        const status = c.newValue ? 'enabled ✅' : 'disabled ❌';
+        return `• ${c.state}: DS&G ${status}`;
+      });
+      if (dsgChanges.length > 10) {
+        dsgLines.push(`• ... and ${dsgChanges.length - 10} more DS&G changes`);
+      }
+      blocks.push({
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `*DS&G changes detected:*\n${dsgLines.join('\n')}`
         }
-      ]
-    };
+      });
+    }
 
+    // Show carrier active status changes if any
+    if (activeChanges.length > 0) {
+      const activeLines = activeChanges.slice(0, 10).map(c => {
+        const status = c.newValue ? 'enabled ✅' : 'disabled ❌';
+        return `• ${c.state} - ${c.carrier}: ${status}`;
+      });
+      if (activeChanges.length > 10) {
+        activeLines.push(`• ... and ${activeChanges.length - 10} more carrier changes`);
+      }
+      blocks.push({
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `*Carrier status changes:*\n${activeLines.join('\n')}`
+        }
+      });
+    }
+
+    // Link to tool
+    blocks.push({
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `<${TOOL_URL}|View Coverages by State Tool>`
+      }
+    });
+
+    const message = { blocks };
     const payload = JSON.stringify(message);
     const url = new URL(SLACK_WEBHOOK_URL);
 
@@ -410,10 +443,8 @@ async function main() {
 
     console.log('Files updated successfully');
 
-    // Send Slack notification
-    if (changes.length > 0) {
-      await sendSlackNotification(changes);
-    }
+    // Send Slack notification with DSG eligibility focus
+    await sendSlackNotification(changes, dsgEligibility);
 
   } finally {
     await connection.end();
