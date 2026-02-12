@@ -106,6 +106,34 @@ function computeDsgEligibility(dbResults) {
 }
 
 /**
+ * Compute Admitted AL eligibility per state based on company 6156 (Everspan Admitted MunichRe).
+ * If company 6156 is active in a state, that state has Admitted AL, Hotshots, and UIIA.
+ * Exception: FL has Admitted AL UIIA as N/A.
+ */
+function computeAdmittedALEligibility(dbResults) {
+  const ADMITTED_CARRIER_ID = 6156; // Everspan Admitted MunichRe
+  const stateAdmittedStatus = {};
+  for (const row of dbResults) {
+    const stateCode = row.code;
+    if (!stateCode) continue;
+    if (row.id === ADMITTED_CARRIER_ID && (row.active === 1 || row.active === true)) {
+      stateAdmittedStatus[stateCode] = {
+        "Admitted AL": "Y",
+        "Admitted AL Hotshots": "Y",
+        "Admitted AL UIIA": stateCode === "FL" ? "N/A" : "Y"
+      };
+    } else if (!(stateCode in stateAdmittedStatus)) {
+      stateAdmittedStatus[stateCode] = {
+        "Admitted AL": "N/A",
+        "Admitted AL Hotshots": "N/A",
+        "Admitted AL UIIA": "N/A"
+      };
+    }
+  }
+  return stateAdmittedStatus;
+}
+
+/**
  * Detect specific changes between old and new state
  */
 function detectChanges(oldRows, newRows) {
@@ -175,9 +203,9 @@ function detectChanges(oldRows, newRows) {
 }
 
 /**
- * Send a notification to Slack focusing on DSG eligibility
+ * Send a notification to Slack focusing on carrier eligibility changes
  */
-function sendSlackNotification(changes, dsgEligibility) {
+function sendSlackNotification(changes, dsgEligibility, admittedALEligibility) {
   return new Promise((resolve) => {
     if (!SLACK_WEBHOOK_URL) {
       console.log('No Slack webhook URL configured, skipping notification');
@@ -198,17 +226,48 @@ function sendSlackNotification(changes, dsgEligibility) {
     const dsgChanges = changes.filter(c => c.type === 'DSG' && !PREVIOUSLY_ENABLED_DSG_STATES.includes(c.state));
     const activeChanges = changes.filter(c => c.type === 'ACTIVE');
 
+    // Identify admitted carrier (Everspan Admitted MunichRe) active changes
+    const admittedCarrierChanges = activeChanges.filter(c => c.carrier === 'Everspan Admitted MunichRe');
+
     // Build message sections
     const blocks = [
       {
         type: "header",
         text: {
           type: "plain_text",
-          text: "🔔 DS&G Eligibility Update",
+          text: "🔔 Carrier Eligibility Update",
           emoji: true
         }
       }
     ];
+
+    // Admitted AL changes (Everspan Admitted MunichRe becoming active in new states)
+    if (admittedCarrierChanges.length > 0) {
+      const admittedLines = admittedCarrierChanges.map(c => {
+        const status = c.newValue ? 'now available ✅' : 'no longer available ❌';
+        return `• ${c.state}: Everspan Admitted (MunichRe) ${status}`;
+      });
+      blocks.push({
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `*Admitted AL Changes:*\n${admittedLines.join('\n')}`
+        }
+      });
+
+      // Show updated admitted AL count
+      if (admittedALEligibility) {
+        const admittedCount = Object.values(admittedALEligibility)
+          .filter(v => v["Admitted AL"] === "Y").length;
+        blocks.push({
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `*Permitted Admitted AL Operations:* ${admittedCount} states`
+          }
+        });
+      }
+    }
 
     // NEW DSG enabled states summary (excluding previously enabled)
     if (newDsgEnabledStates.length > 0) {
@@ -239,14 +298,15 @@ function sendSlackNotification(changes, dsgEligibility) {
       });
     }
 
-    // Show carrier active status changes if any
-    if (activeChanges.length > 0) {
-      const activeLines = activeChanges.slice(0, 10).map(c => {
+    // Show other carrier active status changes (excluding admitted which are shown above)
+    const otherActiveChanges = activeChanges.filter(c => c.carrier !== 'Everspan Admitted MunichRe');
+    if (otherActiveChanges.length > 0) {
+      const activeLines = otherActiveChanges.slice(0, 10).map(c => {
         const status = c.newValue ? 'enabled ✅' : 'disabled ❌';
         return `• ${c.state} - ${c.carrier}: ${status}`;
       });
-      if (activeChanges.length > 10) {
-        activeLines.push(`• ... and ${activeChanges.length - 10} more carrier changes`);
+      if (otherActiveChanges.length > 10) {
+        activeLines.push(`• ... and ${otherActiveChanges.length - 10} more carrier changes`);
       }
       blocks.push({
         type: "section",
@@ -427,6 +487,12 @@ async function main() {
     const dsgEnabledStates = Object.entries(dsgEligibility).filter(([_, v]) => v === "Y").map(([k]) => k);
     console.log(`DS&G enabled in ${dsgEnabledStates.length} states: ${dsgEnabledStates.join(', ')}`);
 
+    // Compute Admitted AL eligibility from carrier data
+    const admittedALEligibility = computeAdmittedALEligibility(fullRows);
+    const admittedALStates = Object.entries(admittedALEligibility)
+      .filter(([_, v]) => v["Admitted AL"] === "Y").map(([k]) => k);
+    console.log(`Admitted AL in ${admittedALStates.length} states: ${admittedALStates.join(', ')}`);
+
     // Update index.html
     let html = await fs.readFile('index.html', 'utf-8');
     let updated = false;
@@ -447,7 +513,7 @@ async function main() {
     updated = true;
     console.log('Updated carrierData');
 
-    // Update lobOpsData for DS&G eligibility
+    // Update lobOpsData for DS&G eligibility and Admitted AL
     const lobPattern = /const lobOpsData = ({[^;]+});/s;
     const lobMatch = html.match(lobPattern);
 
@@ -456,6 +522,7 @@ async function main() {
         const lobData = JSON.parse(lobMatch[1]);
         let lobUpdated = false;
 
+        // Update DS&G fields
         for (const [stateCode, dsgStatus] of Object.entries(dsgEligibility)) {
           if (lobData[stateCode]) {
             const currentDsg = lobData[stateCode]["Non-Admitted AL DS&G"];
@@ -467,12 +534,25 @@ async function main() {
           }
         }
 
+        // Update Admitted AL fields based on admitted carrier (6156) activity
+        for (const [stateCode, admittedStatus] of Object.entries(admittedALEligibility)) {
+          if (lobData[stateCode]) {
+            for (const [field, value] of Object.entries(admittedStatus)) {
+              if (lobData[stateCode][field] !== value) {
+                console.log(`  ${field}: ${stateCode} ${lobData[stateCode][field]} → ${value}`);
+                lobData[stateCode][field] = value;
+                lobUpdated = true;
+              }
+            }
+          }
+        }
+
         if (lobUpdated) {
           html = html.replace(
             `const lobOpsData = ${lobMatch[1]};`,
             `const lobOpsData = ${JSON.stringify(lobData)};`
           );
-          console.log('Updated lobOpsData (DS&G eligibility)');
+          console.log('Updated lobOpsData (DS&G + Admitted AL eligibility)');
         }
       } catch (e) {
         console.log(`WARNING: Could not parse lobOpsData: ${e.message}`);
@@ -491,8 +571,8 @@ async function main() {
 
     console.log('Files updated successfully');
 
-    // Send Slack notification with DSG eligibility focus
-    await sendSlackNotification(changes, dsgEligibility);
+    // Send Slack notification with carrier eligibility changes
+    await sendSlackNotification(changes, dsgEligibility, admittedALEligibility);
 
   } finally {
     await connection.end();
