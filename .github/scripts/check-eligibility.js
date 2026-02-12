@@ -214,7 +214,7 @@ function sendSlackNotification(changes, dsgEligibility, admittedALEligibility) {
     }
 
     // States that were already enabled for DSG before this update
-    const PREVIOUSLY_ENABLED_DSG_STATES = ['AZ', 'CA', 'GA', 'IN', 'MD', 'MI', 'MS', 'OH', 'PA', 'TN', 'TX', 'WA'];
+    const PREVIOUSLY_ENABLED_DSG_STATES = ['AL', 'AR', 'AZ', 'CA', 'CO', 'DE', 'GA', 'IA', 'ID', 'IN', 'MD', 'ME', 'MI', 'MN', 'MO', 'MS', 'MT', 'ND', 'NE', 'NH', 'OH', 'OK', 'OR', 'PA', 'RI', 'SD', 'TN', 'TX', 'UT', 'VA', 'WA', 'WV'];
 
     // Get NEW states where DSG is enabled (excluding previously enabled)
     const newDsgEnabledStates = Object.entries(dsgEligibility)
