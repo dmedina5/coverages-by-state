@@ -1,6 +1,6 @@
 {
-  "hash": "force_redetect",
-  "timestamp": "2026-02-12T14:54:00.413Z",
+  "hash": "02d7a0b33d6f57bd1c9a21a4256a15ab",
+  "timestamp": "2026-02-12T14:57:06.753Z",
   "rowCount": 171,
   "data": [
     {
@@ -371,7 +371,7 @@
       "company_id": 6156,
       "company_name": "Everspan Insurance Company",
       "state_code": "IL",
-      "active": 0,
+      "active": 1,
       "dsg_allowed": 0
     },
     {
@@ -959,7 +959,7 @@
       "company_id": 6156,
       "company_name": "Everspan Insurance Company",
       "state_code": "SC",
-      "active": 0,
+      "active": 1,
       "dsg_allowed": 0
     },
     {
