@@ -829,10 +829,6 @@
                 <div>
                   <h4 className="font-semibold text-gray-700 mb-3">Active Carriers</h4>
                   <p className="text-xs text-gray-500 mb-2 italic">Filter states where specific carriers are active</p>
-                  <div className="mb-2 p-2 bg-amber-50 border border-amber-200 rounded text-xs text-amber-800">
-                    <strong>Note:</strong> Currently only Accredited Non-Admitted (New Program) is active. Other carriers are turned off or blocked.
-                  </div>
-
                   <div className="space-y-2 max-h-64 overflow-y-auto">
                     {CARRIERS.map(carrier => {
                       // Check if this carrier is actually active in any state
