@@ -1,7 +1,7 @@
 {
-  "hash": "02d7a0b33d6f57bd1c9a21a4256a15ab",
-  "timestamp": "2026-02-12T14:57:06.753Z",
-  "rowCount": 171,
+  "hash": "d78d6169639b4ee320d87b33f136777d",
+  "timestamp": "2026-04-15T21:59:44.356Z",
+  "rowCount": 172,
   "data": [
     {
       "company_id": 5245,
@@ -688,6 +688,13 @@
       "state_code": "MT",
       "active": 1,
       "dsg_allowed": 1
+    },
+    {
+      "company_id": 6156,
+      "company_name": "Everspan Insurance Company",
+      "state_code": "NC",
+      "active": 1,
+      "dsg_allowed": 0
     },
     {
       "company_id": 5245,
