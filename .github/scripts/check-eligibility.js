@@ -428,6 +428,24 @@ async function connectWithRetry(config, maxRetries = 3, delayMs = 5000) {
 }
 
 async function main() {
+  // APPROVED MODE: replay the pending notification saved during detection run
+  if (APPROVED_MODE) {
+    let pending = null;
+    try {
+      const data = await fs.readFile('pending_notification.json', 'utf-8');
+      pending = JSON.parse(data);
+    } catch (e) {
+      console.log('No pending_notification.json found — nothing to send');
+      return;
+    }
+    console.log('Sending APPROVED message to general channel');
+    await sendSlackNotification(pending.changes, pending.dsgEligibility, pending.admittedALEligibility);
+    // Clear the pending file after sending
+    await fs.writeFile('pending_notification.json', JSON.stringify({ sent: true, sentAt: new Date().toISOString() }, null, 2));
+    console.log('Pending notification sent and cleared');
+    return;
+  }
+
   console.log('Connecting to database...');
   console.log(`Host: ${DB_CONFIG.host}`);
   console.log(`Port: ${DB_CONFIG.port}`);
@@ -570,6 +588,15 @@ async function main() {
     }, null, 2));
 
     console.log('Files updated successfully');
+
+    // Save pending notification so approval run can replay it without re-querying DB
+    await fs.writeFile('pending_notification.json', JSON.stringify({
+      detectedAt: new Date().toISOString(),
+      changes,
+      dsgEligibility,
+      admittedALEligibility
+    }, null, 2));
+    console.log('Saved pending_notification.json for approval replay');
 
     // Send Slack notification with carrier eligibility changes
     await sendSlackNotification(changes, dsgEligibility, admittedALEligibility);
