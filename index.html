@@ -58,6 +58,20 @@
       "DS&G"
     ];
 
+    // Full state names for abbreviations that don't appear in stateData
+    // (stateData only includes states where Cover Whale writes Auto Liability)
+    const STATE_NAMES_FALLBACK = {
+      AK: "Alaska",
+      CT: "Connecticut",
+      HI: "Hawaii",
+      KS: "Kansas",
+      KY: "Kentucky",
+      LA: "Louisiana",
+      MA: "Massachusetts",
+      NY: "New York",
+      WY: "Wyoming"
+    };
+
     // Carrier names - mapped to exact column names from spreadsheet
     const CARRIERS = [
       { display: "Everspan Admitted (GenRe)", key: "Everspan Admitted GenRe" },
@@ -411,12 +425,84 @@
       }, [lobFilter, opsFilter, coverageFilter, coverageRequirement, carrierFilter]);
 
       const renderDashboard = () => {
-        if (!selectedStateData.coverage) {
+        // No state selected at all — keep original placeholder
+        if (!selectedState) {
           return (
             <div className="bg-white rounded-lg shadow-lg p-12 text-center">
               <div className="text-6xl mb-4">📊</div>
               <h3 className="text-2xl font-semibold text-gray-600 mb-2">No State Selected</h3>
               <p className="text-gray-500">Please select a state from the dropdown above to view comprehensive coverage information</p>
+            </div>
+          );
+        }
+
+        // State selected but not in stateData (no Auto Liability coverage info).
+        // These are states like CT/KY/LA/WY (APD/MTC/NTL/TGL only) and AK/HI/MA/KS/NY
+        // (nothing enabled). Show a lightweight view based on lobOpsData.
+        if (!selectedStateData.coverage) {
+          const lobData = selectedStateData.lob || {};
+          const stateName = STATE_NAMES_FALLBACK[selectedState] || selectedState;
+          const hasAnyLOB = LINES_OF_BUSINESS.some(lob => lobData[lob] === "Y");
+
+          if (!hasAnyLOB) {
+            return (
+              <div className="space-y-6 fade-in">
+                <div className="bg-gradient-to-r from-gray-600 to-gray-700 rounded-lg shadow-lg p-6 text-white">
+                  <h2 className="text-3xl font-bold mb-2">{stateName}</h2>
+                  <p className="text-gray-200 text-sm">Coverage availability</p>
+                </div>
+                <div className="bg-white rounded-lg shadow-lg p-12 text-center">
+                  <div className="text-6xl mb-4">🚫</div>
+                  <h3 className="text-2xl font-semibold text-gray-700">
+                    NO LINES OF BUSINESS ARE AVAILABLE IN THESE STATES
+                  </h3>
+                </div>
+              </div>
+            );
+          }
+
+          return (
+            <div className="space-y-6 fade-in">
+              <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg shadow-lg p-6 text-white">
+                <h2 className="text-3xl font-bold mb-2">{stateName}</h2>
+                <p className="text-purple-100 text-sm">
+                  Auto Liability is not currently offered in this state. The lines of business
+                  below are available on a non-admitted (E&S) basis.
+                </p>
+              </div>
+
+              <div className="bg-white rounded-lg shadow-lg p-6">
+                <h3 className="text-xl font-bold mb-4 text-indigo-800 flex items-center gap-2">
+                  <span>📦</span> Available Lines of Business (E&S Only)
+                </h3>
+                <p className="text-sm text-gray-600 mb-4 italic">
+                  All available lines of business are offered on a non-admitted (E&S) basis.
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  {LINES_OF_BUSINESS.map(lob => {
+                    const status = getAvailabilityStatus(lobData[lob]);
+                    return (
+                      <div key={lob} className={`p-4 rounded-lg border-2 ${status.available ? 'border-green-300' : 'border-gray-200'}`}>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-semibold text-gray-700">{lob}</p>
+                            <p className="text-xs text-gray-500">
+                              {lob === "APD" && "Auto Physical Damage"}
+                              {lob === "MTC" && "Motor Truck Cargo"}
+                              {lob === "NTL" && "Non-Trucking Liability"}
+                              {lob === "TGL" && "Truckers General Liability"}
+                            </p>
+                            <p className="text-xs text-purple-600 font-medium mt-1">Non-Admitted</p>
+                          </div>
+                          <span className={`text-xs px-2 py-1 rounded-full font-semibold ${status.className}`}>
+                            {status.icon}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           );
         }
