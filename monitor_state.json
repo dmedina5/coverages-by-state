@@ -1,7 +1,7 @@
 {
-  "hash": "b5e5d79131e470b7f835c58bc3f87895",
-  "timestamp": "2026-08-14T13:42:43.493Z",
-  "rowCount": 172,
+  "hash": "1ed0dde1771ec62cc4a26a97cd74fad0",
+  "timestamp": "2026-08-14T14:18:04.766Z",
+  "rowCount": 173,
   "data": [
     {
       "company_id": 5245,
@@ -294,6 +294,14 @@
     {
       "company_id": 6156,
       "company_name": "Everspan Insurance Company",
+      "state_code": "FL",
+      "active": 1,
+      "dsg_allowed": 0,
+      "lottery_al": 100
+    },
+    {
+      "company_id": 6881,
+      "company_name": "Accredited Surety and Casualty Company",
       "state_code": "FL",
       "active": 1,
       "dsg_allowed": 0,

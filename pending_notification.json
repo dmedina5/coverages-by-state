@@ -1,6 +1,13 @@
 {
-  "detectedAt": "2026-08-14T13:42:43.498Z",
-  "changes": [],
+  "detectedAt": "2026-08-14T14:18:04.770Z",
+  "changes": [
+    {
+      "type": "NEW",
+      "state": "FL",
+      "carrier": "Accredited 2025 Admitted",
+      "message": "New entry: FL - Accredited 2025 Admitted"
+    }
+  ],
   "dsgEligibility": {
     "AK": "N/A",
     "AL": "Y",
@@ -407,5 +414,11 @@
     "WV": [
       "Everspan Non-Admitted MunichRe"
     ]
+  },
+  "untrackedCarriers": [],
+  "staleness": {
+    "level": "unknown",
+    "hours": null,
+    "message": "No previous heartbeat recorded (first run since staleness tracking was added)"
   }
 }
