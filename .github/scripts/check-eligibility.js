@@ -24,19 +24,63 @@ const SLACK_APPROVAL_WEBHOOK_URL = process.env.SLACK_APPROVAL_WEBHOOK_URL;  // D
 const TOOL_URL = 'https://dmedina5.github.io/coverages-by-state/';
 const APPROVED_MODE = process.env.APPROVED === 'true';  // Set via workflow_dispatch to send to general channel
 
-const COMPANY_ID_MAPPING = {
-  5245: "Accredited Non-Admitted 1st",
-  6607: "Accredited Non-Admitted New",
-  5696: "Ascot Non-Admitted",
-  6155: "Everspan Non-Admitted MunichRe",
-  6156: "Everspan Admitted MunichRe",
-};
+// Monitor health. The workflow is scheduled every 5 minutes but the self-hosted runner
+// defers it heavily — observed real cadence is roughly hourly — so thresholds are set
+// against actual behaviour, not the cron expression.
+const HEARTBEAT_FILE = 'monitor_heartbeat.json';
+const HEARTBEAT_MIN_INTERVAL_MINUTES = parseInt(process.env.HEARTBEAT_MIN_INTERVAL_MINUTES) || 180;
+const STALENESS_WARN_HOURS = parseFloat(process.env.STALENESS_WARN_HOURS) || 6;
+const STALENESS_ERROR_HOURS = parseFloat(process.env.STALENESS_ERROR_HOURS) || 12;
 
-const DEFAULT_CARRIER_STATUS = {
-  "Everspan Admitted GenRe": "N/A",
-  "Everspan Non-Admitted GenRe": "turned off permanently",
-  "Knight Non-Admitted": "turned off permanently"
-};
+/**
+ * THE carrier list. Single source of truth for the DB query, the sync, and the UI —
+ * index.html renders its carrier cards and filter buttons from the copy of this that
+ * gets written into it, so adding a carrier is one entry here and nothing else.
+ *
+ * `status`:
+ *   live       — quotable today. Synced from company_state and rendered normally.
+ *   pre-launch — the company_state row exists but the carrier is gated OFF above the
+ *                database, so it is NOT quotable and must not be shown as available.
+ *                Still synced (so a weight change is visible in Slack), never rendered.
+ *   retired    — no company_state row at all; a fixed presentational status.
+ *
+ * Why `pre-launch` exists: Accredited 2025 Admitted (6881) has active=1 and a 100%
+ * lottery weight in prod, seeded deploy-dark by T2CP-832 ahead of its program launch.
+ * The real gate is ACCREDITED_2025_ADMITTED_ENABLED (config/carriers.php, defaults
+ * false, absent from prod secrets) — an application flag this tool cannot read. Zero
+ * submissions have ever bound on it. Trusting company_state.active alone would tell
+ * agents a carrier is available months before it is. Flip to `live` at launch.
+ */
+const CARRIER_REGISTRY = [
+  { id: null, key: "Everspan Admitted GenRe",         display: "Everspan Admitted (GenRe)",           status: "retired",    defaultStatus: "N/A" },
+  { id: null, key: "Everspan Non-Admitted GenRe",     display: "Everspan Non-Admitted (GenRe)",       status: "retired",    defaultStatus: "turned off permanently" },
+  { id: 6156, key: "Everspan Admitted MunichRe",      display: "Everspan Admitted (MunichRe)",        status: "live" },
+  { id: 6155, key: "Everspan Non-Admitted MunichRe",  display: "Everspan Non-Admitted (MunichRe)",    status: "live" },
+  { id: 5245, key: "Accredited Non-Admitted 1st",     display: "Accredited Non-Admitted (1st)",       status: "live" },
+  { id: 6607, key: "Accredited Non-Admitted New",     display: "Accredited Non-Admitted (New)",       status: "live" },
+  { id: 61,   key: "Knight Non-Admitted",             display: "Knight Non-Admitted",                 status: "retired",    defaultStatus: "turned off permanently",
+    note: "Permanently turned off for new business; continues to endorse existing policies." },
+  { id: 5696, key: "Ascot Non-Admitted",              display: "Ascot Non-Admitted",                  status: "live" },
+  { id: 6881, key: "Accredited 2025 Admitted",        display: "Accredited Admitted (2025 Program)",  status: "pre-launch",
+    note: "Provisioned in the database ahead of launch. Not quotable until ACCREDITED_2025_ADMITTED_ENABLED is turned on." }
+];
+
+// Carriers whose company_state rows the monitor reads (live + pre-launch).
+const TRACKED_CARRIERS = CARRIER_REGISTRY.filter(c => c.id !== null && c.status !== 'retired');
+const TRACKED_COMPANY_IDS = TRACKED_CARRIERS.map(c => c.id);
+
+// id -> data key, for turning DB rows into the keys index.html indexes by
+const COMPANY_ID_MAPPING = Object.fromEntries(TRACKED_CARRIERS.map(c => [c.id, c.key]));
+
+// Fixed statuses for carriers with no company_state row to read
+const DEFAULT_CARRIER_STATUS = Object.fromEntries(
+  CARRIER_REGISTRY.filter(c => c.defaultStatus).map(c => [c.key, c.defaultStatus])
+);
+
+// Carriers that must never render as available, whatever the database says
+const NON_QUOTABLE_KEYS = new Set(
+  CARRIER_REGISTRY.filter(c => c.status === 'pre-launch').map(c => c.key)
+);
 
 // The effective AL lottery weight for a carrier in a state: states flagged
 // specific_lottery use the per-state override (company_state.lottery_al), all
@@ -54,8 +98,27 @@ const STATE_QUERY = `
   FROM companies c
   INNER JOIN company_state cs ON c.id = cs.company_id
   INNER JOIN states s ON cs.state_id = s.id
-  WHERE c.id IN (5245, 6607, 5696, 6155, 6156)
+  WHERE c.id IN (${TRACKED_COMPANY_IDS.join(', ')})
   ORDER BY s.code, c.id
+`;
+
+/**
+ * Every company with a company_state row. company_state is carrier-only (6 companies
+ * across 173 rows as of 2026-08-14), so anything here that the registry does not know
+ * about is a carrier this tool is blind to — surfaced rather than silently included,
+ * because active=1 does not prove quotable (see CARRIER_REGISTRY).
+ */
+const CARRIER_DISCOVERY_QUERY = `
+  SELECT c.id, c.name,
+         COUNT(*) AS state_rows,
+         SUM(cs.active) AS active_states,
+         GROUP_CONCAT(DISTINCT CASE WHEN cs.active = TRUE THEN s.code END ORDER BY s.code) AS active_state_codes
+  FROM companies c
+  INNER JOIN company_state cs ON c.id = cs.company_id
+  INNER JOIN states s ON cs.state_id = s.id
+  GROUP BY c.id, c.name
+  HAVING active_states > 0
+  ORDER BY c.id
 `;
 
 const CARRIER_QUERY = `
@@ -95,6 +158,12 @@ function processCarrierData(rows) {
     const key = COMPANY_ID_MAPPING[row.id];
     if (!key) continue;
     if (!stateCarriers[row.code]) stateCarriers[row.code] = {};
+    // A pre-launch carrier is active in the database but gated off above it, so it
+    // can never be reported as available no matter what company_state says.
+    if (NON_QUOTABLE_KEYS.has(key)) {
+      stateCarriers[row.code][key] = "pre-launch";
+      continue;
+    }
     stateCarriers[row.code][key] = row.active ? "Y" : "turned off";
   }
   const result = {};
@@ -105,6 +174,66 @@ function processCarrierData(rows) {
     }
   }
   return result;
+}
+
+/**
+ * Carriers active in the database that the registry does not cover.
+ *
+ * Deliberately reports rather than auto-includes: a carrier can be provisioned in
+ * company_state months before it is quotable (see CARRIER_REGISTRY), so silently
+ * showing it as available would be worse than not showing it at all. Someone adds a
+ * registry line once they know its launch status.
+ */
+function findUntrackedCarriers(discoveryRows) {
+  const known = new Set(CARRIER_REGISTRY.filter(c => c.id !== null).map(c => c.id));
+  return discoveryRows
+    .filter(row => !known.has(row.id))
+    .map(row => ({
+      id: row.id,
+      name: row.name,
+      activeStates: Number(row.active_states) || 0,
+      stateCodes: (row.active_state_codes || '').split(',').filter(Boolean)
+    }));
+}
+
+/**
+ * Health of the monitor itself, from the heartbeat written on every successful check.
+ *
+ * `now` is injected rather than read from the clock so this is deterministically
+ * testable. Thresholds must stay above HEARTBEAT_MIN_INTERVAL_MINUTES, otherwise a
+ * perfectly healthy monitor would alarm on its own rate-limited heartbeat.
+ */
+function evaluateStaleness(lastCheckedAt, now, opts = {}) {
+  const warnHours = opts.warnHours ?? STALENESS_WARN_HOURS;
+  const errorHours = opts.errorHours ?? STALENESS_ERROR_HOURS;
+
+  if (!lastCheckedAt) {
+    return { level: 'unknown', hours: null, message: 'No previous heartbeat recorded (first run since staleness tracking was added)' };
+  }
+  const then = new Date(lastCheckedAt).getTime();
+  if (Number.isNaN(then)) {
+    return { level: 'unknown', hours: null, message: `Unreadable heartbeat timestamp: ${lastCheckedAt}` };
+  }
+  const hours = (now - then) / 3600000;
+  const rounded = Math.round(hours * 10) / 10;
+  if (hours >= errorHours) {
+    return { level: 'error', hours: rounded, message: `Monitor has not completed a successful check in ${rounded}h (threshold ${errorHours}h) — carrier data may be stale` };
+  }
+  if (hours >= warnHours) {
+    return { level: 'warn', hours: rounded, message: `Last successful check was ${rounded}h ago (threshold ${warnHours}h)` };
+  }
+  return { level: 'ok', hours: rounded, message: `Last successful check was ${rounded}h ago` };
+}
+
+/**
+ * Heartbeat writes are rate limited so a monitor that runs hourly does not produce a
+ * commit every hour. Interval stays well under the staleness thresholds.
+ */
+function shouldPersistHeartbeat(lastPersistedAt, now, minIntervalMinutes = HEARTBEAT_MIN_INTERVAL_MINUTES) {
+  if (!lastPersistedAt) return true;
+  const then = new Date(lastPersistedAt).getTime();
+  if (Number.isNaN(then)) return true;
+  return (now - then) >= minIntervalMinutes * 60000;
 }
 
 /**
@@ -195,6 +324,31 @@ function computeAdmittedALEligibility(dbResults) {
 
 function formatLotteryValue(value) {
   return value === null ? 'n/a (not enabled)' : `${value}%`;
+}
+
+/**
+ * Matches one `const <name> = <json>;` data block in index.html.
+ *
+ * Anchored to the end of the line rather than "everything up to the next semicolon":
+ * the blocks are emitted by JSON.stringify as a single line, and their values can
+ * legitimately contain semicolons (a carrier note does today). A `[^;]+` pattern
+ * silently fails to match those, and the sync then aborts on a block it cannot find.
+ */
+function dataBlockPattern(name) {
+  return new RegExp('const ' + name + ' = ([\\[{].*[\\]}]);$', 'm');
+}
+
+/**
+ * Replace a data block in index.html, failing loudly if it is not found — a missed
+ * block means the published tool silently keeps serving the old values.
+ */
+function replaceDataBlock(html, name, value) {
+  const match = html.match(dataBlockPattern(name));
+  if (!match) {
+    console.log(`::error::Could not find ${name} in index.html`);
+    process.exit(1);
+  }
+  return html.replace(`const ${name} = ${match[1]};`, `const ${name} = ${JSON.stringify(value)};`);
 }
 
 /**
@@ -289,7 +443,15 @@ function detectChanges(oldRows, newRows) {
 /**
  * Send a notification to Slack focusing on carrier eligibility changes
  */
-function sendSlackNotification(changes, dsgEligibility, admittedALEligibility, zeroLotteryCarriers) {
+function sendSlackNotification(payload) {
+  const {
+    changes = [],
+    dsgEligibility,
+    admittedALEligibility,
+    zeroLotteryCarriers,
+    untrackedCarriers,
+    staleness
+  } = payload || {};
   return new Promise((resolve) => {
     if (!SLACK_WEBHOOK_URL) {
       console.log('No Slack webhook URL configured, skipping notification');
@@ -462,6 +624,33 @@ function sendSlackNotification(changes, dsgEligibility, admittedALEligibility, z
       });
     }
 
+    // Carriers active in prod that this tool does not know about. Needs a human:
+    // being active in company_state does not prove a carrier is quotable.
+    if (untrackedCarriers && untrackedCarriers.length > 0) {
+      const lines = untrackedCarriers.map(c =>
+        `• \`${c.id}\` ${c.name} — active in ${c.activeStates} state${c.activeStates === 1 ? '' : 's'}${c.stateCodes.length ? ` (${c.stateCodes.join(', ')})` : ''}`
+      );
+      blocks.push({
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `:rotating_light: *Carrier active in the database but NOT tracked by this tool:*\n${lines.join('\n')}\n_Not shown in the tool and not monitored for 0% changes. Confirm whether it has actually launched, then add it to CARRIER_REGISTRY in check-eligibility.js._`
+        }
+      });
+    }
+
+    // Monitor health — a gap means the tool was showing stale data for that window
+    if (staleness && (staleness.level === 'warn' || staleness.level === 'error')) {
+      const icon = staleness.level === 'error' ? ':rotating_light:' : ':warning:';
+      blocks.push({
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `${icon} *Monitor health:* ${staleness.message}`
+        }
+      });
+    }
+
     // Link to tool
     blocks.push({
       type: "section",
@@ -552,6 +741,20 @@ function sendSlackNotification(changes, dsgEligibility, admittedALEligibility, z
   });
 }
 
+async function readHeartbeat() {
+  try {
+    return JSON.parse(await fs.readFile(HEARTBEAT_FILE, 'utf-8'));
+  } catch (e) {
+    return null;
+  }
+}
+
+/**
+ * A single unreachable-database run is a transient blip and stays green, as before.
+ * But once the monitor has been failing long enough that the published data is stale,
+ * it escalates to a hard failure so the run goes red and GitHub actually notifies —
+ * previously any number of consecutive failures exited 0 and looked healthy.
+ */
 async function connectWithRetry(config, maxRetries = 3, delayMs = 5000) {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
@@ -562,9 +765,15 @@ async function connectWithRetry(config, maxRetries = 3, delayMs = 5000) {
     } catch (err) {
       console.log(`Attempt ${attempt} failed: ${err.message}`);
       if (attempt === maxRetries) {
-        // Exit gracefully instead of throwing - prevents workflow failure
-        console.log('::warning::Database unavailable after retries - will try again next run');
-        process.exit(0);  // Exit with success to prevent workflow failure
+        const heartbeat = await readHeartbeat();
+        const staleness = evaluateStaleness(heartbeat?.lastCheckedAt, Date.now());
+        if (staleness.level === 'error') {
+          console.log(`::error::Database unavailable after ${maxRetries} attempts, and ${staleness.message}`);
+          await sendSlackNotification({ staleness, changes: [] });
+          process.exit(1);  // Escalate: this is no longer a transient blip
+        }
+        console.log(`::warning::Database unavailable after retries - will try again next run (${staleness.message})`);
+        process.exit(0);
       }
       console.log(`Waiting ${delayMs/1000}s before retry...`);
       await new Promise(r => setTimeout(r, delayMs));
@@ -584,7 +793,7 @@ async function main() {
       return;
     }
     console.log('Sending APPROVED message to general channel');
-    await sendSlackNotification(pending.changes, pending.dsgEligibility, pending.admittedALEligibility, pending.zeroLotteryCarriers);
+    await sendSlackNotification(pending);
     // Clear the pending file after sending
     await fs.writeFile('pending_notification.json', JSON.stringify({ sent: true, sentAt: new Date().toISOString() }, null, 2));
     console.log('Pending notification sent and cleared');
@@ -607,12 +816,52 @@ async function main() {
     process.exit(1);
   }
 
+  let exitCode = 0;
+
   try {
+    // Monitor health, measured before anything else so a gap is reported even on a
+    // run that finds no carrier changes at all.
+    const now = Date.now();
+    const previousHeartbeat = await readHeartbeat();
+    const staleness = evaluateStaleness(previousHeartbeat?.lastCheckedAt, now);
+    if (staleness.level === 'error') {
+      console.log(`::error::${staleness.message}`);
+      exitCode = 1;  // surface as a red run so GitHub notifies
+    } else if (staleness.level === 'warn') {
+      console.log(`::warning::${staleness.message}`);
+    } else {
+      console.log(`Monitor health: ${staleness.message}`);
+    }
+
     // Get current state
     const [stateRows] = await connection.execute(STATE_QUERY);
     const currentHash = computeHash(stateRows);
     console.log(`Current state hash: ${currentHash}`);
     console.log(`Records: ${stateRows.length}`);
+
+    // Carriers active in prod that the registry does not cover. Checked on every run,
+    // not just on change — a new carrier appears without any tracked row changing.
+    const [discoveryRows] = await connection.execute(CARRIER_DISCOVERY_QUERY);
+    const untrackedCarriers = findUntrackedCarriers(discoveryRows);
+    if (untrackedCarriers.length > 0) {
+      for (const c of untrackedCarriers) {
+        console.log(`::warning::Untracked carrier active in prod: ${c.id} ${c.name} (${c.stateCodes.join(', ') || c.activeStates + ' states'}) — add to CARRIER_REGISTRY`);
+      }
+    } else {
+      console.log(`Carrier registry covers all ${discoveryRows.length} active carriers`);
+    }
+
+    // Heartbeat: rate limited so an hourly monitor does not commit hourly
+    const heartbeatDue = shouldPersistHeartbeat(previousHeartbeat?.lastCheckedAt, now);
+    if (heartbeatDue) {
+      await fs.writeFile(HEARTBEAT_FILE, JSON.stringify({
+        lastCheckedAt: new Date(now).toISOString(),
+        trackedCarriers: TRACKED_COMPANY_IDS.length,
+        untrackedCarriers: untrackedCarriers.map(c => ({ id: c.id, name: c.name })),
+        note: 'Written on every successful check (rate limited). Drives the freshness indicator in the tool.'
+      }, null, 2));
+      console.log('Heartbeat updated');
+    }
 
     // Load saved state
     let savedState = null;
@@ -627,7 +876,11 @@ async function main() {
     // Compare
     if (savedState && savedState.hash === currentHash) {
       console.log('No changes detected');
+      if (untrackedCarriers.length > 0 || staleness.level === 'error') {
+        await sendSlackNotification({ changes: [], untrackedCarriers, staleness });
+      }
       await connection.end();
+      if (exitCode !== 0) process.exitCode = exitCode;
       return;
     }
 
@@ -671,39 +924,22 @@ async function main() {
     let html = await fs.readFile('index.html', 'utf-8');
     let updated = false;
 
-    // Update carrierData
-    const carrierPattern = /const carrierData = ({[^;]+});/s;
-    const carrierMatch = html.match(carrierPattern);
-
-    if (!carrierMatch) {
-      console.log('::error::Could not find carrierData in index.html');
-      process.exit(1);
-    }
-
-    html = html.replace(
-      `const carrierData = ${carrierMatch[1]};`,
-      `const carrierData = ${JSON.stringify(carrierData)};`
-    );
+    html = replaceDataBlock(html, 'carrierData', carrierData);
     updated = true;
     console.log('Updated carrierData');
 
-    // Update carrierLotteryData (drives the "Set to 0% in this state" label)
-    const lotteryPattern = /const carrierLotteryData = ({[^;]+});/s;
-    const lotteryMatch = html.match(lotteryPattern);
-
-    if (!lotteryMatch) {
-      console.log('::error::Could not find carrierLotteryData in index.html');
-      process.exit(1);
-    }
-
-    html = html.replace(
-      `const carrierLotteryData = ${lotteryMatch[1]};`,
-      `const carrierLotteryData = ${JSON.stringify(lotteryData)};`
-    );
+    // Drives the "Set to 0% in this state" label
+    html = replaceDataBlock(html, 'carrierLotteryData', lotteryData);
     console.log('Updated carrierLotteryData');
 
+    // Push the registry itself into the page so the UI's carrier cards and filter
+    // buttons come from one list — adding a carrier means editing CARRIER_REGISTRY
+    // above and nothing in index.html.
+    html = replaceDataBlock(html, 'carrierRegistry', CARRIER_REGISTRY);
+    console.log('Updated carrierRegistry');
+
     // Update lobOpsData for DS&G eligibility and Admitted AL
-    const lobPattern = /const lobOpsData = ({[^;]+});/s;
+    const lobPattern = dataBlockPattern('lobOpsData');
     const lobMatch = html.match(lobPattern);
 
     if (lobMatch) {
@@ -761,23 +997,30 @@ async function main() {
     console.log('Files updated successfully');
 
     // Save pending notification so approval run can replay it without re-querying DB
-    await fs.writeFile('pending_notification.json', JSON.stringify({
+    const notification = {
       detectedAt: new Date().toISOString(),
       changes,
       dsgEligibility,
       admittedALEligibility,
-      zeroLotteryCarriers
-    }, null, 2));
+      zeroLotteryCarriers,
+      untrackedCarriers,
+      staleness
+    };
+    await fs.writeFile('pending_notification.json', JSON.stringify(notification, null, 2));
     console.log('Saved pending_notification.json for approval replay');
 
     // Send Slack notification with carrier eligibility changes.
     // A hash change with no reportable row-level change (e.g. the first run after a
-    // new tracked column is introduced) would otherwise post an empty update.
-    if (changes.length === 0) {
-      console.log('Hash changed but no reportable row-level changes — skipping Slack notification');
+    // new tracked column is introduced) would otherwise post an empty update — but an
+    // untracked carrier or a staleness gap is worth saying on its own.
+    const hasSomethingToSay = changes.length > 0 || untrackedCarriers.length > 0 || staleness.level === 'error';
+    if (!hasSomethingToSay) {
+      console.log('Hash changed but nothing reportable — skipping Slack notification');
     } else {
-      await sendSlackNotification(changes, dsgEligibility, admittedALEligibility, zeroLotteryCarriers);
+      await sendSlackNotification(notification);
     }
+
+    if (exitCode !== 0) process.exitCode = exitCode;
 
   } finally {
     await connection.end();
@@ -785,15 +1028,24 @@ async function main() {
 }
 
 module.exports = {
+  CARRIER_REGISTRY,
+  TRACKED_COMPANY_IDS,
+  COMPANY_ID_MAPPING,
+  DEFAULT_CARRIER_STATUS,
+  NON_QUOTABLE_KEYS,
   computeHash,
   normalizeLottery,
   processCarrierData,
   computeLotteryData,
   findZeroLotteryCarriers,
+  findUntrackedCarriers,
+  evaluateStaleness,
+  shouldPersistHeartbeat,
   computeDsgEligibility,
   computeAdmittedALEligibility,
   detectChanges,
-  formatLotteryValue
+  formatLotteryValue,
+  dataBlockPattern
 };
 
 if (require.main === module) {

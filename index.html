@@ -80,17 +80,8 @@
       WY: "Wyoming"
     };
 
-    // Carrier names - mapped to exact column names from spreadsheet
-    const CARRIERS = [
-      { display: "Everspan Admitted (GenRe)", key: "Everspan Admitted GenRe" },
-      { display: "Everspan Non-Admitted (GenRe)", key: "Everspan Non-Admitted GenRe" },
-      { display: "Everspan Admitted (MunichRe)", key: "Everspan Admitted MunichRe" },
-      { display: "Everspan Non-Admitted (MunichRe)", key: "Everspan Non-Admitted MunichRe" },
-      { display: "Accredited Non-Admitted (1st Program)", key: "Accredited Non-Admitted 1st" },
-      { display: "Accredited Non-Admitted (New Program)", key: "Accredited Non-Admitted New" },
-      { display: "Knight Non-Admitted", key: "Knight Non-Admitted" },
-      { display: "Ascot Non-Admitted", key: "Ascot Non-Admitted" }
-    ];
+    // CARRIERS / PRE_LAUNCH_CARRIERS are derived from carrierRegistry, which is declared
+    // further down with the rest of the synced data.
 
     // Carrier capabilities for AL operations
     const carrierCapabilities = {
@@ -115,7 +106,7 @@
         "Non-Admitted AL": "Y",
         "Non-Admitted AL DS&G": "Y"
       },
-      "Everspan Admitted GenRe)": {
+      "Everspan Admitted (GenRe)": {
         "Admitted AL": "disabled",
         "Admitted AL Hotshots": "disabled",
         "Admitted AL UIIA": "disabled",
@@ -165,6 +156,17 @@
     // ACTIVE in that state appear. A carrier at 0 is still enabled to quote but the
     // lottery will never select it. Auto-synced by .github/scripts/check-eligibility.js.
     const carrierLotteryData = {"AL":{"Accredited Non-Admitted 1st":35,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":65},"AR":{"Accredited Non-Admitted 1st":35,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":65},"AZ":{"Accredited Non-Admitted 1st":35,"Ascot Non-Admitted":1,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":64},"CA":{"Accredited Non-Admitted 1st":35,"Ascot Non-Admitted":1,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":64},"CO":{"Accredited Non-Admitted 1st":35,"Ascot Non-Admitted":1,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":64},"DE":{"Accredited Non-Admitted 1st":35,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":65},"FL":{"Everspan Admitted MunichRe":100},"GA":{"Accredited Non-Admitted 1st":34,"Ascot Non-Admitted":1,"Accredited Non-Admitted New":64},"IA":{"Accredited Non-Admitted 1st":35,"Ascot Non-Admitted":1,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":64},"ID":{"Accredited Non-Admitted 1st":35,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":65},"IL":{"Everspan Admitted MunichRe":100},"IN":{"Accredited Non-Admitted 1st":35,"Ascot Non-Admitted":1,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":64},"MD":{"Accredited Non-Admitted 1st":35,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":65},"ME":{"Accredited Non-Admitted 1st":35,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":65},"MI":{"Accredited Non-Admitted 1st":0,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":100},"MN":{"Accredited Non-Admitted 1st":0,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":100},"MO":{"Accredited Non-Admitted 1st":35,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":65},"MS":{"Accredited Non-Admitted 1st":35,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":65},"MT":{"Accredited Non-Admitted 1st":35,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":65},"NC":{"Everspan Admitted MunichRe":100},"ND":{"Accredited Non-Admitted 1st":35,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":65},"NE":{"Accredited Non-Admitted 1st":35,"Ascot Non-Admitted":1,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":64},"NH":{"Accredited Non-Admitted 1st":35,"Ascot Non-Admitted":1,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":64},"NJ":{"Accredited Non-Admitted 1st":35,"Accredited Non-Admitted New":65},"NM":{"Everspan Admitted MunichRe":100},"NV":{"Everspan Admitted MunichRe":100},"OH":{"Accredited Non-Admitted 1st":35,"Accredited Non-Admitted New":65},"OK":{"Accredited Non-Admitted 1st":35,"Ascot Non-Admitted":1,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":64},"OR":{"Accredited Non-Admitted 1st":34,"Ascot Non-Admitted":1,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":65},"PA":{"Accredited Non-Admitted 1st":35,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":65},"RI":{"Accredited Non-Admitted 1st":35,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":65},"SC":{"Everspan Admitted MunichRe":100},"SD":{"Accredited Non-Admitted 1st":35,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":65},"TN":{"Accredited Non-Admitted 1st":35,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":65},"TX":{"Accredited Non-Admitted 1st":35,"Ascot Non-Admitted":1,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":64},"UT":{"Accredited Non-Admitted 1st":35,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":65},"VA":{"Accredited Non-Admitted 1st":35,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":65},"VT":{"Accredited Non-Admitted 1st":35,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":65},"WA":{"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":100},"WI":{"Everspan Admitted MunichRe":100},"WV":{"Accredited Non-Admitted 1st":35,"Everspan Non-Admitted MunichRe":0,"Accredited Non-Admitted New":65}};
+
+    // THE carrier list — mirrored from CARRIER_REGISTRY in check-eligibility.js on every
+    // sync. status: live = quotable; pre-launch = row exists in the DB but the carrier is
+    // gated off above it, so it is never rendered; retired = fixed presentational status.
+    const carrierRegistry = [{"id":null,"key":"Everspan Admitted GenRe","display":"Everspan Admitted (GenRe)","status":"retired","defaultStatus":"N/A"},{"id":null,"key":"Everspan Non-Admitted GenRe","display":"Everspan Non-Admitted (GenRe)","status":"retired","defaultStatus":"turned off permanently"},{"id":6156,"key":"Everspan Admitted MunichRe","display":"Everspan Admitted (MunichRe)","status":"live"},{"id":6155,"key":"Everspan Non-Admitted MunichRe","display":"Everspan Non-Admitted (MunichRe)","status":"live"},{"id":5245,"key":"Accredited Non-Admitted 1st","display":"Accredited Non-Admitted (1st)","status":"live"},{"id":6607,"key":"Accredited Non-Admitted New","display":"Accredited Non-Admitted (New)","status":"live"},{"id":61,"key":"Knight Non-Admitted","display":"Knight Non-Admitted","status":"retired","defaultStatus":"turned off permanently","note":"Permanently turned off for new business; continues to endorse existing policies."},{"id":5696,"key":"Ascot Non-Admitted","display":"Ascot Non-Admitted","status":"live"},{"id":6881,"key":"Accredited 2025 Admitted","display":"Accredited Admitted (2025 Program)","status":"pre-launch","note":"Provisioned in the database ahead of launch. Not quotable until ACCREDITED_2025_ADMITTED_ENABLED is turned on."}];
+
+    // Carriers shown anywhere in the UI, in registry order. Pre-launch carriers are
+    // deliberately excluded: their company_state row exists, but they are gated off
+    // above the database and are not quotable, so showing them would be wrong.
+    const CARRIERS = carrierRegistry.filter(c => c.status !== "pre-launch");
+    const PRE_LAUNCH_CARRIERS = carrierRegistry.filter(c => c.status === "pre-launch");
 
     // Helper functions
     const formatLimit = (value) => {
@@ -232,6 +234,44 @@
       return { ...getAvailabilityStatus(value), zeroLottery: false };
     };
 
+    // Freshness of the underlying carrier data. The monitor writes monitor_heartbeat.json
+    // on every successful check, so a stale timestamp means the tool has been showing old
+    // data — worth saying out loud rather than looking confidently wrong.
+    // Thresholds mirror STALENESS_WARN_HOURS / STALENESS_ERROR_HOURS in check-eligibility.js.
+    const FRESHNESS_WARN_HOURS = 6;
+    const FRESHNESS_ERROR_HOURS = 12;
+
+    const describeFreshness = (lastCheckedAt, now) => {
+      if (!lastCheckedAt) {
+        return { level: "unknown", text: "Data freshness unavailable — could not read the monitor heartbeat" };
+      }
+      const then = new Date(lastCheckedAt).getTime();
+      if (Number.isNaN(then)) {
+        return { level: "unknown", text: "Data freshness unavailable — unreadable heartbeat" };
+      }
+      const hours = (now - then) / 3600000;
+      const ago = hours < 1
+        ? `${Math.max(1, Math.round(hours * 60))} min ago`
+        : hours < 48
+          ? `${Math.round(hours)} hr ago`
+          : `${Math.round(hours / 24)} days ago`;
+
+      if (hours >= FRESHNESS_ERROR_HOURS) {
+        return { level: "error", text: `Carrier data last verified ${ago} — the monitor may have stopped running` };
+      }
+      if (hours >= FRESHNESS_WARN_HOURS) {
+        return { level: "warn", text: `Carrier data last verified ${ago}` };
+      }
+      return { level: "ok", text: `Carrier data verified ${ago}` };
+    };
+
+    const FRESHNESS_STYLES = {
+      ok: "bg-green-50 border-green-200 text-green-700",
+      warn: "bg-amber-50 border-amber-300 text-amber-800",
+      error: "bg-red-50 border-red-300 text-red-800",
+      unknown: "bg-gray-50 border-gray-200 text-gray-500"
+    };
+
     // How many of the states where this carrier is active have it at 0%
     const countZeroLotteryStates = (carrierKey) =>
       Object.keys(carrierData).filter(stateCode =>
@@ -275,8 +315,24 @@
       const [coverageRequirement, setCoverageRequirement] = useState("any");
       const [carrierFilter, setCarrierFilter] = useState([]);
       const [alSnapshotFilter, setAlSnapshotFilter] = useState(null);
+      const [freshness, setFreshness] = useState(null);
       const searchInputRef = useRef(null);
       const dropdownRef = useRef(null);
+
+      // Heartbeat lives in its own small file so the monitor can refresh it without
+      // rewriting index.html on every run.
+      useEffect(() => {
+        let cancelled = false;
+        fetch('monitor_heartbeat.json', { cache: 'no-store' })
+          .then(r => (r.ok ? r.json() : null))
+          .then(data => {
+            if (!cancelled) setFreshness(describeFreshness(data && data.lastCheckedAt, Date.now()));
+          })
+          .catch(() => {
+            if (!cancelled) setFreshness(describeFreshness(null, Date.now()));
+          });
+        return () => { cancelled = true; };
+      }, []);
 
       const alCounts = useMemo(() => countALStates(), []);
 
@@ -664,23 +720,12 @@
                 const blockedCarriers = [];
                 const zeroLotteryCarriers = [];
 
-                const carrierList = [
-                  { key: "Everspan Admitted GenRe", label: "Everspan Admitted (GenRe)" },
-                  { key: "Everspan Non-Admitted GenRe", label: "Everspan Non-Admitted (GenRe)" },
-                  { key: "Everspan Admitted MunichRe", label: "Everspan Admitted (MunichRe)" },
-                  { key: "Everspan Non-Admitted MunichRe", label: "Everspan Non-Admitted (MunichRe)" },
-                  { key: "Accredited Non-Admitted 1st", label: "Accredited Non-Admitted (1st)" },
-                  { key: "Accredited Non-Admitted New", label: "Accredited Non-Admitted (New)" },
-                  { key: "Knight Non-Admitted", label: "Knight Non-Admitted" },
-                  { key: "Ascot Non-Admitted", label: "Ascot Non-Admitted" }
-                ];
-
-                carrierList.forEach(carrier => {
+                CARRIERS.forEach(carrier => {
                   const status = selectedStateData.carriers[carrier.key];
-                  if (status === "turned off") turnedOffTempCarriers.push(carrier.label);
-                  else if (status === "turned off permanently") turnedOffPermCarriers.push(carrier.label);
-                  else if (status === "blocked") blockedCarriers.push(carrier.label);
-                  else if (status === "Y" && isZeroLottery(selectedState, carrier.key)) zeroLotteryCarriers.push(carrier.label);
+                  if (status === "turned off") turnedOffTempCarriers.push(carrier.display);
+                  else if (status === "turned off permanently") turnedOffPermCarriers.push(carrier.display);
+                  else if (status === "blocked") blockedCarriers.push(carrier.display);
+                  else if (status === "Y" && isZeroLottery(selectedState, carrier.key)) zeroLotteryCarriers.push(carrier.display);
                 });
 
                 return (
@@ -720,20 +765,11 @@
               })()}
 
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {[
-                  { key: "Everspan Admitted GenRe", label: "Everspan Admitted (GenRe)" },
-                  { key: "Everspan Non-Admitted GenRe", label: "Everspan Non-Admitted (GenRe)" },
-                  { key: "Everspan Admitted MunichRe", label: "Everspan Admitted (MunichRe)" },
-                  { key: "Everspan Non-Admitted MunichRe", label: "Everspan Non-Admitted (MunichRe)" },
-                  { key: "Accredited Non-Admitted 1st", label: "Accredited Non-Admitted (1st)" },
-                  { key: "Accredited Non-Admitted New", label: "Accredited Non-Admitted (New)" },
-                  { key: "Knight Non-Admitted", label: "Knight Non-Admitted" },
-                  { key: "Ascot Non-Admitted", label: "Ascot Non-Admitted" }
-                ].map(carrier => {
+                {CARRIERS.map(carrier => {
                   const status = getCarrierStateStatus(selectedState, carrier.key, selectedStateData.carriers[carrier.key]);
                   return (
                     <div key={carrier.key} className={`p-3 rounded-lg border ${status.zeroLottery ? 'bg-amber-50 border-amber-300' : 'bg-gray-50'}`}>
-                      <p className="text-sm font-medium text-gray-700 mb-1">{carrier.label}</p>
+                      <p className="text-sm font-medium text-gray-700 mb-1">{carrier.display}</p>
                       <span className={`text-xs px-2 py-1 rounded-full font-semibold ${status.className} inline-flex items-center gap-1`}>
                         <span>{status.icon}</span>
                         <span>{status.label}</span>
@@ -741,10 +777,21 @@
                       {status.zeroLottery && (
                         <p className="text-xs text-amber-700 mt-1 italic">Enabled to quote — lottery will not select</p>
                       )}
+                      {carrier.note && (
+                        <p className="text-xs text-gray-500 mt-1 italic">{carrier.note}</p>
+                      )}
                     </div>
                   );
                 })}
               </div>
+
+              {PRE_LAUNCH_CARRIERS.length > 0 && (
+                <div className="mt-4 p-3 bg-slate-50 border border-slate-200 rounded text-xs text-slate-600">
+                  <span className="font-semibold">Not yet launched:</span>{" "}
+                  {PRE_LAUNCH_CARRIERS.map(c => c.display).join(", ")} — set up in the platform but not
+                  available to quote yet, so not shown above.
+                </div>
+              )}
             </div>
 
             <div className="bg-white rounded-lg shadow-lg p-6">
@@ -1325,6 +1372,14 @@
                 <p>⚠️ <span className="font-semibold">Note:</span> Auto Liability coverage is not currently offered in Alaska, Connecticut, Hawaii, Kansas, Kentucky, Louisiana, Massachusetts, New York, and Wyoming.</p>
               </div>
             </div>
+
+            {freshness && (
+              <div className={`mt-6 px-4 py-2 rounded-lg border text-sm text-center ${FRESHNESS_STYLES[freshness.level]}`}>
+                {freshness.level === "error" && <span className="mr-1">🚨</span>}
+                {freshness.level === "warn" && <span className="mr-1">⚠️</span>}
+                {freshness.text}
+              </div>
+            )}
 
             <div className="mt-8 text-center text-sm text-gray-500">
               <p>Core Systems Management Tool • Enhanced Coverage Assessment Platform v4.0</p>
