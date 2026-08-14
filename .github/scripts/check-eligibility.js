@@ -4,18 +4,19 @@ const crypto = require('crypto');
 const https = require('https');
 
 // Configuration from environment
-// Password is base64 encoded to preserve special characters
-const decodedPassword = Buffer.from(process.env.DB_PASSWORD, 'base64').toString('utf-8');
-
-const DB_CONFIG = {
-  host: process.env.DB_HOST,
-  port: parseInt(process.env.DB_PORT) || 3306,
-  user: process.env.DB_USER,
-  password: decodedPassword,
-  database: process.env.DB_NAME,
-  connectTimeout: 30000,
-  ssl: { rejectUnauthorized: false }
-};
+// Password is base64 encoded to preserve special characters.
+// Decoded lazily so this file stays requireable (test harness) without DB secrets.
+function buildDbConfig() {
+  return {
+    host: process.env.DB_HOST,
+    port: parseInt(process.env.DB_PORT) || 3306,
+    user: process.env.DB_USER,
+    password: Buffer.from(process.env.DB_PASSWORD || '', 'base64').toString('utf-8'),
+    database: process.env.DB_NAME,
+    connectTimeout: 30000,
+    ssl: { rejectUnauthorized: false }
+  };
+}
 
 // Slack configuration
 const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;  // General channel
@@ -37,9 +38,19 @@ const DEFAULT_CARRIER_STATUS = {
   "Knight Non-Admitted": "turned off permanently"
 };
 
+// The effective AL lottery weight for a carrier in a state: states flagged
+// specific_lottery use the per-state override (company_state.lottery_al), all
+// others fall back to the carrier-wide weight (companies.lottery_al).
+const EFFECTIVE_LOTTERY_SQL = `
+  CASE WHEN cs.active = TRUE AND s.specific_lottery = FALSE THEN c.lottery_al
+       WHEN cs.active = TRUE AND s.specific_lottery = TRUE THEN cs.lottery_al
+       ELSE NULL END
+`;
+
 const STATE_QUERY = `
   SELECT c.id AS company_id, c.name AS company_name, s.code AS state_code,
-         cs.active, cs.dsg_allowed
+         cs.active, cs.dsg_allowed,
+         ${EFFECTIVE_LOTTERY_SQL} AS lottery_al
   FROM companies c
   INNER JOIN company_state cs ON c.id = cs.company_id
   INNER JOIN states s ON cs.state_id = s.id
@@ -49,9 +60,7 @@ const STATE_QUERY = `
 
 const CARRIER_QUERY = `
   SELECT DISTINCT c.id, c.name, s.code, cs.active,
-         CASE WHEN cs.active = TRUE AND s.specific_lottery = FALSE THEN c.lottery_al
-              WHEN cs.active = TRUE AND s.specific_lottery = TRUE THEN cs.lottery_al
-              ELSE NULL END AS lottery_al,
+         ${EFFECTIVE_LOTTERY_SQL} AS lottery_al,
          cs.dsg_allowed
   FROM companies c
   INNER JOIN company_state cs ON c.id = cs.company_id
@@ -59,9 +68,22 @@ const CARRIER_QUERY = `
   ORDER BY s.code, c.id
 `;
 
+// lottery_al is part of the hash so a weight change (e.g. a carrier dropped to 0%
+// while staying enabled) triggers a sync — active/dsg_allowed alone would miss it.
 function computeHash(rows) {
-  const str = rows.map(r => `${r.state_code}:${r.company_id}:${r.active}:${r.dsg_allowed}`).sort().join('|');
+  const str = rows
+    .map(r => `${r.state_code}:${r.company_id}:${r.active}:${r.dsg_allowed}:${normalizeLottery(r.lottery_al)}`)
+    .sort()
+    .join('|');
   return crypto.createHash('md5').update(str).digest('hex');
+}
+
+// null/undefined lottery (inactive carrier) collapses to a single sentinel so an
+// inactive row never looks like a 0% row.
+function normalizeLottery(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const num = Number(value);
+  return Number.isNaN(num) ? null : num;
 }
 
 function processCarrierData(rows) {
@@ -81,6 +103,44 @@ function processCarrierData(rows) {
     for (const key of Object.values(COMPANY_ID_MAPPING)) {
       if (!(key in result[state])) result[state][key] = "N/A";
     }
+  }
+  return result;
+}
+
+/**
+ * Compute the effective AL lottery weight per state, per tracked carrier.
+ *
+ * Only ACTIVE carriers are recorded — an inactive carrier has no lottery standing,
+ * and recording it as 0 would be indistinguishable from the case this exists to
+ * surface: a carrier that is still enabled to quote but sits at 0% on the lottery
+ * (Everspan Non-Admitted MunichRe today), so the lottery never selects it.
+ *
+ * Shape: { "TX": { "Everspan Non-Admitted MunichRe": 0, "Ascot Non-Admitted": 1 } }
+ */
+function computeLotteryData(dbResults) {
+  const result = {};
+  for (const row of dbResults) {
+    if (!row.code) continue;
+    const key = COMPANY_ID_MAPPING[row.id];
+    if (!key) continue;
+    if (!(row.active === 1 || row.active === true)) continue;
+    const lottery = normalizeLottery(row.lottery_al);
+    if (lottery === null) continue;
+    if (!result[row.code]) result[row.code] = {};
+    result[row.code][key] = lottery;
+  }
+  return result;
+}
+
+/**
+ * Carriers that are enabled to quote but set to 0% on the lottery, keyed by state.
+ * Sorted so the output is stable across runs (stable diffs, stable Slack copy).
+ */
+function findZeroLotteryCarriers(lotteryData) {
+  const result = {};
+  for (const state of Object.keys(lotteryData).sort()) {
+    const zeroed = Object.keys(lotteryData[state]).filter(c => lotteryData[state][c] === 0).sort();
+    if (zeroed.length > 0) result[state] = zeroed;
   }
   return result;
 }
@@ -131,6 +191,10 @@ function computeAdmittedALEligibility(dbResults) {
     }
   }
   return stateAdmittedStatus;
+}
+
+function formatLotteryValue(value) {
+  return value === null ? 'n/a (not enabled)' : `${value}%`;
 }
 
 /**
@@ -185,6 +249,26 @@ function detectChanges(oldRows, newRows) {
           message: `${newRow.state_code} - ${carrierName}: DSG ${oldStatus} → ${newStatus}`
         });
       }
+      // Lottery weight. Rows saved before lottery tracking existed have no
+      // lottery_al key at all — skip those rather than reporting the whole book
+      // as changed on the first run after this field was added.
+      const oldTrackedLottery = Object.prototype.hasOwnProperty.call(oldRow, 'lottery_al');
+      const oldLottery = normalizeLottery(oldRow.lottery_al);
+      const newLottery = normalizeLottery(newRow.lottery_al);
+      if (oldTrackedLottery && oldLottery !== newLottery) {
+        changes.push({
+          type: 'LOTTERY',
+          state: newRow.state_code,
+          carrier: carrierName,
+          oldValue: oldLottery,
+          newValue: newLottery,
+          // Only meaningful while the carrier stays enabled — that is the case
+          // this exists to catch (quotable, but never selected by the lottery).
+          zeroed: newLottery === 0 && Boolean(newRow.active),
+          restored: oldLottery === 0 && newLottery !== null && newLottery > 0,
+          message: `${newRow.state_code} - ${carrierName}: lottery ${formatLotteryValue(oldLottery)} → ${formatLotteryValue(newLottery)}`
+        });
+      }
     }
   }
 
@@ -205,7 +289,7 @@ function detectChanges(oldRows, newRows) {
 /**
  * Send a notification to Slack focusing on carrier eligibility changes
  */
-function sendSlackNotification(changes, dsgEligibility, admittedALEligibility) {
+function sendSlackNotification(changes, dsgEligibility, admittedALEligibility, zeroLotteryCarriers) {
   return new Promise((resolve) => {
     if (!SLACK_WEBHOOK_URL) {
       console.log('No Slack webhook URL configured, skipping notification');
@@ -313,6 +397,67 @@ function sendSlackNotification(changes, dsgEligibility, admittedALEligibility) {
         text: {
           type: "mrkdwn",
           text: `*Carrier status changes:*\n${activeLines.join('\n')}`
+        }
+      });
+    }
+
+    // Lottery weight changes — a carrier can stay enabled to quote while its
+    // lottery weight drops to 0%, which no active/DSG signal above would surface.
+    const lotteryChanges = changes.filter(c => c.type === 'LOTTERY');
+    if (lotteryChanges.length > 0) {
+      const zeroedChanges = lotteryChanges.filter(c => c.zeroed);
+      const otherLotteryChanges = lotteryChanges.filter(c => !c.zeroed);
+
+      if (zeroedChanges.length > 0) {
+        const zeroLines = zeroedChanges.slice(0, 10).map(c =>
+          `• ${c.state} - ${c.carrier}: ${formatLotteryValue(c.oldValue)} → *0%* ⚖️`
+        );
+        if (zeroedChanges.length > 10) {
+          zeroLines.push(`• ... and ${zeroedChanges.length - 10} more set to 0%`);
+        }
+        blocks.push({
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `*Carriers set to 0% on the lottery (still enabled to quote):*\n${zeroLines.join('\n')}`
+          }
+        });
+      }
+
+      if (otherLotteryChanges.length > 0) {
+        const otherLines = otherLotteryChanges.slice(0, 10).map(c => {
+          const marker = c.restored ? ' ✅' : '';
+          return `• ${c.state} - ${c.carrier}: ${formatLotteryValue(c.oldValue)} → ${formatLotteryValue(c.newValue)}${marker}`;
+        });
+        if (otherLotteryChanges.length > 10) {
+          otherLines.push(`• ... and ${otherLotteryChanges.length - 10} more lottery changes`);
+        }
+        blocks.push({
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `*Lottery weight changes:*\n${otherLines.join('\n')}`
+          }
+        });
+      }
+    }
+
+    // Standing total of carriers sitting at 0% while still quotable
+    if (zeroLotteryCarriers && Object.keys(zeroLotteryCarriers).length > 0) {
+      const perCarrier = {};
+      for (const [state, carriers] of Object.entries(zeroLotteryCarriers)) {
+        for (const carrier of carriers) {
+          (perCarrier[carrier] = perCarrier[carrier] || []).push(state);
+        }
+      }
+      const summaryLines = Object.keys(perCarrier).sort().map(carrier =>
+        `• ${carrier}: ${perCarrier[carrier].length} state${perCarrier[carrier].length === 1 ? '' : 's'} (${perCarrier[carrier].join(', ')})`
+      );
+      blocks.push({
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `*Currently at 0% on the lottery (enabled, not selected):*\n${summaryLines.join('\n')}`
         }
       });
     }
@@ -439,12 +584,14 @@ async function main() {
       return;
     }
     console.log('Sending APPROVED message to general channel');
-    await sendSlackNotification(pending.changes, pending.dsgEligibility, pending.admittedALEligibility);
+    await sendSlackNotification(pending.changes, pending.dsgEligibility, pending.admittedALEligibility, pending.zeroLotteryCarriers);
     // Clear the pending file after sending
     await fs.writeFile('pending_notification.json', JSON.stringify({ sent: true, sentAt: new Date().toISOString() }, null, 2));
     console.log('Pending notification sent and cleared');
     return;
   }
+
+  const DB_CONFIG = buildDbConfig();
 
   console.log('Connecting to database...');
   console.log(`Host: ${DB_CONFIG.host}`);
@@ -511,6 +658,15 @@ async function main() {
       .filter(([_, v]) => v["Admitted AL"] === "Y").map(([k]) => k);
     console.log(`Admitted AL in ${admittedALStates.length} states: ${admittedALStates.join(', ')}`);
 
+    // Compute effective AL lottery weights and the 0%-but-still-quotable set
+    const lotteryData = computeLotteryData(fullRows);
+    const zeroLotteryCarriers = findZeroLotteryCarriers(lotteryData);
+    const zeroLotteryStates = Object.keys(zeroLotteryCarriers);
+    console.log(`Carriers set to 0% on the lottery in ${zeroLotteryStates.length} states`);
+    for (const state of zeroLotteryStates) {
+      console.log(`  ${state}: ${zeroLotteryCarriers[state].join(', ')}`);
+    }
+
     // Update index.html
     let html = await fs.readFile('index.html', 'utf-8');
     let updated = false;
@@ -530,6 +686,21 @@ async function main() {
     );
     updated = true;
     console.log('Updated carrierData');
+
+    // Update carrierLotteryData (drives the "Set to 0% in this state" label)
+    const lotteryPattern = /const carrierLotteryData = ({[^;]+});/s;
+    const lotteryMatch = html.match(lotteryPattern);
+
+    if (!lotteryMatch) {
+      console.log('::error::Could not find carrierLotteryData in index.html');
+      process.exit(1);
+    }
+
+    html = html.replace(
+      `const carrierLotteryData = ${lotteryMatch[1]};`,
+      `const carrierLotteryData = ${JSON.stringify(lotteryData)};`
+    );
+    console.log('Updated carrierLotteryData');
 
     // Update lobOpsData for DS&G eligibility and Admitted AL
     const lobPattern = /const lobOpsData = ({[^;]+});/s;
@@ -594,19 +765,40 @@ async function main() {
       detectedAt: new Date().toISOString(),
       changes,
       dsgEligibility,
-      admittedALEligibility
+      admittedALEligibility,
+      zeroLotteryCarriers
     }, null, 2));
     console.log('Saved pending_notification.json for approval replay');
 
-    // Send Slack notification with carrier eligibility changes
-    await sendSlackNotification(changes, dsgEligibility, admittedALEligibility);
+    // Send Slack notification with carrier eligibility changes.
+    // A hash change with no reportable row-level change (e.g. the first run after a
+    // new tracked column is introduced) would otherwise post an empty update.
+    if (changes.length === 0) {
+      console.log('Hash changed but no reportable row-level changes — skipping Slack notification');
+    } else {
+      await sendSlackNotification(changes, dsgEligibility, admittedALEligibility, zeroLotteryCarriers);
+    }
 
   } finally {
     await connection.end();
   }
 }
 
-main().catch(err => {
-  console.log('::warning::' + err.message);
-  process.exit(0);  // Exit gracefully - network issues are transient
-});
+module.exports = {
+  computeHash,
+  normalizeLottery,
+  processCarrierData,
+  computeLotteryData,
+  findZeroLotteryCarriers,
+  computeDsgEligibility,
+  computeAdmittedALEligibility,
+  detectChanges,
+  formatLotteryValue
+};
+
+if (require.main === module) {
+  main().catch(err => {
+    console.log('::warning::' + err.message);
+    process.exit(0);  // Exit gracefully - network issues are transient
+  });
+}

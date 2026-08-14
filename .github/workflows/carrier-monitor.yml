@@ -40,6 +40,11 @@ jobs:
       - name: Install dependencies
         run: npm install mysql2
 
+      # Guards the pure sync logic (hash, lottery, change detection) before it is
+      # allowed to rewrite index.html. No DB or secrets needed.
+      - name: Run sync logic self-tests
+        run: node .github/scripts/test-eligibility.js
+
       - name: Check for carrier eligibility changes
         id: check
         env:
