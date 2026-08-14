@@ -1,0 +1,411 @@
+{
+  "detectedAt": "2026-08-14T13:42:43.498Z",
+  "changes": [],
+  "dsgEligibility": {
+    "AK": "N/A",
+    "AL": "Y",
+    "AR": "Y",
+    "AZ": "Y",
+    "CA": "Y",
+    "CO": "Y",
+    "CT": "N/A",
+    "DC": "N/A",
+    "DE": "Y",
+    "FL": "N/A",
+    "GA": "Y",
+    "HI": "N/A",
+    "IA": "Y",
+    "ID": "Y",
+    "IL": "N/A",
+    "IN": "Y",
+    "KS": "N/A",
+    "KY": "N/A",
+    "LA": "N/A",
+    "MA": "N/A",
+    "MD": "Y",
+    "ME": "Y",
+    "MI": "Y",
+    "MN": "Y",
+    "MO": "Y",
+    "MS": "Y",
+    "MT": "Y",
+    "NC": "N/A",
+    "ND": "Y",
+    "NE": "Y",
+    "NH": "Y",
+    "NJ": "N/A",
+    "NM": "N/A",
+    "NV": "N/A",
+    "NY": "N/A",
+    "OH": "Y",
+    "OK": "Y",
+    "OR": "Y",
+    "PA": "Y",
+    "RI": "Y",
+    "SC": "N/A",
+    "SD": "Y",
+    "TN": "Y",
+    "TX": "Y",
+    "UT": "Y",
+    "VA": "Y",
+    "VT": "N/A",
+    "WA": "Y",
+    "WI": "N/A",
+    "WV": "Y",
+    "WY": "N/A"
+  },
+  "admittedALEligibility": {
+    "AK": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "AL": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "AR": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "AZ": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "CA": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "CO": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "CT": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "DC": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "DE": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "FL": {
+      "Admitted AL": "Y",
+      "Admitted AL Hotshots": "Y",
+      "Admitted AL UIIA": "N/A"
+    },
+    "GA": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "HI": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "IA": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "ID": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "IL": {
+      "Admitted AL": "Y",
+      "Admitted AL Hotshots": "Y",
+      "Admitted AL UIIA": "Y"
+    },
+    "IN": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "KS": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "KY": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "LA": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "MA": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "MD": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "ME": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "MI": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "MN": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "MO": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "MS": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "MT": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "NC": {
+      "Admitted AL": "Y",
+      "Admitted AL Hotshots": "Y",
+      "Admitted AL UIIA": "Y"
+    },
+    "ND": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "NE": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "NH": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "NJ": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "NM": {
+      "Admitted AL": "Y",
+      "Admitted AL Hotshots": "Y",
+      "Admitted AL UIIA": "Y"
+    },
+    "NV": {
+      "Admitted AL": "Y",
+      "Admitted AL Hotshots": "Y",
+      "Admitted AL UIIA": "Y"
+    },
+    "NY": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "OH": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "OK": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "OR": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "PA": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "RI": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "SC": {
+      "Admitted AL": "Y",
+      "Admitted AL Hotshots": "Y",
+      "Admitted AL UIIA": "Y"
+    },
+    "SD": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "TN": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "TX": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "UT": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "VA": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "VT": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "WA": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "WI": {
+      "Admitted AL": "Y",
+      "Admitted AL Hotshots": "Y",
+      "Admitted AL UIIA": "Y"
+    },
+    "WV": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    },
+    "WY": {
+      "Admitted AL": "N/A",
+      "Admitted AL Hotshots": "N/A",
+      "Admitted AL UIIA": "N/A"
+    }
+  },
+  "zeroLotteryCarriers": {
+    "AL": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "AR": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "AZ": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "CA": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "CO": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "DE": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "IA": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "ID": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "IN": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "MD": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "ME": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "MI": [
+      "Accredited Non-Admitted 1st",
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "MN": [
+      "Accredited Non-Admitted 1st",
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "MO": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "MS": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "MT": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "ND": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "NE": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "NH": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "OK": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "OR": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "PA": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "RI": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "SD": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "TN": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "TX": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "UT": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "VA": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "VT": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "WA": [
+      "Everspan Non-Admitted MunichRe"
+    ],
+    "WV": [
+      "Everspan Non-Admitted MunichRe"
+    ]
+  }
+}
