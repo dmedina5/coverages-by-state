@@ -23,6 +23,7 @@ const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;  // General channel
 const SLACK_APPROVAL_WEBHOOK_URL = process.env.SLACK_APPROVAL_WEBHOOK_URL;  // Daniel's DM for approval
 const TOOL_URL = 'https://dmedina5.github.io/coverages-by-state/';
 const APPROVED_MODE = process.env.APPROVED === 'true';  // Set via workflow_dispatch to send to general channel
+const PREVIEW_MODE = process.env.PREVIEW === 'true';    // Set via workflow_dispatch to re-send the pending post to Daniel's DM
 
 // Monitor health. The workflow is scheduled every 5 minutes but the self-hosted runner
 // defers it heavily — observed real cadence is roughly hourly — so thresholds are set
@@ -811,8 +812,12 @@ async function connectWithRetry(config, maxRetries = 3, delayMs = 5000) {
 }
 
 async function main() {
-  // APPROVED MODE: replay the pending notification saved during detection run
-  if (APPROVED_MODE) {
+  // Replay modes work from the pending notification saved by the last detection run,
+  // rendered under the CURRENT rules (not what the original DM showed):
+  //   PREVIEW  — re-send it to Daniel's approval DM, exactly as the channel would see
+  //              it plus the monitor notes. Nothing is cleared; validate, then approve.
+  //   APPROVED — post the channel version to the general channel and clear the file.
+  if (APPROVED_MODE || PREVIEW_MODE) {
     let pending = null;
     try {
       const data = await fs.readFile('pending_notification.json', 'utf-8');
@@ -823,6 +828,12 @@ async function main() {
     }
     if (!hasChannelContent(buildSlackBlocks(pending))) {
       console.log('Pending notification has nothing for the general channel under the current rules — not sending');
+      return;
+    }
+    if (PREVIEW_MODE && !APPROVED_MODE) {
+      console.log('Sending PREVIEW of the pending notification to Daniel');
+      await sendSlackNotification(pending);
+      console.log('Preview sent; pending notification kept for approval');
       return;
     }
     console.log('Sending APPROVED message to general channel');

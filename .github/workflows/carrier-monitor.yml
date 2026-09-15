@@ -13,6 +13,14 @@ on:
         options:
           - 'false'
           - 'true'
+      preview:
+        description: 'Set to true to re-send the pending message to the approval DM (nothing is cleared)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
 
 concurrency:
   group: carrier-monitor
@@ -95,6 +103,7 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_APPROVAL_WEBHOOK_URL: ${{ secrets.SLACK_APPROVAL_WEBHOOK_URL }}
           APPROVED: ${{ github.event.inputs.approved || 'false' }}
+          PREVIEW: ${{ github.event.inputs.preview || 'false' }}
         run: node .github/scripts/check-eligibility.js
 
       # always() so a stale-data failure in the step above still publishes whatever it
