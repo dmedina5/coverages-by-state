@@ -23,6 +23,8 @@ const {
   shouldPersistHeartbeat,
   computeAdmittedALEligibility,
   buildSlackBlocks,
+  buildMonitorBlocks,
+  composeSlackMessage,
   detectChanges,
   formatLotteryValue,
   dataBlockPattern
@@ -284,6 +286,51 @@ test('a mixed batch keeps only the 0% lines', () => {
 test('the message always ends with the tool link', () => {
   const blocks = buildSlackBlocks({ changes: [] });
   assert.ok(blocks[blocks.length - 1].text.text.includes('Coverages by State Tool'));
+});
+
+console.log('monitor details never reach the general channel');
+const staleError = { level: 'error', hours: 657.4, message: 'Monitor has not completed a successful check in 657.4h (threshold 12h) — carrier data may be stale' };
+const untracked = [{ id: 9999, name: 'Brand New Carrier Co', activeStates: 2, stateCodes: ['TX', 'OK'] }];
+const zeroDrop = lotteryChange('MI', 'Accredited Non-Admitted 1st', 35, 0);
+test('the channel message carries no monitor health or untracked-carrier section', () => {
+  const text = blockTexts(buildSlackBlocks({ changes: [zeroDrop], staleness: staleError, untrackedCarriers: untracked }));
+  assert.ok(!text.includes('Monitor health'), text);
+  assert.ok(!text.includes('657.4h'), text);
+  assert.ok(!text.includes('NOT tracked'), text);
+  assert.ok(text.includes('set to 0% on the lottery'), 'the carrier content is still there');
+});
+test('monitor blocks carry exactly the operator-only sections', () => {
+  const text = blockTexts(buildMonitorBlocks({ staleness: staleError, untrackedCarriers: untracked }));
+  assert.ok(text.includes('Monitor health'), text);
+  assert.ok(text.includes('657.4h'), text);
+  assert.ok(text.includes('NOT tracked'), text);
+  assert.deepStrictEqual(buildMonitorBlocks({ changes: [zeroDrop] }), []);
+  assert.deepStrictEqual(buildMonitorBlocks({ staleness: { level: 'ok', hours: 0.1, message: 'fresh' } }), []);
+});
+test('the approved (general channel) message is the channel blocks and nothing else', () => {
+  const payload = { changes: [zeroDrop, lotteryChange('AZ', 'Ascot Non-Admitted', 1, 25)], staleness: staleError, untrackedCarriers: untracked };
+  const sent = composeSlackMessage(payload, true);
+  assert.deepStrictEqual(sent, buildSlackBlocks(payload));
+  const text = blockTexts(sent);
+  assert.ok(!text.includes('Monitor'), text);
+  assert.ok(!text.includes('PENDING APPROVAL'), text);
+  assert.ok(!text.includes('1% → 25%'), text);
+});
+test('the approval DM previews the channel post and appends the monitor notes separately', () => {
+  const payload = { changes: [zeroDrop], staleness: staleError };
+  const text = blockTexts(composeSlackMessage(payload, false));
+  assert.ok(text.includes('PENDING APPROVAL'), text);
+  assert.ok(text.includes('set to 0% on the lottery'), text);
+  assert.ok(text.includes('approved=true'), text);
+  assert.ok(text.includes('Monitor notes'), text);
+  assert.ok(text.includes('657.4h'), text);
+  assert.ok(text.indexOf('approved=true') < text.indexOf('Monitor notes'), 'monitor notes come after the approval instructions, outside the preview');
+});
+test('an outage-only alert to the operator carries no approval framing', () => {
+  const text = blockTexts(composeSlackMessage({ changes: [], staleness: staleError }, false));
+  assert.ok(!text.includes('PENDING APPROVAL'), text);
+  assert.ok(!text.includes('approved=true'), text);
+  assert.ok(text.includes('657.4h'), text);
 });
 
 console.log('findUntrackedCarriers');

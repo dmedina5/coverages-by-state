@@ -460,9 +460,7 @@ function buildSlackBlocks(payload) {
     changes = [],
     dsgEligibility = {},
     admittedALEligibility,
-    zeroLotteryCarriers,
-    untrackedCarriers,
-    staleness
+    zeroLotteryCarriers
   } = payload || {};
 
   // States that were already enabled for DSG before this update
@@ -617,6 +615,28 @@ function buildSlackBlocks(payload) {
     });
   }
 
+  // Link to tool
+  blocks.push({
+    type: "section",
+    text: {
+      type: "mrkdwn",
+      text: `<${TOOL_URL}|View Coverages by State Tool>`
+    }
+  });
+
+  return blocks;
+}
+
+/**
+ * Operator-only sections: monitor health and carriers the registry does not know.
+ * These go to the approval DM and never to the general channel — the channel is
+ * told what carriers can do, not how this tool is doing (2026-09-15). Empty when
+ * there is nothing to say.
+ */
+function buildMonitorBlocks(payload) {
+  const { untrackedCarriers, staleness } = payload || {};
+  const blocks = [];
+
   // Carriers active in prod that this tool does not know about. Needs a human:
   // being active in company_state does not prove a carrier is quotable.
   if (untrackedCarriers && untrackedCarriers.length > 0) {
@@ -644,14 +664,60 @@ function buildSlackBlocks(payload) {
     });
   }
 
-  // Link to tool
-  blocks.push({
-    type: "section",
-    text: {
-      type: "mrkdwn",
-      text: `<${TOOL_URL}|View Coverages by State Tool>`
-    }
-  });
+  return blocks;
+}
+
+/**
+ * The blocks actually posted, by audience. Approved → the general channel gets the
+ * channel blocks and nothing else. Otherwise the operator gets a preview of exactly
+ * that post plus the approval instructions, with the monitor notes appended OUTSIDE
+ * the preview; an alert with nothing for the channel (a database outage) is just the
+ * monitor notes, with no approval framing to approve.
+ */
+function composeSlackMessage(payload, approved) {
+  const channelBlocks = buildSlackBlocks(payload);
+  if (approved) return channelBlocks;
+
+  const monitorBlocks = buildMonitorBlocks(payload);
+  // Header + tool link are always present; anything more is real content.
+  const hasChannelContent = channelBlocks.length > 2;
+  const blocks = [];
+
+  if (hasChannelContent || monitorBlocks.length === 0) {
+    blocks.push(
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: "⏳ *PENDING APPROVAL* - Review the message below before sending to the general channel:"
+        }
+      },
+      { type: "divider" },
+      ...channelBlocks,
+      { type: "divider" },
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: "✅ To approve and send to general channel, run:\n`gh workflow run carrier-monitor.yml -f approved=true`\n\n❌ To modify, edit the message in the script and re-run."
+        }
+      }
+    );
+  }
+
+  if (monitorBlocks.length > 0) {
+    if (blocks.length > 0) blocks.push({ type: "divider" });
+    blocks.push(
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: "🛠 *Monitor notes* — for you only, not part of the channel post:"
+        }
+      },
+      ...monitorBlocks
+    );
+  }
 
   return blocks;
 }
@@ -667,44 +733,10 @@ function sendSlackNotification(payload) {
       return;
     }
 
-    const blocks = buildSlackBlocks(payload);
-
-    // Determine which webhook to use based on approval mode
-    let webhookUrl;
-    let messageBlocks;
-
-    if (APPROVED_MODE) {
-      // Send to general channel (approved)
-      webhookUrl = SLACK_WEBHOOK_URL;
-      messageBlocks = blocks;
-      console.log('Sending APPROVED message to general channel');
-    } else {
-      // Send to Daniel for approval first
-      webhookUrl = SLACK_APPROVAL_WEBHOOK_URL || SLACK_WEBHOOK_URL;
-
-      // Add approval header and instructions
-      const approvalBlocks = [
-        {
-          type: "section",
-          text: {
-            type: "mrkdwn",
-            text: "⏳ *PENDING APPROVAL* - Review the message below before sending to the general channel:"
-          }
-        },
-        { type: "divider" },
-        ...blocks,
-        { type: "divider" },
-        {
-          type: "section",
-          text: {
-            type: "mrkdwn",
-            text: "✅ To approve and send to general channel, run:\n`gh workflow run carrier-monitor.yml -f approved=true`\n\n❌ To modify, edit the message in the script and re-run."
-          }
-        }
-      ];
-      messageBlocks = approvalBlocks;
-      console.log('Sending message to Daniel for approval');
-    }
+    // Audience decides both the webhook and the content — see composeSlackMessage.
+    const webhookUrl = APPROVED_MODE ? SLACK_WEBHOOK_URL : (SLACK_APPROVAL_WEBHOOK_URL || SLACK_WEBHOOK_URL);
+    const messageBlocks = composeSlackMessage(payload, APPROVED_MODE);
+    console.log(APPROVED_MODE ? 'Sending APPROVED message to general channel' : 'Sending message to Daniel for approval');
 
     if (!webhookUrl) {
       console.log('No webhook URL configured');
@@ -713,7 +745,7 @@ function sendSlackNotification(payload) {
     }
 
     const message = { blocks: messageBlocks };
-    const payload = JSON.stringify(message);
+    const body = JSON.stringify(message);
     const url = new URL(webhookUrl);
 
     const options = {
@@ -722,7 +754,7 @@ function sendSlackNotification(payload) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(payload)
+        'Content-Length': Buffer.byteLength(body)
       }
     };
 
@@ -745,7 +777,7 @@ function sendSlackNotification(payload) {
       resolve(false);
     });
 
-    req.write(payload);
+    req.write(body);
     req.end();
   });
 }
@@ -1054,6 +1086,9 @@ module.exports = {
   computeDsgEligibility,
   computeAdmittedALEligibility,
   buildSlackBlocks,
+  buildMonitorBlocks,
+  composeSlackMessage,
+  sendSlackNotification,
   detectChanges,
   formatLotteryValue,
   dataBlockPattern
