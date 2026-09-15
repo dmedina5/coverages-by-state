@@ -1,6 +1,6 @@
 {
-  "hash": "1ed0dde1771ec62cc4a26a97cd74fad0",
-  "timestamp": "2026-08-14T14:18:04.766Z",
+  "hash": "e5e3cda571f215fc5025cdf4e06084fd",
+  "timestamp": "2026-09-15T02:05:11.269Z",
   "rowCount": 173,
   "data": [
     {
@@ -21,7 +21,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "AK",
       "active": 0,
       "dsg_allowed": 0,
@@ -53,7 +53,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "AL",
       "active": 1,
       "dsg_allowed": 0,
@@ -85,7 +85,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "AR",
       "active": 1,
       "dsg_allowed": 0,
@@ -105,7 +105,7 @@
       "state_code": "AZ",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 35
+      "lottery_al": 25
     },
     {
       "company_id": 5696,
@@ -113,11 +113,11 @@
       "state_code": "AZ",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 1
+      "lottery_al": 25
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "AZ",
       "active": 1,
       "dsg_allowed": 0,
@@ -129,7 +129,7 @@
       "state_code": "AZ",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 64
+      "lottery_al": 50
     },
     {
       "company_id": 5245,
@@ -137,7 +137,7 @@
       "state_code": "CA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 35
+      "lottery_al": 25
     },
     {
       "company_id": 5696,
@@ -145,11 +145,11 @@
       "state_code": "CA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 1
+      "lottery_al": 25
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "CA",
       "active": 1,
       "dsg_allowed": 0,
@@ -161,7 +161,7 @@
       "state_code": "CA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 64
+      "lottery_al": 50
     },
     {
       "company_id": 5245,
@@ -169,7 +169,7 @@
       "state_code": "CO",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 35
+      "lottery_al": 25
     },
     {
       "company_id": 5696,
@@ -177,11 +177,11 @@
       "state_code": "CO",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 1
+      "lottery_al": 25
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "CO",
       "active": 1,
       "dsg_allowed": 0,
@@ -193,7 +193,7 @@
       "state_code": "CO",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 64
+      "lottery_al": 50
     },
     {
       "company_id": 5245,
@@ -213,7 +213,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "CT",
       "active": 0,
       "dsg_allowed": 0,
@@ -245,7 +245,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "DC",
       "active": 0,
       "dsg_allowed": 0,
@@ -277,7 +277,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "DE",
       "active": 1,
       "dsg_allowed": 0,
@@ -293,7 +293,7 @@
     },
     {
       "company_id": 6156,
-      "company_name": "Everspan Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Insurance Company - Issuing Insurance Company",
       "state_code": "FL",
       "active": 1,
       "dsg_allowed": 0,
@@ -301,10 +301,10 @@
     },
     {
       "company_id": 6881,
-      "company_name": "Accredited Surety and Casualty Company",
+      "company_name": "Accredited Surety and Casualty Company, Inc.",
       "state_code": "FL",
       "active": 1,
-      "dsg_allowed": 0,
+      "dsg_allowed": 1,
       "lottery_al": 100
     },
     {
@@ -313,7 +313,7 @@
       "state_code": "GA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 34
+      "lottery_al": 25
     },
     {
       "company_id": 5696,
@@ -321,7 +321,7 @@
       "state_code": "GA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 1
+      "lottery_al": 25
     },
     {
       "company_id": 6607,
@@ -329,7 +329,7 @@
       "state_code": "GA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 64
+      "lottery_al": 50
     },
     {
       "company_id": 5245,
@@ -349,7 +349,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "HI",
       "active": 0,
       "dsg_allowed": 0,
@@ -369,7 +369,7 @@
       "state_code": "IA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 35
+      "lottery_al": 25
     },
     {
       "company_id": 5696,
@@ -377,11 +377,11 @@
       "state_code": "IA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 1
+      "lottery_al": 25
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "IA",
       "active": 1,
       "dsg_allowed": 0,
@@ -393,7 +393,7 @@
       "state_code": "IA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 64
+      "lottery_al": 50
     },
     {
       "company_id": 5245,
@@ -413,7 +413,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "ID",
       "active": 1,
       "dsg_allowed": 0,
@@ -429,7 +429,7 @@
     },
     {
       "company_id": 6156,
-      "company_name": "Everspan Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Insurance Company - Issuing Insurance Company",
       "state_code": "IL",
       "active": 1,
       "dsg_allowed": 0,
@@ -441,7 +441,7 @@
       "state_code": "IN",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 35
+      "lottery_al": 25
     },
     {
       "company_id": 5696,
@@ -449,11 +449,11 @@
       "state_code": "IN",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 1
+      "lottery_al": 25
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "IN",
       "active": 1,
       "dsg_allowed": 0,
@@ -465,7 +465,7 @@
       "state_code": "IN",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 64
+      "lottery_al": 50
     },
     {
       "company_id": 5245,
@@ -485,7 +485,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "KS",
       "active": 0,
       "dsg_allowed": 0,
@@ -517,7 +517,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "KY",
       "active": 0,
       "dsg_allowed": 0,
@@ -549,7 +549,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "LA",
       "active": 0,
       "dsg_allowed": 0,
@@ -581,7 +581,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "MA",
       "active": 0,
       "dsg_allowed": 0,
@@ -605,7 +605,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "MD",
       "active": 1,
       "dsg_allowed": 0,
@@ -637,7 +637,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "ME",
       "active": 1,
       "dsg_allowed": 0,
@@ -661,7 +661,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "MI",
       "active": 1,
       "dsg_allowed": 0,
@@ -693,7 +693,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "MN",
       "active": 1,
       "dsg_allowed": 0,
@@ -725,7 +725,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "MO",
       "active": 1,
       "dsg_allowed": 0,
@@ -749,7 +749,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "MS",
       "active": 1,
       "dsg_allowed": 0,
@@ -781,7 +781,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "MT",
       "active": 1,
       "dsg_allowed": 0,
@@ -797,7 +797,7 @@
     },
     {
       "company_id": 6156,
-      "company_name": "Everspan Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Insurance Company - Issuing Insurance Company",
       "state_code": "NC",
       "active": 1,
       "dsg_allowed": 0,
@@ -821,7 +821,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "ND",
       "active": 1,
       "dsg_allowed": 0,
@@ -841,7 +841,7 @@
       "state_code": "NE",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 35
+      "lottery_al": 25
     },
     {
       "company_id": 5696,
@@ -849,11 +849,11 @@
       "state_code": "NE",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 1
+      "lottery_al": 25
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "NE",
       "active": 1,
       "dsg_allowed": 0,
@@ -865,7 +865,7 @@
       "state_code": "NE",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 64
+      "lottery_al": 50
     },
     {
       "company_id": 5245,
@@ -873,7 +873,7 @@
       "state_code": "NH",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 35
+      "lottery_al": 25
     },
     {
       "company_id": 5696,
@@ -881,11 +881,11 @@
       "state_code": "NH",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 1
+      "lottery_al": 25
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "NH",
       "active": 1,
       "dsg_allowed": 0,
@@ -897,14 +897,14 @@
       "state_code": "NH",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 64
+      "lottery_al": 50
     },
     {
       "company_id": 5245,
       "company_name": "Accredited Specialty Insurance Company",
       "state_code": "NJ",
       "active": 1,
-      "dsg_allowed": 0,
+      "dsg_allowed": 1,
       "lottery_al": 35
     },
     {
@@ -920,12 +920,12 @@
       "company_name": "Accredited Specialty Insurance Company",
       "state_code": "NJ",
       "active": 1,
-      "dsg_allowed": 0,
+      "dsg_allowed": 1,
       "lottery_al": 65
     },
     {
       "company_id": 6156,
-      "company_name": "Everspan Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Insurance Company - Issuing Insurance Company",
       "state_code": "NM",
       "active": 1,
       "dsg_allowed": 0,
@@ -933,7 +933,7 @@
     },
     {
       "company_id": 6156,
-      "company_name": "Everspan Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Insurance Company - Issuing Insurance Company",
       "state_code": "NV",
       "active": 1,
       "dsg_allowed": 0,
@@ -957,7 +957,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "NY",
       "active": 0,
       "dsg_allowed": 0,
@@ -993,7 +993,7 @@
       "state_code": "OK",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 35
+      "lottery_al": 25
     },
     {
       "company_id": 5696,
@@ -1001,11 +1001,11 @@
       "state_code": "OK",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 1
+      "lottery_al": 25
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "OK",
       "active": 1,
       "dsg_allowed": 0,
@@ -1017,7 +1017,7 @@
       "state_code": "OK",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 64
+      "lottery_al": 50
     },
     {
       "company_id": 5245,
@@ -1025,7 +1025,7 @@
       "state_code": "OR",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 34
+      "lottery_al": 25
     },
     {
       "company_id": 5696,
@@ -1033,11 +1033,11 @@
       "state_code": "OR",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 1
+      "lottery_al": 25
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "OR",
       "active": 1,
       "dsg_allowed": 0,
@@ -1049,7 +1049,7 @@
       "state_code": "OR",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 65
+      "lottery_al": 50
     },
     {
       "company_id": 5245,
@@ -1061,7 +1061,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "PA",
       "active": 1,
       "dsg_allowed": 0,
@@ -1093,7 +1093,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "RI",
       "active": 1,
       "dsg_allowed": 0,
@@ -1109,7 +1109,7 @@
     },
     {
       "company_id": 6156,
-      "company_name": "Everspan Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Insurance Company - Issuing Insurance Company",
       "state_code": "SC",
       "active": 1,
       "dsg_allowed": 0,
@@ -1133,7 +1133,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "SD",
       "active": 1,
       "dsg_allowed": 0,
@@ -1157,7 +1157,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "TN",
       "active": 1,
       "dsg_allowed": 0,
@@ -1177,7 +1177,7 @@
       "state_code": "TX",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 35
+      "lottery_al": 25
     },
     {
       "company_id": 5696,
@@ -1185,11 +1185,11 @@
       "state_code": "TX",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 1
+      "lottery_al": 25
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "TX",
       "active": 1,
       "dsg_allowed": 0,
@@ -1201,7 +1201,7 @@
       "state_code": "TX",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 64
+      "lottery_al": 50
     },
     {
       "company_id": 5245,
@@ -1221,7 +1221,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "UT",
       "active": 1,
       "dsg_allowed": 0,
@@ -1253,7 +1253,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "VA",
       "active": 1,
       "dsg_allowed": 0,
@@ -1285,7 +1285,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "VT",
       "active": 1,
       "dsg_allowed": 0,
@@ -1301,7 +1301,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "WA",
       "active": 1,
       "dsg_allowed": 0,
@@ -1317,7 +1317,7 @@
     },
     {
       "company_id": 6156,
-      "company_name": "Everspan Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Insurance Company - Issuing Insurance Company",
       "state_code": "WI",
       "active": 1,
       "dsg_allowed": 0,
@@ -1341,7 +1341,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "WV",
       "active": 1,
       "dsg_allowed": 0,
@@ -1373,7 +1373,7 @@
     },
     {
       "company_id": 6155,
-      "company_name": "Everspan Indemnity Insurance Company",
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "WY",
       "active": 0,
       "dsg_allowed": 0,

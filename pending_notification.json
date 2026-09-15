@@ -1,11 +1,359 @@
 {
-  "detectedAt": "2026-08-14T14:18:04.770Z",
+  "detectedAt": "2026-09-15T02:05:11.270Z",
   "changes": [
     {
-      "type": "NEW",
+      "type": "LOTTERY",
+      "state": "AZ",
+      "carrier": "Accredited Non-Admitted 1st",
+      "oldValue": 35,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "AZ - Accredited Non-Admitted 1st: lottery 35% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "AZ",
+      "carrier": "Ascot Non-Admitted",
+      "oldValue": 1,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "AZ - Ascot Non-Admitted: lottery 1% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "AZ",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 64,
+      "newValue": 50,
+      "zeroed": false,
+      "restored": false,
+      "message": "AZ - Accredited Non-Admitted New: lottery 64% → 50%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "CA",
+      "carrier": "Accredited Non-Admitted 1st",
+      "oldValue": 35,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "CA - Accredited Non-Admitted 1st: lottery 35% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "CA",
+      "carrier": "Ascot Non-Admitted",
+      "oldValue": 1,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "CA - Ascot Non-Admitted: lottery 1% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "CA",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 64,
+      "newValue": 50,
+      "zeroed": false,
+      "restored": false,
+      "message": "CA - Accredited Non-Admitted New: lottery 64% → 50%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "CO",
+      "carrier": "Accredited Non-Admitted 1st",
+      "oldValue": 35,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "CO - Accredited Non-Admitted 1st: lottery 35% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "CO",
+      "carrier": "Ascot Non-Admitted",
+      "oldValue": 1,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "CO - Ascot Non-Admitted: lottery 1% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "CO",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 64,
+      "newValue": 50,
+      "zeroed": false,
+      "restored": false,
+      "message": "CO - Accredited Non-Admitted New: lottery 64% → 50%"
+    },
+    {
+      "type": "DSG",
       "state": "FL",
       "carrier": "Accredited 2025 Admitted",
-      "message": "New entry: FL - Accredited 2025 Admitted"
+      "oldValue": 0,
+      "newValue": 1,
+      "message": "FL - Accredited 2025 Admitted: DSG not allowed → allowed"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "GA",
+      "carrier": "Accredited Non-Admitted 1st",
+      "oldValue": 34,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "GA - Accredited Non-Admitted 1st: lottery 34% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "GA",
+      "carrier": "Ascot Non-Admitted",
+      "oldValue": 1,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "GA - Ascot Non-Admitted: lottery 1% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "GA",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 64,
+      "newValue": 50,
+      "zeroed": false,
+      "restored": false,
+      "message": "GA - Accredited Non-Admitted New: lottery 64% → 50%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "IA",
+      "carrier": "Accredited Non-Admitted 1st",
+      "oldValue": 35,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "IA - Accredited Non-Admitted 1st: lottery 35% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "IA",
+      "carrier": "Ascot Non-Admitted",
+      "oldValue": 1,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "IA - Ascot Non-Admitted: lottery 1% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "IA",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 64,
+      "newValue": 50,
+      "zeroed": false,
+      "restored": false,
+      "message": "IA - Accredited Non-Admitted New: lottery 64% → 50%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "IN",
+      "carrier": "Accredited Non-Admitted 1st",
+      "oldValue": 35,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "IN - Accredited Non-Admitted 1st: lottery 35% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "IN",
+      "carrier": "Ascot Non-Admitted",
+      "oldValue": 1,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "IN - Ascot Non-Admitted: lottery 1% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "IN",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 64,
+      "newValue": 50,
+      "zeroed": false,
+      "restored": false,
+      "message": "IN - Accredited Non-Admitted New: lottery 64% → 50%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "NE",
+      "carrier": "Accredited Non-Admitted 1st",
+      "oldValue": 35,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "NE - Accredited Non-Admitted 1st: lottery 35% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "NE",
+      "carrier": "Ascot Non-Admitted",
+      "oldValue": 1,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "NE - Ascot Non-Admitted: lottery 1% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "NE",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 64,
+      "newValue": 50,
+      "zeroed": false,
+      "restored": false,
+      "message": "NE - Accredited Non-Admitted New: lottery 64% → 50%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "NH",
+      "carrier": "Accredited Non-Admitted 1st",
+      "oldValue": 35,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "NH - Accredited Non-Admitted 1st: lottery 35% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "NH",
+      "carrier": "Ascot Non-Admitted",
+      "oldValue": 1,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "NH - Ascot Non-Admitted: lottery 1% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "NH",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 64,
+      "newValue": 50,
+      "zeroed": false,
+      "restored": false,
+      "message": "NH - Accredited Non-Admitted New: lottery 64% → 50%"
+    },
+    {
+      "type": "DSG",
+      "state": "NJ",
+      "carrier": "Accredited Non-Admitted 1st",
+      "oldValue": 0,
+      "newValue": 1,
+      "message": "NJ - Accredited Non-Admitted 1st: DSG not allowed → allowed"
+    },
+    {
+      "type": "DSG",
+      "state": "NJ",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 0,
+      "newValue": 1,
+      "message": "NJ - Accredited Non-Admitted New: DSG not allowed → allowed"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "OK",
+      "carrier": "Accredited Non-Admitted 1st",
+      "oldValue": 35,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "OK - Accredited Non-Admitted 1st: lottery 35% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "OK",
+      "carrier": "Ascot Non-Admitted",
+      "oldValue": 1,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "OK - Ascot Non-Admitted: lottery 1% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "OK",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 64,
+      "newValue": 50,
+      "zeroed": false,
+      "restored": false,
+      "message": "OK - Accredited Non-Admitted New: lottery 64% → 50%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "OR",
+      "carrier": "Accredited Non-Admitted 1st",
+      "oldValue": 34,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "OR - Accredited Non-Admitted 1st: lottery 34% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "OR",
+      "carrier": "Ascot Non-Admitted",
+      "oldValue": 1,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "OR - Ascot Non-Admitted: lottery 1% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "OR",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 65,
+      "newValue": 50,
+      "zeroed": false,
+      "restored": false,
+      "message": "OR - Accredited Non-Admitted New: lottery 65% → 50%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "TX",
+      "carrier": "Accredited Non-Admitted 1st",
+      "oldValue": 35,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "TX - Accredited Non-Admitted 1st: lottery 35% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "TX",
+      "carrier": "Ascot Non-Admitted",
+      "oldValue": 1,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "TX - Ascot Non-Admitted: lottery 1% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "TX",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 64,
+      "newValue": 50,
+      "zeroed": false,
+      "restored": false,
+      "message": "TX - Accredited Non-Admitted New: lottery 64% → 50%"
     }
   ],
   "dsgEligibility": {
@@ -18,7 +366,7 @@
     "CT": "N/A",
     "DC": "N/A",
     "DE": "Y",
-    "FL": "N/A",
+    "FL": "Y",
     "GA": "Y",
     "HI": "N/A",
     "IA": "Y",
@@ -40,7 +388,7 @@
     "ND": "Y",
     "NE": "Y",
     "NH": "Y",
-    "NJ": "N/A",
+    "NJ": "Y",
     "NM": "N/A",
     "NV": "N/A",
     "NY": "N/A",
@@ -417,8 +765,8 @@
   },
   "untrackedCarriers": [],
   "staleness": {
-    "level": "unknown",
-    "hours": null,
-    "message": "No previous heartbeat recorded (first run since staleness tracking was added)"
+    "level": "error",
+    "hours": 657.4,
+    "message": "Monitor has not completed a successful check in 657.4h (threshold 12h) — carrier data may be stale"
   }
 }
