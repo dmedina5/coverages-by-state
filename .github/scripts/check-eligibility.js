@@ -285,23 +285,35 @@ function findZeroLotteryCarriers(lotteryData) {
 }
 
 /**
- * Compute DS&G eligibility per state based on dsg_allowed column.
- * Logic: If ANY carrier has dsg_allowed = 1 for a state, that state is enabled for DS&G ("Y")
- *        If NO carriers have dsg_allowed = 1, the state shows "N/A"
+ * Compute DS&G (Dirt, Sand & Gravel) eligibility per state, split by paper.
+ * A carrier with dsg_allowed = 1 grants the state DS&G on that carrier's paper:
+ * "Admitted AL DS&G" when the carrier is a live admitted carrier (ADMITTED_CARRIER_IDS),
+ * "Non-Admitted AL DS&G" otherwise. Florida writes DS&G through Accredited 2025
+ * Admitted only, so it is Admitted DS&G and NOT non-admitted (2026-09-15).
+ * A state with no DS&G carrier reads "N/A" on both.
  */
+const DSG_FIELDS = ["Admitted AL DS&G", "Non-Admitted AL DS&G"];
 function computeDsgEligibility(dbResults) {
   const stateDsgStatus = {};
   for (const row of dbResults) {
     const stateCode = row.code;
-    const dsgAllowed = row.dsg_allowed;
     if (!stateCode) continue;
-    if (dsgAllowed === 1 || dsgAllowed === true) {
-      stateDsgStatus[stateCode] = "Y";
-    } else if (!(stateCode in stateDsgStatus)) {
-      stateDsgStatus[stateCode] = "N/A";
+    if (!(stateCode in stateDsgStatus)) {
+      stateDsgStatus[stateCode] = { "Admitted AL DS&G": "N/A", "Non-Admitted AL DS&G": "N/A" };
+    }
+    if (row.dsg_allowed === 1 || row.dsg_allowed === true) {
+      const field = ADMITTED_CARRIER_IDS.includes(row.id) ? "Admitted AL DS&G" : "Non-Admitted AL DS&G";
+      stateDsgStatus[stateCode][field] = "Y";
     }
   }
   return stateDsgStatus;
+}
+
+// True when a state's DS&G entry says DS&G is written there on any paper. Accepts
+// the split object above and the plain "Y"/"N/A" string older pending files carry.
+function dsgEnabled(entry) {
+  if (entry === "Y") return true;
+  return !!entry && typeof entry === "object" && DSG_FIELDS.some(f => entry[f] === "Y");
 }
 
 /**
@@ -468,7 +480,7 @@ function buildSlackBlocks(payload) {
 
   // Get NEW states where DSG is enabled (excluding previously enabled)
   const newDsgEnabledStates = Object.entries(dsgEligibility)
-    .filter(([state, status]) => status === "Y" && !PREVIOUSLY_ENABLED_DSG_STATES.includes(state))
+    .filter(([state, entry]) => dsgEnabled(entry) && !PREVIOUSLY_ENABLED_DSG_STATES.includes(state))
     .map(([state]) => state)
     .sort();
 
@@ -535,7 +547,10 @@ function buildSlackBlocks(payload) {
   if (dsgChanges.length > 0) {
     const dsgLines = dsgChanges.slice(0, 10).map(c => {
       const status = c.newValue ? 'enabled ✅' : 'disabled ❌';
-      return `• ${c.state}: DS&G ${status}`;
+      const entry = CARRIER_REGISTRY.find(r => r.key === c.carrier);
+      const paper = entry && entry.admitted ? 'Admitted' : 'Non-Admitted';
+      const display = (entry && entry.display) || c.carrier;
+      return `• ${c.state}: ${paper} DS&G ${status} (${display})`;
     });
     if (dsgChanges.length > 10) {
       dsgLines.push(`• ... and ${dsgChanges.length - 10} more DS&G changes`);
@@ -943,8 +958,10 @@ async function main() {
 
     // Compute DS&G eligibility
     const dsgEligibility = computeDsgEligibility(fullRows);
-    const dsgEnabledStates = Object.entries(dsgEligibility).filter(([_, v]) => v === "Y").map(([k]) => k);
+    const dsgEnabledStates = Object.entries(dsgEligibility).filter(([_, v]) => dsgEnabled(v)).map(([k]) => k);
+    const admittedDsgStates = Object.entries(dsgEligibility).filter(([_, v]) => v["Admitted AL DS&G"] === "Y").map(([k]) => k);
     console.log(`DS&G enabled in ${dsgEnabledStates.length} states: ${dsgEnabledStates.join(', ')}`);
+    console.log(`  on admitted paper in ${admittedDsgStates.length}: ${admittedDsgStates.join(', ') || 'none'}`);
 
     // Compute Admitted AL eligibility from carrier data
     const admittedALEligibility = computeAdmittedALEligibility(fullRows);
@@ -988,14 +1005,16 @@ async function main() {
         const lobData = JSON.parse(lobMatch[1]);
         let lobUpdated = false;
 
-        // Update DS&G fields
+        // Update DS&G fields, one per paper
         for (const [stateCode, dsgStatus] of Object.entries(dsgEligibility)) {
           if (lobData[stateCode]) {
-            const currentDsg = lobData[stateCode]["Non-Admitted AL DS&G"];
-            if (currentDsg !== dsgStatus) {
-              console.log(`  DS&G: ${stateCode} ${currentDsg} → ${dsgStatus}`);
-              lobData[stateCode]["Non-Admitted AL DS&G"] = dsgStatus;
-              lobUpdated = true;
+            for (const field of DSG_FIELDS) {
+              const current = lobData[stateCode][field];
+              if (current !== dsgStatus[field]) {
+                console.log(`  ${field}: ${stateCode} ${current} → ${dsgStatus[field]}`);
+                lobData[stateCode][field] = dsgStatus[field];
+                lobUpdated = true;
+              }
             }
           }
         }
@@ -1084,6 +1103,7 @@ module.exports = {
   evaluateStaleness,
   shouldPersistHeartbeat,
   computeDsgEligibility,
+  DSG_FIELDS,
   computeAdmittedALEligibility,
   buildSlackBlocks,
   buildMonitorBlocks,

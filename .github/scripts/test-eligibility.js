@@ -22,6 +22,7 @@ const {
   evaluateStaleness,
   shouldPersistHeartbeat,
   computeAdmittedALEligibility,
+  computeDsgEligibility,
   buildSlackBlocks,
   buildMonitorBlocks,
   composeSlackMessage,
@@ -331,6 +332,55 @@ test('an outage-only alert to the operator carries no approval framing', () => {
   assert.ok(!text.includes('PENDING APPROVAL'), text);
   assert.ok(!text.includes('approved=true'), text);
   assert.ok(text.includes('657.4h'), text);
+});
+
+console.log('computeDsgEligibility — DS&G is split by paper');
+const dsgRow = (id, code, active, dsg) => ({ id, code, active, lottery_al: 0, dsg_allowed: dsg });
+const NONE = { 'Admitted AL DS&G': 'N/A', 'Non-Admitted AL DS&G': 'N/A' };
+test('DS&G through an admitted carrier is Admitted DS&G, not Non-Admitted', () => {
+  const data = computeDsgEligibility([dsgRow(6881, 'FL', 1, 1), dsgRow(6156, 'FL', 1, 0)]);
+  assert.deepStrictEqual(data.FL, { 'Admitted AL DS&G': 'Y', 'Non-Admitted AL DS&G': 'N/A' },
+    'Florida writes DS&G through Accredited Admitted — the Non-Admitted banner is wrong there');
+});
+test('DS&G through a non-admitted carrier is Non-Admitted DS&G', () => {
+  const data = computeDsgEligibility([dsgRow(5245, 'GA', 1, 1), dsgRow(5696, 'GA', 1, 1)]);
+  assert.deepStrictEqual(data.GA, { 'Admitted AL DS&G': 'N/A', 'Non-Admitted AL DS&G': 'Y' });
+});
+test('a state with no DS&G carrier reads N/A on both papers', () => {
+  assert.deepStrictEqual(computeDsgEligibility([dsgRow(6155, 'CT', 0, 0)]).CT, NONE);
+});
+test('a state with DS&G on both papers reads Y on both', () => {
+  const data = computeDsgEligibility([dsgRow(6881, 'XX', 1, 1), dsgRow(6607, 'XX', 1, 1)]);
+  assert.deepStrictEqual(data.XX, { 'Admitted AL DS&G': 'Y', 'Non-Admitted AL DS&G': 'Y' });
+});
+test('a DS&G grant is not undone by a later non-DS&G row for the same state', () => {
+  const data = computeDsgEligibility([dsgRow(6881, 'FL', 1, 1), dsgRow(6156, 'FL', 1, 0)]);
+  assert.strictEqual(data.FL['Admitted AL DS&G'], 'Y');
+});
+
+console.log('Slack DS&G sections name the paper');
+const dsgChange = (state, carrier, newValue) => ({ type: 'DSG', state, carrier, oldValue: newValue ? 0 : 1, newValue,
+  message: `${state} - ${carrier}: DSG ${newValue ? 'not allowed → allowed' : 'allowed → not allowed'}` });
+test('the new-states summary reads the split shape', () => {
+  const text = blockTexts(buildSlackBlocks({ changes: [], dsgEligibility: {
+    FL: { 'Admitted AL DS&G': 'Y', 'Non-Admitted AL DS&G': 'N/A' },
+    NJ: { 'Admitted AL DS&G': 'N/A', 'Non-Admitted AL DS&G': 'Y' },
+    CT: NONE
+  } }));
+  assert.ok(text.includes('DS&G is now enabled in 2 NEW states'), text);
+  assert.ok(text.includes('FL, NJ'), text);
+});
+test('the new-states summary still reads the legacy string shape saved in older pending files', () => {
+  const text = blockTexts(buildSlackBlocks({ changes: [], dsgEligibility: { FL: 'Y', NJ: 'Y', CT: 'N/A' } }));
+  assert.ok(text.includes('DS&G is now enabled in 2 NEW states'), text);
+});
+test('a DS&G change line says which paper and which carrier', () => {
+  const text = blockTexts(buildSlackBlocks({ changes: [
+    dsgChange('FL', 'Accredited 2025 Admitted', 1),
+    dsgChange('NJ', 'Accredited Non-Admitted 1st', 1)
+  ] }));
+  assert.ok(text.includes('• FL: Admitted DS&G enabled ✅ (Accredited Admitted (2025 Program))'), text);
+  assert.ok(text.includes('• NJ: Non-Admitted DS&G enabled ✅ (Accredited Non-Admitted (1st))'), text);
 });
 
 console.log('findUntrackedCarriers');
