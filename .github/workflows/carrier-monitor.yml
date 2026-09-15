@@ -58,6 +58,18 @@ jobs:
           args: --accept-routes
           use-cache: 'true'
 
+      # On the Windows service, a bare `bash` resolves to C:\windows\system32\bash.exe —
+      # the WSL launcher, which has no distribution under the service account and
+      # exits 1 ("Windows Subsystem for Linux has no installed distributions",
+      # run 34922183981). Put Git for Windows' bash ahead of it for the rest of the job.
+      - name: Prefer Git bash over the WSL launcher (Windows only)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          $gitBash = Join-Path (Split-Path (Split-Path (Get-Command git.exe).Source)) 'bin'
+          if (-not (Test-Path (Join-Path $gitBash 'bash.exe'))) { throw "Git bash not found under $gitBash" }
+          Add-Content -Path $env:GITHUB_PATH -Value $gitBash
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -88,8 +100,8 @@ jobs:
       # always() so a stale-data failure in the step above still publishes whatever it
       # did manage to sync. A push failure is reported, not swallowed: silently losing
       # the push means the live tool keeps serving old data behind a green run.
-      # bash on every runner (Git for Windows supplies it on the self-hosted one), so
-      # the same step works wherever MONITOR_RUNS_ON points.
+      # bash on every runner (Git for Windows supplies it on the self-hosted one — see
+      # the PATH step above), so the same step works wherever MONITOR_RUNS_ON points.
       - name: Commit and push changes
         if: always()
         continue-on-error: true
