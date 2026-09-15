@@ -451,17 +451,215 @@ function detectChanges(oldRows, newRows) {
 }
 
 /**
- * Send a notification to Slack focusing on carrier eligibility changes
+ * Build the Slack message body (a list of Block Kit blocks) for a detection payload.
+ * Pure — no I/O — so the message content is testable; sendSlackNotification wraps it
+ * with the approval header and posts it.
  */
-function sendSlackNotification(payload) {
+function buildSlackBlocks(payload) {
   const {
     changes = [],
-    dsgEligibility,
+    dsgEligibility = {},
     admittedALEligibility,
     zeroLotteryCarriers,
     untrackedCarriers,
     staleness
   } = payload || {};
+
+  // States that were already enabled for DSG before this update
+  const PREVIOUSLY_ENABLED_DSG_STATES = ['AL', 'AR', 'AZ', 'CA', 'CO', 'DE', 'GA', 'IA', 'ID', 'IN', 'MD', 'ME', 'MI', 'MN', 'MO', 'MS', 'MT', 'ND', 'NE', 'NH', 'OH', 'OK', 'OR', 'PA', 'RI', 'SD', 'TN', 'TX', 'UT', 'VA', 'WA', 'WV'];
+
+  // Get NEW states where DSG is enabled (excluding previously enabled)
+  const newDsgEnabledStates = Object.entries(dsgEligibility)
+    .filter(([state, status]) => status === "Y" && !PREVIOUSLY_ENABLED_DSG_STATES.includes(state))
+    .map(([state]) => state)
+    .sort();
+
+  // Filter for DSG-specific changes (only newly enabled, excluding previously enabled states)
+  const dsgChanges = changes.filter(c => c.type === 'DSG' && !PREVIOUSLY_ENABLED_DSG_STATES.includes(c.state));
+  const activeChanges = changes.filter(c => c.type === 'ACTIVE');
+
+  // Identify admitted-carrier active changes (any live admitted carrier)
+  const admittedCarrierChanges = activeChanges.filter(c => ADMITTED_CARRIER_KEYS.has(c.carrier));
+
+  // Build message sections
+  const blocks = [
+    {
+      type: "header",
+      text: {
+        type: "plain_text",
+        text: "🔔 Carrier Eligibility Update",
+        emoji: true
+      }
+    }
+  ];
+
+  // Admitted AL changes (an admitted carrier becoming active in new states)
+  if (admittedCarrierChanges.length > 0) {
+    const admittedLines = admittedCarrierChanges.map(c => {
+      const status = c.newValue ? 'now available ✅' : 'no longer available ❌';
+      const display = (CARRIER_REGISTRY.find(r => r.key === c.carrier) || {}).display || c.carrier;
+      return `• ${c.state}: ${display} ${status}`;
+    });
+    blocks.push({
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `*Admitted AL Changes:*\n${admittedLines.join('\n')}`
+      }
+    });
+
+    // Show updated admitted AL count
+    if (admittedALEligibility) {
+      const admittedCount = Object.values(admittedALEligibility)
+        .filter(v => v["Admitted AL"] === "Y").length;
+      blocks.push({
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `*Permitted Admitted AL Operations:* ${admittedCount} states`
+        }
+      });
+    }
+  }
+
+  // NEW DSG enabled states summary (excluding previously enabled)
+  if (newDsgEnabledStates.length > 0) {
+    blocks.push({
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `*DS&G is now enabled in ${newDsgEnabledStates.length} NEW states:*\n${newDsgEnabledStates.join(', ')}`
+      }
+    });
+  }
+
+  // Show specific DSG changes if any
+  if (dsgChanges.length > 0) {
+    const dsgLines = dsgChanges.slice(0, 10).map(c => {
+      const status = c.newValue ? 'enabled ✅' : 'disabled ❌';
+      return `• ${c.state}: DS&G ${status}`;
+    });
+    if (dsgChanges.length > 10) {
+      dsgLines.push(`• ... and ${dsgChanges.length - 10} more DS&G changes`);
+    }
+    blocks.push({
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `*DS&G changes detected:*\n${dsgLines.join('\n')}`
+      }
+    });
+  }
+
+  // Show other carrier active status changes (excluding admitted which are shown above)
+  const otherActiveChanges = activeChanges.filter(c => !ADMITTED_CARRIER_KEYS.has(c.carrier));
+  if (otherActiveChanges.length > 0) {
+    const activeLines = otherActiveChanges.slice(0, 10).map(c => {
+      const status = c.newValue ? 'enabled ✅' : 'disabled ❌';
+      return `• ${c.state} - ${c.carrier}: ${status}`;
+    });
+    if (otherActiveChanges.length > 10) {
+      activeLines.push(`• ... and ${otherActiveChanges.length - 10} more carrier changes`);
+    }
+    blocks.push({
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `*Carrier status changes:*\n${activeLines.join('\n')}`
+      }
+    });
+  }
+
+  // Lottery: only a drop to 0% is announced — a carrier can stay enabled to quote
+  // while its weight drops to 0%, which no active/DSG signal above would surface.
+  // Other weight movements (35% → 25%, a restore from 0%) are deliberately NOT
+  // posted: they are routine rebalancing and were noise in the channel (2026-09-15).
+  // They still change the hash, so index.html and the state file stay current.
+  const lotteryChanges = changes.filter(c => c.type === 'LOTTERY');
+  if (lotteryChanges.length > 0) {
+    const zeroedChanges = lotteryChanges.filter(c => c.zeroed);
+
+    if (zeroedChanges.length > 0) {
+      const zeroLines = zeroedChanges.slice(0, 10).map(c =>
+        `• ${c.state} - ${c.carrier}: ${formatLotteryValue(c.oldValue)} → *0%* ⚖️`
+      );
+      if (zeroedChanges.length > 10) {
+        zeroLines.push(`• ... and ${zeroedChanges.length - 10} more set to 0%`);
+      }
+      blocks.push({
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `*Carriers set to 0% on the lottery (still enabled to quote):*\n${zeroLines.join('\n')}`
+        }
+      });
+    }
+
+  }
+
+  // Standing total of carriers sitting at 0% while still quotable
+  if (zeroLotteryCarriers && Object.keys(zeroLotteryCarriers).length > 0) {
+    const perCarrier = {};
+    for (const [state, carriers] of Object.entries(zeroLotteryCarriers)) {
+      for (const carrier of carriers) {
+        (perCarrier[carrier] = perCarrier[carrier] || []).push(state);
+      }
+    }
+    const summaryLines = Object.keys(perCarrier).sort().map(carrier =>
+      `• ${carrier}: ${perCarrier[carrier].length} state${perCarrier[carrier].length === 1 ? '' : 's'} (${perCarrier[carrier].join(', ')})`
+    );
+    blocks.push({
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `*Currently at 0% on the lottery (enabled, not selected):*\n${summaryLines.join('\n')}`
+      }
+    });
+  }
+
+  // Carriers active in prod that this tool does not know about. Needs a human:
+  // being active in company_state does not prove a carrier is quotable.
+  if (untrackedCarriers && untrackedCarriers.length > 0) {
+    const lines = untrackedCarriers.map(c =>
+      `• \`${c.id}\` ${c.name} — active in ${c.activeStates} state${c.activeStates === 1 ? '' : 's'}${c.stateCodes.length ? ` (${c.stateCodes.join(', ')})` : ''}`
+    );
+    blocks.push({
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `:rotating_light: *Carrier active in the database but NOT tracked by this tool:*\n${lines.join('\n')}\n_Not shown in the tool and not monitored for 0% changes. Confirm whether it has actually launched, then add it to CARRIER_REGISTRY in check-eligibility.js._`
+      }
+    });
+  }
+
+  // Monitor health — a gap means the tool was showing stale data for that window
+  if (staleness && (staleness.level === 'warn' || staleness.level === 'error')) {
+    const icon = staleness.level === 'error' ? ':rotating_light:' : ':warning:';
+    blocks.push({
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `${icon} *Monitor health:* ${staleness.message}`
+      }
+    });
+  }
+
+  // Link to tool
+  blocks.push({
+    type: "section",
+    text: {
+      type: "mrkdwn",
+      text: `<${TOOL_URL}|View Coverages by State Tool>`
+    }
+  });
+
+  return blocks;
+}
+
+/**
+ * Send a notification to Slack focusing on carrier eligibility changes
+ */
+function sendSlackNotification(payload) {
   return new Promise((resolve) => {
     if (!SLACK_WEBHOOK_URL) {
       console.log('No Slack webhook URL configured, skipping notification');
@@ -469,207 +667,7 @@ function sendSlackNotification(payload) {
       return;
     }
 
-    // States that were already enabled for DSG before this update
-    const PREVIOUSLY_ENABLED_DSG_STATES = ['AL', 'AR', 'AZ', 'CA', 'CO', 'DE', 'GA', 'IA', 'ID', 'IN', 'MD', 'ME', 'MI', 'MN', 'MO', 'MS', 'MT', 'ND', 'NE', 'NH', 'OH', 'OK', 'OR', 'PA', 'RI', 'SD', 'TN', 'TX', 'UT', 'VA', 'WA', 'WV'];
-
-    // Get NEW states where DSG is enabled (excluding previously enabled)
-    const newDsgEnabledStates = Object.entries(dsgEligibility)
-      .filter(([state, status]) => status === "Y" && !PREVIOUSLY_ENABLED_DSG_STATES.includes(state))
-      .map(([state]) => state)
-      .sort();
-
-    // Filter for DSG-specific changes (only newly enabled, excluding previously enabled states)
-    const dsgChanges = changes.filter(c => c.type === 'DSG' && !PREVIOUSLY_ENABLED_DSG_STATES.includes(c.state));
-    const activeChanges = changes.filter(c => c.type === 'ACTIVE');
-
-    // Identify admitted-carrier active changes (any live admitted carrier)
-    const admittedCarrierChanges = activeChanges.filter(c => ADMITTED_CARRIER_KEYS.has(c.carrier));
-
-    // Build message sections
-    const blocks = [
-      {
-        type: "header",
-        text: {
-          type: "plain_text",
-          text: "🔔 Carrier Eligibility Update",
-          emoji: true
-        }
-      }
-    ];
-
-    // Admitted AL changes (an admitted carrier becoming active in new states)
-    if (admittedCarrierChanges.length > 0) {
-      const admittedLines = admittedCarrierChanges.map(c => {
-        const status = c.newValue ? 'now available ✅' : 'no longer available ❌';
-        const display = (CARRIER_REGISTRY.find(r => r.key === c.carrier) || {}).display || c.carrier;
-        return `• ${c.state}: ${display} ${status}`;
-      });
-      blocks.push({
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: `*Admitted AL Changes:*\n${admittedLines.join('\n')}`
-        }
-      });
-
-      // Show updated admitted AL count
-      if (admittedALEligibility) {
-        const admittedCount = Object.values(admittedALEligibility)
-          .filter(v => v["Admitted AL"] === "Y").length;
-        blocks.push({
-          type: "section",
-          text: {
-            type: "mrkdwn",
-            text: `*Permitted Admitted AL Operations:* ${admittedCount} states`
-          }
-        });
-      }
-    }
-
-    // NEW DSG enabled states summary (excluding previously enabled)
-    if (newDsgEnabledStates.length > 0) {
-      blocks.push({
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: `*DS&G is now enabled in ${newDsgEnabledStates.length} NEW states:*\n${newDsgEnabledStates.join(', ')}`
-        }
-      });
-    }
-
-    // Show specific DSG changes if any
-    if (dsgChanges.length > 0) {
-      const dsgLines = dsgChanges.slice(0, 10).map(c => {
-        const status = c.newValue ? 'enabled ✅' : 'disabled ❌';
-        return `• ${c.state}: DS&G ${status}`;
-      });
-      if (dsgChanges.length > 10) {
-        dsgLines.push(`• ... and ${dsgChanges.length - 10} more DS&G changes`);
-      }
-      blocks.push({
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: `*DS&G changes detected:*\n${dsgLines.join('\n')}`
-        }
-      });
-    }
-
-    // Show other carrier active status changes (excluding admitted which are shown above)
-    const otherActiveChanges = activeChanges.filter(c => !ADMITTED_CARRIER_KEYS.has(c.carrier));
-    if (otherActiveChanges.length > 0) {
-      const activeLines = otherActiveChanges.slice(0, 10).map(c => {
-        const status = c.newValue ? 'enabled ✅' : 'disabled ❌';
-        return `• ${c.state} - ${c.carrier}: ${status}`;
-      });
-      if (otherActiveChanges.length > 10) {
-        activeLines.push(`• ... and ${otherActiveChanges.length - 10} more carrier changes`);
-      }
-      blocks.push({
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: `*Carrier status changes:*\n${activeLines.join('\n')}`
-        }
-      });
-    }
-
-    // Lottery weight changes — a carrier can stay enabled to quote while its
-    // lottery weight drops to 0%, which no active/DSG signal above would surface.
-    const lotteryChanges = changes.filter(c => c.type === 'LOTTERY');
-    if (lotteryChanges.length > 0) {
-      const zeroedChanges = lotteryChanges.filter(c => c.zeroed);
-      const otherLotteryChanges = lotteryChanges.filter(c => !c.zeroed);
-
-      if (zeroedChanges.length > 0) {
-        const zeroLines = zeroedChanges.slice(0, 10).map(c =>
-          `• ${c.state} - ${c.carrier}: ${formatLotteryValue(c.oldValue)} → *0%* ⚖️`
-        );
-        if (zeroedChanges.length > 10) {
-          zeroLines.push(`• ... and ${zeroedChanges.length - 10} more set to 0%`);
-        }
-        blocks.push({
-          type: "section",
-          text: {
-            type: "mrkdwn",
-            text: `*Carriers set to 0% on the lottery (still enabled to quote):*\n${zeroLines.join('\n')}`
-          }
-        });
-      }
-
-      if (otherLotteryChanges.length > 0) {
-        const otherLines = otherLotteryChanges.slice(0, 10).map(c => {
-          const marker = c.restored ? ' ✅' : '';
-          return `• ${c.state} - ${c.carrier}: ${formatLotteryValue(c.oldValue)} → ${formatLotteryValue(c.newValue)}${marker}`;
-        });
-        if (otherLotteryChanges.length > 10) {
-          otherLines.push(`• ... and ${otherLotteryChanges.length - 10} more lottery changes`);
-        }
-        blocks.push({
-          type: "section",
-          text: {
-            type: "mrkdwn",
-            text: `*Lottery weight changes:*\n${otherLines.join('\n')}`
-          }
-        });
-      }
-    }
-
-    // Standing total of carriers sitting at 0% while still quotable
-    if (zeroLotteryCarriers && Object.keys(zeroLotteryCarriers).length > 0) {
-      const perCarrier = {};
-      for (const [state, carriers] of Object.entries(zeroLotteryCarriers)) {
-        for (const carrier of carriers) {
-          (perCarrier[carrier] = perCarrier[carrier] || []).push(state);
-        }
-      }
-      const summaryLines = Object.keys(perCarrier).sort().map(carrier =>
-        `• ${carrier}: ${perCarrier[carrier].length} state${perCarrier[carrier].length === 1 ? '' : 's'} (${perCarrier[carrier].join(', ')})`
-      );
-      blocks.push({
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: `*Currently at 0% on the lottery (enabled, not selected):*\n${summaryLines.join('\n')}`
-        }
-      });
-    }
-
-    // Carriers active in prod that this tool does not know about. Needs a human:
-    // being active in company_state does not prove a carrier is quotable.
-    if (untrackedCarriers && untrackedCarriers.length > 0) {
-      const lines = untrackedCarriers.map(c =>
-        `• \`${c.id}\` ${c.name} — active in ${c.activeStates} state${c.activeStates === 1 ? '' : 's'}${c.stateCodes.length ? ` (${c.stateCodes.join(', ')})` : ''}`
-      );
-      blocks.push({
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: `:rotating_light: *Carrier active in the database but NOT tracked by this tool:*\n${lines.join('\n')}\n_Not shown in the tool and not monitored for 0% changes. Confirm whether it has actually launched, then add it to CARRIER_REGISTRY in check-eligibility.js._`
-        }
-      });
-    }
-
-    // Monitor health — a gap means the tool was showing stale data for that window
-    if (staleness && (staleness.level === 'warn' || staleness.level === 'error')) {
-      const icon = staleness.level === 'error' ? ':rotating_light:' : ':warning:';
-      blocks.push({
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: `${icon} *Monitor health:* ${staleness.message}`
-        }
-      });
-    }
-
-    // Link to tool
-    blocks.push({
-      type: "section",
-      text: {
-        type: "mrkdwn",
-        text: `<${TOOL_URL}|View Coverages by State Tool>`
-      }
-    });
+    const blocks = buildSlackBlocks(payload);
 
     // Determine which webhook to use based on approval mode
     let webhookUrl;
@@ -1055,6 +1053,7 @@ module.exports = {
   shouldPersistHeartbeat,
   computeDsgEligibility,
   computeAdmittedALEligibility,
+  buildSlackBlocks,
   detectChanges,
   formatLotteryValue,
   dataBlockPattern

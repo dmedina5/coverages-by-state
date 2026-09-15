@@ -22,6 +22,7 @@ const {
   evaluateStaleness,
   shouldPersistHeartbeat,
   computeAdmittedALEligibility,
+  buildSlackBlocks,
   detectChanges,
   formatLotteryValue,
   dataBlockPattern
@@ -247,6 +248,42 @@ test('a non-admitted carrier never grants Admitted AL', () => {
 test('an admitted grant is not undone by a later inactive row for the same state', () => {
   const data = computeAdmittedALEligibility([carrierRow(6156, 'FL', 1, 100), carrierRow(6881, 'FL', 0, 0)]);
   assert.strictEqual(data.FL['Admitted AL'], 'Y');
+});
+
+console.log('buildSlackBlocks');
+const blockTexts = blocks => blocks.map(b => (b.text && b.text.text) || '').join('\n');
+const lotteryChange = (state, carrier, oldValue, newValue) => ({
+  type: 'LOTTERY', state, carrier, oldValue, newValue,
+  zeroed: newValue === 0, restored: oldValue === 0 && newValue > 0,
+  message: `${state} - ${carrier}: lottery ${oldValue}% → ${newValue}%`
+});
+test('a carrier dropping to 0% is announced', () => {
+  const text = blockTexts(buildSlackBlocks({ changes: [lotteryChange('MI', 'Accredited Non-Admitted 1st', 35, 0)] }));
+  assert.ok(text.includes('set to 0% on the lottery'), text);
+  assert.ok(text.includes('MI - Accredited Non-Admitted 1st: 35% → *0%*'), text);
+});
+test('a non-zero lottery weight change is never announced', () => {
+  const text = blockTexts(buildSlackBlocks({ changes: [
+    lotteryChange('AZ', 'Accredited Non-Admitted 1st', 35, 25),
+    lotteryChange('AZ', 'Ascot Non-Admitted', 1, 25),
+    lotteryChange('MN', 'Accredited Non-Admitted New', 0, 100)
+  ] }));
+  assert.ok(!text.includes('Lottery weight changes'), text);
+  assert.ok(!text.includes('35% → 25%'), text);
+  assert.ok(!text.includes('more lottery changes'), text);
+  assert.ok(!text.includes('0% → 100%'), 'a restore is a weight change too');
+});
+test('a mixed batch keeps only the 0% lines', () => {
+  const text = blockTexts(buildSlackBlocks({ changes: [
+    lotteryChange('AZ', 'Accredited Non-Admitted 1st', 35, 25),
+    lotteryChange('WA', 'Everspan Non-Admitted MunichRe', 10, 0)
+  ] }));
+  assert.ok(text.includes('WA - Everspan Non-Admitted MunichRe: 10% → *0%*'), text);
+  assert.ok(!text.includes('AZ - Accredited Non-Admitted 1st'), text);
+});
+test('the message always ends with the tool link', () => {
+  const blocks = buildSlackBlocks({ changes: [] });
+  assert.ok(blocks[blocks.length - 1].text.text.includes('Coverages by State Tool'));
 });
 
 console.log('findUntrackedCarriers');
