@@ -26,9 +26,13 @@ jobs:
       contents: write
 
     steps:
+      # ref: main, not the run's pinned sha — a scheduled run queues before it starts,
+      # and a hand-pushed commit in that window left the run's sync commit behind
+      # main, so its push was rejected (2026-09-15, run 34918130704).
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          ref: main
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: true
 
@@ -73,6 +77,15 @@ jobs:
           git diff --staged --quiet
           if ($LASTEXITCODE -ne 0) {
             git commit -m "Auto-sync: Carrier eligibility changes detected"
+            # main may have moved while this job ran. Replay the sync commit on top of
+            # it; on a conflict the synced files win (-X theirs = the commit being
+            # replayed), since they were just derived from prod and a hand edit to a
+            # synced block is stale by definition.
+            git pull --rebase -X theirs origin main
+            if ($LASTEXITCODE -ne 0) {
+              Write-Host "::error::Rebase onto main failed - the live tool is now behind this runner's state"
+              exit 1
+            }
             git push
             if ($LASTEXITCODE -ne 0) {
               Write-Host "::error::Push failed - the live tool is now behind this runner's state"
