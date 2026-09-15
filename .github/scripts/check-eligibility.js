@@ -44,25 +44,29 @@ const STALENESS_ERROR_HOURS = parseFloat(process.env.STALENESS_ERROR_HOURS) || 1
  *                Still synced (so a weight change is visible in Slack), never rendered.
  *   retired    — no company_state row at all; a fixed presentational status.
  *
- * Why `pre-launch` exists: Accredited 2025 Admitted (6881) has active=1 and a 100%
- * lottery weight in prod, seeded deploy-dark by T2CP-832 ahead of its program launch.
- * The real gate is ACCREDITED_2025_ADMITTED_ENABLED (config/carriers.php, defaults
- * false, absent from prod secrets) — an application flag this tool cannot read. Zero
- * submissions have ever bound on it. Trusting company_state.active alone would tell
- * agents a carrier is available months before it is. Flip to `live` at launch.
+ * `admitted`: true for an admitted-paper carrier. The Admitted AL / Hotshots / UIIA
+ *   fields of lobOpsData are derived from whichever live admitted carriers are active
+ *   in a state, so a second admitted carrier is one flag here, not a new code path.
+ *
+ * Why `pre-launch` exists: Accredited 2025 Admitted (6881) sat in company_state with
+ * active=1 and a 100% FL lottery weight from 2026-07-30 (seeded deploy-dark by
+ * T2CP-832) until its launch on 2026-09-14, gated by ACCREDITED_2025_ADMITTED_ENABLED
+ * (config/carriers.php) — an application flag this tool cannot read. Trusting
+ * company_state.active alone would have advertised it six weeks early. The status is
+ * kept for the next carrier seeded the same way; flip it to `live` at launch.
  */
 const CARRIER_REGISTRY = [
   { id: null, key: "Everspan Admitted GenRe",         display: "Everspan Admitted (GenRe)",           status: "retired",    defaultStatus: "N/A" },
   { id: null, key: "Everspan Non-Admitted GenRe",     display: "Everspan Non-Admitted (GenRe)",       status: "retired",    defaultStatus: "turned off permanently" },
-  { id: 6156, key: "Everspan Admitted MunichRe",      display: "Everspan Admitted (MunichRe)",        status: "live" },
+  { id: 6156, key: "Everspan Admitted MunichRe",      display: "Everspan Admitted (MunichRe)",        status: "live",       admitted: true },
   { id: 6155, key: "Everspan Non-Admitted MunichRe",  display: "Everspan Non-Admitted (MunichRe)",    status: "live" },
   { id: 5245, key: "Accredited Non-Admitted 1st",     display: "Accredited Non-Admitted (1st)",       status: "live" },
   { id: 6607, key: "Accredited Non-Admitted New",     display: "Accredited Non-Admitted (New)",       status: "live" },
   { id: 61,   key: "Knight Non-Admitted",             display: "Knight Non-Admitted",                 status: "retired",    defaultStatus: "turned off permanently",
     note: "Permanently turned off for new business; continues to endorse existing policies." },
   { id: 5696, key: "Ascot Non-Admitted",              display: "Ascot Non-Admitted",                  status: "live" },
-  { id: 6881, key: "Accredited 2025 Admitted",        display: "Accredited Admitted (2025 Program)",  status: "pre-launch",
-    note: "Provisioned in the database ahead of launch. Not quotable until ACCREDITED_2025_ADMITTED_ENABLED is turned on." }
+  { id: 6881, key: "Accredited 2025 Admitted",        display: "Accredited Admitted (2025 Program)",  status: "live",       admitted: true,
+    note: "Florida-only admitted program. Launched 2026-09-14." }
 ];
 
 // Carriers whose company_state rows the monitor reads (live + pre-launch).
@@ -81,6 +85,12 @@ const DEFAULT_CARRIER_STATUS = Object.fromEntries(
 const NON_QUOTABLE_KEYS = new Set(
   CARRIER_REGISTRY.filter(c => c.status === 'pre-launch').map(c => c.key)
 );
+
+// Admitted-paper carriers that are quotable today. Any one of them active in a state
+// gives that state the Admitted AL line (see computeAdmittedALEligibility).
+const ADMITTED_CARRIERS = CARRIER_REGISTRY.filter(c => c.admitted && c.status === 'live');
+const ADMITTED_CARRIER_IDS = ADMITTED_CARRIERS.map(c => c.id);
+const ADMITTED_CARRIER_KEYS = new Set(ADMITTED_CARRIERS.map(c => c.key));
 
 // The effective AL lottery weight for a carrier in a state: states flagged
 // specific_lottery use the per-state override (company_state.lottery_al), all
@@ -149,7 +159,7 @@ function normalizeLottery(value) {
   return Number.isNaN(num) ? null : num;
 }
 
-function processCarrierData(rows) {
+function processCarrierData(rows, nonQuotableKeys = NON_QUOTABLE_KEYS) {
   const stateCarriers = {};
   const allStates = new Set();
   for (const row of rows) {
@@ -160,7 +170,7 @@ function processCarrierData(rows) {
     if (!stateCarriers[row.code]) stateCarriers[row.code] = {};
     // A pre-launch carrier is active in the database but gated off above it, so it
     // can never be reported as available no matter what company_state says.
-    if (NON_QUOTABLE_KEYS.has(key)) {
+    if (nonQuotableKeys.has(key)) {
       stateCarriers[row.code][key] = "pre-launch";
       continue;
     }
@@ -295,17 +305,17 @@ function computeDsgEligibility(dbResults) {
 }
 
 /**
- * Compute Admitted AL eligibility per state based on company 6156 (Everspan Admitted MunichRe).
- * If company 6156 is active in a state, that state has Admitted AL, Hotshots, and UIIA.
- * Exception: FL has Admitted AL UIIA as N/A.
+ * Compute Admitted AL eligibility per state from the live admitted carriers
+ * (ADMITTED_CARRIER_IDS — Everspan Admitted MunichRe and, since 2026-09-14, Accredited
+ * 2025 Admitted). Any of them active in a state gives that state Admitted AL, Hotshots,
+ * and UIIA. Exception: FL has Admitted AL UIIA as N/A.
  */
 function computeAdmittedALEligibility(dbResults) {
-  const ADMITTED_CARRIER_ID = 6156; // Everspan Admitted MunichRe
   const stateAdmittedStatus = {};
   for (const row of dbResults) {
     const stateCode = row.code;
     if (!stateCode) continue;
-    if (row.id === ADMITTED_CARRIER_ID && (row.active === 1 || row.active === true)) {
+    if (ADMITTED_CARRIER_IDS.includes(row.id) && (row.active === 1 || row.active === true)) {
       stateAdmittedStatus[stateCode] = {
         "Admitted AL": "Y",
         "Admitted AL Hotshots": "Y",
@@ -472,8 +482,8 @@ function sendSlackNotification(payload) {
     const dsgChanges = changes.filter(c => c.type === 'DSG' && !PREVIOUSLY_ENABLED_DSG_STATES.includes(c.state));
     const activeChanges = changes.filter(c => c.type === 'ACTIVE');
 
-    // Identify admitted carrier (Everspan Admitted MunichRe) active changes
-    const admittedCarrierChanges = activeChanges.filter(c => c.carrier === 'Everspan Admitted MunichRe');
+    // Identify admitted-carrier active changes (any live admitted carrier)
+    const admittedCarrierChanges = activeChanges.filter(c => ADMITTED_CARRIER_KEYS.has(c.carrier));
 
     // Build message sections
     const blocks = [
@@ -487,11 +497,12 @@ function sendSlackNotification(payload) {
       }
     ];
 
-    // Admitted AL changes (Everspan Admitted MunichRe becoming active in new states)
+    // Admitted AL changes (an admitted carrier becoming active in new states)
     if (admittedCarrierChanges.length > 0) {
       const admittedLines = admittedCarrierChanges.map(c => {
         const status = c.newValue ? 'now available ✅' : 'no longer available ❌';
-        return `• ${c.state}: Everspan Admitted (MunichRe) ${status}`;
+        const display = (CARRIER_REGISTRY.find(r => r.key === c.carrier) || {}).display || c.carrier;
+        return `• ${c.state}: ${display} ${status}`;
       });
       blocks.push({
         type: "section",
@@ -545,7 +556,7 @@ function sendSlackNotification(payload) {
     }
 
     // Show other carrier active status changes (excluding admitted which are shown above)
-    const otherActiveChanges = activeChanges.filter(c => c.carrier !== 'Everspan Admitted MunichRe');
+    const otherActiveChanges = activeChanges.filter(c => !ADMITTED_CARRIER_KEYS.has(c.carrier));
     if (otherActiveChanges.length > 0) {
       const activeLines = otherActiveChanges.slice(0, 10).map(c => {
         const status = c.newValue ? 'enabled ✅' : 'disabled ❌';
@@ -1033,6 +1044,7 @@ module.exports = {
   COMPANY_ID_MAPPING,
   DEFAULT_CARRIER_STATUS,
   NON_QUOTABLE_KEYS,
+  ADMITTED_CARRIER_IDS,
   computeHash,
   normalizeLottery,
   processCarrierData,

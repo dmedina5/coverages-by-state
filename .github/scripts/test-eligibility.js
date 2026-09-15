@@ -12,6 +12,7 @@ const {
   COMPANY_ID_MAPPING,
   DEFAULT_CARRIER_STATUS,
   NON_QUOTABLE_KEYS,
+  ADMITTED_CARRIER_IDS,
   computeHash,
   normalizeLottery,
   processCarrierData,
@@ -20,6 +21,7 @@ const {
   findUntrackedCarriers,
   evaluateStaleness,
   shouldPersistHeartbeat,
+  computeAdmittedALEligibility,
   detectChanges,
   formatLotteryValue,
   dataBlockPattern
@@ -171,7 +173,7 @@ test('every entry has a recognised status', () => {
 test('tracked ids are exactly the live + pre-launch carriers with a company id', () => {
   const expected = CARRIER_REGISTRY.filter(c => c.id !== null && c.status !== 'retired').map(c => c.id);
   assert.deepStrictEqual(TRACKED_COMPANY_IDS.slice().sort(), expected.slice().sort());
-  assert.ok(TRACKED_COMPANY_IDS.includes(6881), 'the pre-launch carrier is still monitored');
+  assert.ok(TRACKED_COMPANY_IDS.includes(6881), 'Accredited 2025 Admitted is monitored');
 });
 test('retired carriers supply a default status and are not queried', () => {
   for (const c of CARRIER_REGISTRY.filter(c => c.status === 'retired')) {
@@ -183,18 +185,68 @@ test('retired carriers supply a default status and are not queried', () => {
 });
 
 console.log('pre-launch carriers never read as available');
+// The registry has no pre-launch carrier today (Accredited 2025 Admitted launched
+// 2026-09-14), so the gate is exercised with an injected non-quotable set — it must
+// keep working for the next carrier seeded deploy-dark.
 test('an active pre-launch row is not reported as "Y"', () => {
   const data = processCarrierData([
     carrierRow(6881, 'FL', 1, 100),
     carrierRow(6156, 'FL', 1, 100)
-  ]);
+  ], new Set(['Accredited 2025 Admitted']));
   assert.strictEqual(data.FL['Accredited 2025 Admitted'], 'pre-launch',
     'active=1 in the DB must not mean quotable for a launch-gated carrier');
   assert.strictEqual(data.FL['Everspan Admitted MunichRe'], 'Y');
 });
-test('the pre-launch carrier is in the non-quotable set', () => {
-  assert.ok(NON_QUOTABLE_KEYS.has('Accredited 2025 Admitted'));
-  assert.ok(!NON_QUOTABLE_KEYS.has('Everspan Non-Admitted MunichRe'));
+test('the non-quotable set is derived from pre-launch registry entries only', () => {
+  const expected = CARRIER_REGISTRY.filter(c => c.status === 'pre-launch').map(c => c.key);
+  assert.deepStrictEqual([...NON_QUOTABLE_KEYS].sort(), expected.sort());
+});
+
+console.log('Accredited 2025 Admitted is live (launched 2026-09-14, FL only)');
+test('the launched carrier is registered live and quotable', () => {
+  const entry = CARRIER_REGISTRY.find(c => c.id === 6881);
+  assert.strictEqual(entry.status, 'live');
+  assert.ok(!NON_QUOTABLE_KEYS.has(entry.key), 'a live carrier must not be in the non-quotable set');
+});
+test('an active row for the launched carrier reads as available', () => {
+  const data = processCarrierData([carrierRow(6881, 'FL', 1, 100)]);
+  assert.strictEqual(data.FL['Accredited 2025 Admitted'], 'Y');
+});
+
+console.log('computeAdmittedALEligibility');
+test('admitted carriers are the live registry entries flagged admitted', () => {
+  const expected = CARRIER_REGISTRY.filter(c => c.admitted && c.status === 'live').map(c => c.id);
+  assert.deepStrictEqual(ADMITTED_CARRIER_IDS.slice().sort(), expected.slice().sort());
+  assert.deepStrictEqual(ADMITTED_CARRIER_IDS.slice().sort(), [6156, 6881]);
+});
+test('no non-admitted carrier is flagged admitted', () => {
+  for (const c of CARRIER_REGISTRY.filter(c => c.admitted)) {
+    assert.ok(/Admitted/.test(c.key) && !/Non-Admitted/.test(c.key), `${c.key} is flagged admitted`);
+  }
+});
+test('Everspan Admitted active in a state grants Admitted AL, Hotshots and UIIA', () => {
+  const data = computeAdmittedALEligibility([carrierRow(6156, 'IL', 1, 100)]);
+  assert.deepStrictEqual(data.IL, { 'Admitted AL': 'Y', 'Admitted AL Hotshots': 'Y', 'Admitted AL UIIA': 'Y' });
+});
+test('Accredited 2025 Admitted active in FL grants Admitted AL on its own', () => {
+  const data = computeAdmittedALEligibility([
+    carrierRow(6881, 'FL', 1, 100),
+    carrierRow(6156, 'FL', 0, 0)
+  ]);
+  assert.deepStrictEqual(data.FL, { 'Admitted AL': 'Y', 'Admitted AL Hotshots': 'Y', 'Admitted AL UIIA': 'N/A' },
+    'the admitted line must not depend on Everspan alone once a second admitted carrier is live');
+});
+test('an inactive admitted carrier does not grant Admitted AL', () => {
+  const data = computeAdmittedALEligibility([carrierRow(6881, 'FL', 0, 0), carrierRow(6156, 'FL', 0, 0)]);
+  assert.deepStrictEqual(data.FL, { 'Admitted AL': 'N/A', 'Admitted AL Hotshots': 'N/A', 'Admitted AL UIIA': 'N/A' });
+});
+test('a non-admitted carrier never grants Admitted AL', () => {
+  const data = computeAdmittedALEligibility([carrierRow(6607, 'TX', 1, 65), carrierRow(5245, 'TX', 1, 35)]);
+  assert.deepStrictEqual(data.TX, { 'Admitted AL': 'N/A', 'Admitted AL Hotshots': 'N/A', 'Admitted AL UIIA': 'N/A' });
+});
+test('an admitted grant is not undone by a later inactive row for the same state', () => {
+  const data = computeAdmittedALEligibility([carrierRow(6156, 'FL', 1, 100), carrierRow(6881, 'FL', 0, 0)]);
+  assert.strictEqual(data.FL['Admitted AL'], 'Y');
 });
 
 console.log('findUntrackedCarriers');
