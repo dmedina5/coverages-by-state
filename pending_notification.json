@@ -763,10 +763,102 @@
       "Everspan Non-Admitted MunichRe"
     ]
   },
-  "untrackedCarriers": [],
   "staleness": {
     "level": "error",
     "hours": 657.4,
     "message": "Monitor has not completed a successful check in 657.4h (threshold 12h) — carrier data may be stale"
-  }
+  },
+  "registry": [
+    {
+      "id": null,
+      "key": "Everspan Admitted GenRe",
+      "display": "Everspan Admitted (GenRe)",
+      "status": "retired",
+      "admitted": true,
+      "defaultStatus": "N/A",
+      "curated": true
+    },
+    {
+      "id": null,
+      "key": "Everspan Non-Admitted GenRe",
+      "display": "Everspan Non-Admitted (GenRe)",
+      "status": "retired",
+      "admitted": false,
+      "defaultStatus": "turned off permanently",
+      "curated": true
+    },
+    {
+      "id": 6156,
+      "key": "Everspan Admitted MunichRe",
+      "display": "Everspan Admitted (MunichRe)",
+      "status": "live",
+      "admitted": true,
+      "curated": true,
+      "activeStates": 7,
+      "newBusiness30d": 4652
+    },
+    {
+      "id": 6155,
+      "key": "Everspan Non-Admitted MunichRe",
+      "display": "Everspan Non-Admitted (MunichRe)",
+      "status": "live",
+      "admitted": false,
+      "curated": true,
+      "activeStates": 31,
+      "newBusiness30d": 7405
+    },
+    {
+      "id": 5245,
+      "key": "Accredited Non-Admitted 1st",
+      "display": "Accredited Non-Admitted (1st)",
+      "status": "live",
+      "admitted": false,
+      "curated": true,
+      "activeStates": 33,
+      "newBusiness30d": 3408
+    },
+    {
+      "id": 6607,
+      "key": "Accredited Non-Admitted New",
+      "display": "Accredited Non-Admitted (New)",
+      "status": "live",
+      "admitted": false,
+      "curated": true,
+      "activeStates": 34,
+      "newBusiness30d": 7156
+    },
+    {
+      "id": 61,
+      "key": "Knight Non-Admitted",
+      "display": "Knight Non-Admitted",
+      "status": "retired",
+      "admitted": false,
+      "curated": true,
+      "activeStates": 0,
+      "newBusiness30d": 0,
+      "defaultStatus": "turned off permanently",
+      "note": "Permanently turned off for new business; continues to endorse existing policies."
+    },
+    {
+      "id": 5696,
+      "key": "Ascot Non-Admitted",
+      "display": "Ascot Non-Admitted",
+      "status": "live",
+      "admitted": false,
+      "curated": true,
+      "activeStates": 11,
+      "newBusiness30d": 1407
+    },
+    {
+      "id": 6881,
+      "key": "Accredited 2025 Admitted",
+      "display": "Accredited Admitted (2025 Program)",
+      "status": "live",
+      "admitted": true,
+      "curated": true,
+      "activeStates": 1,
+      "newBusiness30d": 52,
+      "note": "Florida-only admitted program. Launched 2026-09-14."
+    }
+  ]
 }

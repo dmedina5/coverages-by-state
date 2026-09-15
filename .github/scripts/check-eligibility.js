@@ -33,64 +33,173 @@ const STALENESS_WARN_HOURS = parseFloat(process.env.STALENESS_WARN_HOURS) || 6;
 const STALENESS_ERROR_HOURS = parseFloat(process.env.STALENESS_ERROR_HOURS) || 12;
 
 /**
- * THE carrier list. Single source of truth for the DB query, the sync, and the UI —
- * index.html renders its carrier cards and filter buttons from the copy of this that
- * gets written into it, so adding a carrier is one entry here and nothing else.
+ * THE carrier list is DERIVED from production on every run — nothing here decides
+ * whether a carrier exists, is admitted, or is live. What this file keeps is
+ * presentation only:
  *
- * `status`:
- *   live       — quotable today. Synced from company_state and rendered normally.
- *   pre-launch — the company_state row exists but the carrier is gated OFF above the
- *                database, so it is NOT quotable and must not be shown as available.
- *                Still synced (so a weight change is visible in Slack), never rendered.
- *   retired    — no company_state row at all; a fixed presentational status.
+ *   CURATED_CARRIERS — a friendly key/display name (and an optional note) per known
+ *                      company id, in the order the UI shows the cards. A carrier the
+ *                      map does not know still appears, named from companies.name;
+ *                      add an entry here to name it nicely. Nothing else changes.
+ *   LEGACY_CARRIERS  — carriers with no database presence at all, kept for the
+ *                      historical cards ("N/A" / "turned off permanently").
  *
- * `admitted`: true for an admitted-paper carrier. The Admitted AL / Hotshots / UIIA
- *   fields of lobOpsData are derived from whichever live admitted carriers are active
- *   in a state, so a second admitted carrier is one flag here, not a new code path.
+ * Everything else comes from CARRIER_FACTS_QUERY, per carrier:
+ *   admitted   — companies.regulation = 'Admitted' (6156, 6881 today). 'Non-Admited'
+ *                and 'Undefined' are both non-admitted paper.
+ *   status     — deriveCarrierStatus():
+ *     live       new business written in the last LAUNCH_WINDOW_DAYS, or active in
+ *                some state with any history of new business. Quotable, rendered.
+ *     pre-launch active in company_state but has NEVER written new business — the
+ *                deploy-dark shape: Accredited 2025 Admitted (6881) sat active=1 with a
+ *                100% FL weight from 2026-07-30 behind ACCREDITED_2025_ADMITTED_ENABLED
+ *                until 2026-09-14, and company_state alone would have advertised it six
+ *                weeks early. Synced (so a weight change is visible), never rendered as
+ *                available. Flips to live by itself the day submissions carry its id.
+ *     retired    active nowhere and not writing. Fixed presentational status.
  *
- * Why `pre-launch` exists: Accredited 2025 Admitted (6881) sat in company_state with
- * active=1 and a 100% FL lottery weight from 2026-07-30 (seeded deploy-dark by
- * T2CP-832) until its launch on 2026-09-14, gated by ACCREDITED_2025_ADMITTED_ENABLED
- * (config/carriers.php) — an application flag this tool cannot read. Trusting
- * company_state.active alone would have advertised it six weeks early. The status is
- * kept for the next carrier seeded the same way; flip it to `live` at launch.
+ * "New business" is a transportation_submissions row with transaction_id = 0 and
+ * carrier_al = the carrier — endorsements on old policies (Knight still has them)
+ * do not count, or a carrier turned off years ago would read as live.
  */
-const CARRIER_REGISTRY = [
-  { id: null, key: "Everspan Admitted GenRe",         display: "Everspan Admitted (GenRe)",           status: "retired",    defaultStatus: "N/A" },
-  { id: null, key: "Everspan Non-Admitted GenRe",     display: "Everspan Non-Admitted (GenRe)",       status: "retired",    defaultStatus: "turned off permanently" },
-  { id: 6156, key: "Everspan Admitted MunichRe",      display: "Everspan Admitted (MunichRe)",        status: "live",       admitted: true },
-  { id: 6155, key: "Everspan Non-Admitted MunichRe",  display: "Everspan Non-Admitted (MunichRe)",    status: "live" },
-  { id: 5245, key: "Accredited Non-Admitted 1st",     display: "Accredited Non-Admitted (1st)",       status: "live" },
-  { id: 6607, key: "Accredited Non-Admitted New",     display: "Accredited Non-Admitted (New)",       status: "live" },
-  { id: 61,   key: "Knight Non-Admitted",             display: "Knight Non-Admitted",                 status: "retired",    defaultStatus: "turned off permanently",
+const CURATED_CARRIERS = [
+  { id: 6156, key: "Everspan Admitted MunichRe",      display: "Everspan Admitted (MunichRe)" },
+  { id: 6155, key: "Everspan Non-Admitted MunichRe",  display: "Everspan Non-Admitted (MunichRe)" },
+  { id: 5245, key: "Accredited Non-Admitted 1st",     display: "Accredited Non-Admitted (1st)" },
+  { id: 6607, key: "Accredited Non-Admitted New",     display: "Accredited Non-Admitted (New)" },
+  { id: 61,   key: "Knight Non-Admitted",             display: "Knight Non-Admitted",
+    retiredStatus: "turned off permanently",
     note: "Permanently turned off for new business; continues to endorse existing policies." },
-  { id: 5696, key: "Ascot Non-Admitted",              display: "Ascot Non-Admitted",                  status: "live" },
-  { id: 6881, key: "Accredited 2025 Admitted",        display: "Accredited Admitted (2025 Program)",  status: "live",       admitted: true,
+  { id: 5696, key: "Ascot Non-Admitted",              display: "Ascot Non-Admitted" },
+  { id: 6881, key: "Accredited 2025 Admitted",        display: "Accredited Admitted (2025 Program)",
     note: "Florida-only admitted program. Launched 2026-09-14." }
 ];
 
-// Carriers whose company_state rows the monitor reads (live + pre-launch).
-const TRACKED_CARRIERS = CARRIER_REGISTRY.filter(c => c.id !== null && c.status !== 'retired');
-const TRACKED_COMPANY_IDS = TRACKED_CARRIERS.map(c => c.id);
+const LEGACY_CARRIERS = [
+  { id: null, key: "Everspan Admitted GenRe",     display: "Everspan Admitted (GenRe)",     status: "retired", admitted: true,  defaultStatus: "N/A",                    curated: true },
+  { id: null, key: "Everspan Non-Admitted GenRe", display: "Everspan Non-Admitted (GenRe)", status: "retired", admitted: false, defaultStatus: "turned off permanently", curated: true }
+];
 
-// id -> data key, for turning DB rows into the keys index.html indexes by
-const COMPANY_ID_MAPPING = Object.fromEntries(TRACKED_CARRIERS.map(c => [c.id, c.key]));
+// A carrier is "writing business" if it has new-business submissions this recent.
+const LAUNCH_WINDOW_DAYS = parseInt(process.env.LAUNCH_WINDOW_DAYS) || 30;
 
-// Fixed statuses for carriers with no company_state row to read
-const DEFAULT_CARRIER_STATUS = Object.fromEntries(
-  CARRIER_REGISTRY.filter(c => c.defaultStatus).map(c => [c.key, c.defaultStatus])
-);
+// One row per carrier the database knows: every company with a company_state row,
+// plus the curated ids (a retired carrier such as Knight has no state rows left).
+const CARRIER_FACTS_QUERY = `
+  SELECT c.id, c.name, c.regulation,
+         (SELECT COUNT(*) FROM company_state cs WHERE cs.company_id = c.id AND cs.active = 1) AS active_states,
+         (SELECT COUNT(*) FROM transportation_submissions t
+           WHERE t.carrier_al = c.id AND t.transaction_id = 0
+             AND t.created_at >= NOW() - INTERVAL ${LAUNCH_WINDOW_DAYS} DAY) AS new_business_30d,
+         (SELECT MIN(t.created_at) FROM transportation_submissions t
+           WHERE t.carrier_al = c.id AND t.transaction_id = 0) AS first_new_business
+  FROM companies c
+  WHERE c.company_type_id = 1
+    AND (EXISTS (SELECT 1 FROM company_state cs WHERE cs.company_id = c.id)
+         OR c.id IN (${CURATED_CARRIERS.map(c => c.id).join(', ')}))
+  ORDER BY c.id
+`;
 
-// Carriers that must never render as available, whatever the database says
-const NON_QUOTABLE_KEYS = new Set(
-  CARRIER_REGISTRY.filter(c => c.status === 'pre-launch').map(c => c.key)
-);
+function deriveCarrierStatus(fact) {
+  const activeStates = Number(fact.active_states) || 0;
+  const recent = Number(fact.new_business_30d) || 0;
+  if (recent > 0) return 'live';
+  if (activeStates > 0) return fact.first_new_business ? 'live' : 'pre-launch';
+  return 'retired';
+}
 
-// Admitted-paper carriers that are quotable today. Any one of them active in a state
-// gives that state the Admitted AL line (see computeAdmittedALEligibility).
-const ADMITTED_CARRIERS = CARRIER_REGISTRY.filter(c => c.admitted && c.status === 'live');
-const ADMITTED_CARRIER_IDS = ADMITTED_CARRIERS.map(c => c.id);
-const ADMITTED_CARRIER_KEYS = new Set(ADMITTED_CARRIERS.map(c => c.key));
+// Name for a carrier the curated map does not know: the part of companies.name
+// before any " | " tail, the paper, and the id — two carriers can share a name
+// (5245 and 6607 are both "Accredited Specialty Insurance Company").
+function fallbackName(fact) {
+  const base = String(fact.name || `Carrier ${fact.id}`).split('|')[0].trim();
+  const paper = fact.regulation === 'Admitted' ? 'Admitted' : 'Non-Admitted';
+  return `${base} (${paper}) #${fact.id}`;
+}
+
+/**
+ * Build the registry for this run from CARRIER_FACTS_QUERY rows. Deterministic:
+ * legacy cards first, curated carriers in curated order, then anything the curated
+ * map does not know, by id. Written into index.html as `carrierRegistry` on every
+ * sync, so the UI's cards and filters follow production without a code change.
+ */
+function buildRegistry(facts) {
+  const byId = new Map(facts.map(f => [Number(f.id), f]));
+  const curatedIds = new Set(CURATED_CARRIERS.map(c => c.id));
+  const entryFor = (fact, names) => {
+    const status = deriveCarrierStatus(fact);
+    const entry = {
+      id: Number(fact.id),
+      key: names ? names.key : fallbackName(fact),
+      display: names ? names.display : fallbackName(fact),
+      status,
+      admitted: fact.regulation === 'Admitted',
+      curated: !!names,
+      activeStates: Number(fact.active_states) || 0,
+      newBusiness30d: Number(fact.new_business_30d) || 0
+    };
+    if (status === 'retired') entry.defaultStatus = (names && names.retiredStatus) || 'turned off';
+    if (names && names.note) entry.note = names.note;
+    return entry;
+  };
+  const curated = CURATED_CARRIERS.filter(c => byId.has(c.id)).map(c => entryFor(byId.get(c.id), c));
+  const unnamed = [...byId.values()]
+    .filter(f => !curatedIds.has(Number(f.id)))
+    .sort((a, b) => Number(a.id) - Number(b.id))
+    .map(f => entryFor(f, null));
+  return [...LEGACY_CARRIERS, ...curated, ...unnamed];
+}
+
+/**
+ * Everything the sync needs to look up about a registry, computed once per run
+ * (and once per Slack replay from the registry saved in the payload).
+ */
+function registryIndex(registry) {
+  const entries = registry || [];
+  const tracked = entries.filter(c => c.id !== null && c.id !== undefined && c.status !== 'retired');
+  const admitted = entries.filter(c => c.admitted && c.status === 'live');
+  return {
+    entries,
+    trackedIds: tracked.map(c => c.id),
+    keyById: Object.fromEntries(tracked.map(c => [c.id, c.key])),
+    defaults: Object.fromEntries(entries.filter(c => c.defaultStatus).map(c => [c.key, c.defaultStatus])),
+    nonQuotableKeys: new Set(entries.filter(c => c.status === 'pre-launch').map(c => c.key)),
+    admittedIds: admitted.map(c => c.id),
+    admittedKeys: new Set(admitted.map(c => c.key)),
+    displayByKey: Object.fromEntries(entries.map(c => [c.key, c.display]))
+  };
+}
+
+// Carriers rendered with a fallback name — worth a note to the operator, not a
+// blocker: the site already shows them.
+function unnamedCarriers(registry) {
+  return (registry || []).filter(c => c.id !== null && !c.curated);
+}
+
+/**
+ * Carrier-level transitions between two runs' registries: a launch (pre-launch →
+ * live), a retirement, a carrier appearing for the first time. No previous registry
+ * (state saved before registries were derived) reports nothing rather than
+ * announcing every carrier as new.
+ */
+function detectCarrierChanges(oldRegistry, newRegistry) {
+  if (!Array.isArray(oldRegistry)) return [];
+  const before = new Map(oldRegistry.filter(c => c.id !== null).map(c => [c.id, c]));
+  const changes = [];
+  for (const c of newRegistry.filter(c => c.id !== null)) {
+    const prev = before.get(c.id);
+    const oldStatus = prev ? prev.status : null;
+    if (oldStatus === c.status) continue;
+    changes.push({
+      type: 'CARRIER',
+      carrier: c.key,
+      oldValue: oldStatus,
+      newValue: c.status,
+      message: `${c.display}: ${oldStatus || 'new'} → ${c.status}`
+    });
+  }
+  return changes;
+}
 
 // The effective AL lottery weight for a carrier in a state: states flagged
 // specific_lottery use the per-state override (company_state.lottery_al), all
@@ -101,6 +210,8 @@ const EFFECTIVE_LOTTERY_SQL = `
        ELSE NULL END
 `;
 
+// Every company_state row. company_state is carrier-only; rows for carriers the
+// registry does not track (retired) are skipped by the registry index downstream.
 const STATE_QUERY = `
   SELECT c.id AS company_id, c.name AS company_name, s.code AS state_code,
          cs.active, cs.dsg_allowed,
@@ -108,27 +219,7 @@ const STATE_QUERY = `
   FROM companies c
   INNER JOIN company_state cs ON c.id = cs.company_id
   INNER JOIN states s ON cs.state_id = s.id
-  WHERE c.id IN (${TRACKED_COMPANY_IDS.join(', ')})
   ORDER BY s.code, c.id
-`;
-
-/**
- * Every company with a company_state row. company_state is carrier-only (6 companies
- * across 173 rows as of 2026-08-14), so anything here that the registry does not know
- * about is a carrier this tool is blind to — surfaced rather than silently included,
- * because active=1 does not prove quotable (see CARRIER_REGISTRY).
- */
-const CARRIER_DISCOVERY_QUERY = `
-  SELECT c.id, c.name,
-         COUNT(*) AS state_rows,
-         SUM(cs.active) AS active_states,
-         GROUP_CONCAT(DISTINCT CASE WHEN cs.active = TRUE THEN s.code END ORDER BY s.code) AS active_state_codes
-  FROM companies c
-  INNER JOIN company_state cs ON c.id = cs.company_id
-  INNER JOIN states s ON cs.state_id = s.id
-  GROUP BY c.id, c.name
-  HAVING active_states > 0
-  ORDER BY c.id
 `;
 
 const CARRIER_QUERY = `
@@ -143,9 +234,12 @@ const CARRIER_QUERY = `
 
 // lottery_al is part of the hash so a weight change (e.g. a carrier dropped to 0%
 // while staying enabled) triggers a sync — active/dsg_allowed alone would miss it.
-function computeHash(rows) {
+// Carrier STATUS is part of it too, so a launch (pre-launch → live) with no state
+// row changing still syncs and announces. Submission counts deliberately are not.
+function computeHash(rows, registry = []) {
   const str = rows
     .map(r => `${r.state_code}:${r.company_id}:${r.active}:${r.dsg_allowed}:${normalizeLottery(r.lottery_al)}`)
+    .concat(registry.filter(c => c.id !== null).map(c => `carrier:${c.id}:${c.status}`))
     .sort()
     .join('|');
   return crypto.createHash('md5').update(str).digest('hex');
@@ -159,18 +253,18 @@ function normalizeLottery(value) {
   return Number.isNaN(num) ? null : num;
 }
 
-function processCarrierData(rows, nonQuotableKeys = NON_QUOTABLE_KEYS) {
+function processCarrierData(rows, R) {
   const stateCarriers = {};
   const allStates = new Set();
   for (const row of rows) {
     if (!row.code) continue;
     allStates.add(row.code);
-    const key = COMPANY_ID_MAPPING[row.id];
+    const key = R.keyById[row.id];
     if (!key) continue;
     if (!stateCarriers[row.code]) stateCarriers[row.code] = {};
     // A pre-launch carrier is active in the database but gated off above it, so it
     // can never be reported as available no matter what company_state says.
-    if (nonQuotableKeys.has(key)) {
+    if (R.nonQuotableKeys.has(key)) {
       stateCarriers[row.code][key] = "pre-launch";
       continue;
     }
@@ -178,32 +272,12 @@ function processCarrierData(rows, nonQuotableKeys = NON_QUOTABLE_KEYS) {
   }
   const result = {};
   for (const state of allStates) {
-    result[state] = { ...DEFAULT_CARRIER_STATUS, ...stateCarriers[state] };
-    for (const key of Object.values(COMPANY_ID_MAPPING)) {
+    result[state] = { ...R.defaults, ...stateCarriers[state] };
+    for (const key of Object.values(R.keyById)) {
       if (!(key in result[state])) result[state][key] = "N/A";
     }
   }
   return result;
-}
-
-/**
- * Carriers active in the database that the registry does not cover.
- *
- * Deliberately reports rather than auto-includes: a carrier can be provisioned in
- * company_state months before it is quotable (see CARRIER_REGISTRY), so silently
- * showing it as available would be worse than not showing it at all. Someone adds a
- * registry line once they know its launch status.
- */
-function findUntrackedCarriers(discoveryRows) {
-  const known = new Set(CARRIER_REGISTRY.filter(c => c.id !== null).map(c => c.id));
-  return discoveryRows
-    .filter(row => !known.has(row.id))
-    .map(row => ({
-      id: row.id,
-      name: row.name,
-      activeStates: Number(row.active_states) || 0,
-      stateCodes: (row.active_state_codes || '').split(',').filter(Boolean)
-    }));
 }
 
 /**
@@ -256,11 +330,11 @@ function shouldPersistHeartbeat(lastPersistedAt, now, minIntervalMinutes = HEART
  *
  * Shape: { "TX": { "Everspan Non-Admitted MunichRe": 0, "Ascot Non-Admitted": 1 } }
  */
-function computeLotteryData(dbResults) {
+function computeLotteryData(dbResults, R) {
   const result = {};
   for (const row of dbResults) {
     if (!row.code) continue;
-    const key = COMPANY_ID_MAPPING[row.id];
+    const key = R.keyById[row.id];
     if (!key) continue;
     if (!(row.active === 1 || row.active === true)) continue;
     const lottery = normalizeLottery(row.lottery_al);
@@ -287,13 +361,13 @@ function findZeroLotteryCarriers(lotteryData) {
 /**
  * Compute DS&G (Dirt, Sand & Gravel) eligibility per state, split by paper.
  * A carrier with dsg_allowed = 1 grants the state DS&G on that carrier's paper:
- * "Admitted AL DS&G" when the carrier is a live admitted carrier (ADMITTED_CARRIER_IDS),
+ * "Admitted AL DS&G" when the carrier is a live admitted carrier (R.admittedIds),
  * "Non-Admitted AL DS&G" otherwise. Florida writes DS&G through Accredited 2025
  * Admitted only, so it is Admitted DS&G and NOT non-admitted (2026-09-15).
  * A state with no DS&G carrier reads "N/A" on both.
  */
 const DSG_FIELDS = ["Admitted AL DS&G", "Non-Admitted AL DS&G"];
-function computeDsgEligibility(dbResults) {
+function computeDsgEligibility(dbResults, R) {
   const stateDsgStatus = {};
   for (const row of dbResults) {
     const stateCode = row.code;
@@ -302,7 +376,7 @@ function computeDsgEligibility(dbResults) {
       stateDsgStatus[stateCode] = { "Admitted AL DS&G": "N/A", "Non-Admitted AL DS&G": "N/A" };
     }
     if (row.dsg_allowed === 1 || row.dsg_allowed === true) {
-      const field = ADMITTED_CARRIER_IDS.includes(row.id) ? "Admitted AL DS&G" : "Non-Admitted AL DS&G";
+      const field = R.admittedIds.includes(row.id) ? "Admitted AL DS&G" : "Non-Admitted AL DS&G";
       stateDsgStatus[stateCode][field] = "Y";
     }
   }
@@ -318,16 +392,16 @@ function dsgEnabled(entry) {
 
 /**
  * Compute Admitted AL eligibility per state from the live admitted carriers
- * (ADMITTED_CARRIER_IDS — Everspan Admitted MunichRe and, since 2026-09-14, Accredited
- * 2025 Admitted). Any of them active in a state gives that state Admitted AL, Hotshots,
+ * (R.admittedIds — Everspan Admitted MunichRe and, since 2026-09-14, Accredited 2025
+ * Admitted). Any of them active in a state gives that state Admitted AL, Hotshots,
  * and UIIA. Exception: FL has Admitted AL UIIA as N/A.
  */
-function computeAdmittedALEligibility(dbResults) {
+function computeAdmittedALEligibility(dbResults, R) {
   const stateAdmittedStatus = {};
   for (const row of dbResults) {
     const stateCode = row.code;
     if (!stateCode) continue;
-    if (ADMITTED_CARRIER_IDS.includes(row.id) && (row.active === 1 || row.active === true)) {
+    if (R.admittedIds.includes(row.id) && (row.active === 1 || row.active === true)) {
       stateAdmittedStatus[stateCode] = {
         "Admitted AL": "Y",
         "Admitted AL Hotshots": "Y",
@@ -376,7 +450,7 @@ function replaceDataBlock(html, name, value) {
 /**
  * Detect specific changes between old and new state
  */
-function detectChanges(oldRows, newRows) {
+function detectChanges(oldRows, newRows, R) {
   const changes = [];
   const oldMap = new Map();
   for (const row of (oldRows || [])) {
@@ -391,7 +465,7 @@ function detectChanges(oldRows, newRows) {
 
   for (const [key, newRow] of newMap) {
     const oldRow = oldMap.get(key);
-    const carrierName = COMPANY_ID_MAPPING[newRow.company_id] || newRow.company_name;
+    const carrierName = R.keyById[newRow.company_id] || newRow.company_name;
 
     if (!oldRow) {
       changes.push({
@@ -450,7 +524,7 @@ function detectChanges(oldRows, newRows) {
 
   for (const [key, oldRow] of oldMap) {
     if (!newMap.has(key)) {
-      const carrierName = COMPANY_ID_MAPPING[oldRow.company_id] || oldRow.company_name;
+      const carrierName = R.keyById[oldRow.company_id] || oldRow.company_name;
       changes.push({
         type: 'REMOVED',
         state: oldRow.state_code,
@@ -463,206 +537,105 @@ function detectChanges(oldRows, newRows) {
 }
 
 /**
- * Build the Slack message body (a list of Block Kit blocks) for a detection payload.
- * Pure — no I/O — so the message content is testable; sendSlackNotification wraps it
- * with the approval header and posts it.
+ * Build the general-channel message body (Block Kit blocks) for a detection payload.
+ * Pure — no I/O — so the content is under test; sendSlackNotification wraps it.
+ *
+ * The channel gets exactly three kinds of content (2026-09-15), each its own section
+ * and each omitted when empty:
+ *   1. Carrier eligibility changes  — a carrier going live/retired, and a non-admitted
+ *                                     carrier enabled or disabled in a state
+ *   2. Permitted AL Operations changes — an admitted carrier enabled or disabled in a
+ *                                     state (the Admitted AL line), DS&G by paper
+ *   3. Carriers set to 0% on the lottery — drops to 0% only
+ * Deliberately NOT posted: other lottery weight movements, the standing 0% list,
+ * monitor health, unnamed carriers. The site shows the standing state; the channel
+ * is told what changed.
  */
+const SECTION_LINE_CAP = 15;
+
+function section(title, lines, tail) {
+  const shown = lines.slice(0, SECTION_LINE_CAP);
+  if (lines.length > SECTION_LINE_CAP) shown.push(`• ... and ${lines.length - SECTION_LINE_CAP} more`);
+  const text = `*${title}:*\n${shown.join('\n')}${tail ? `\n${tail}` : ''}`;
+  return { type: "section", text: { type: "mrkdwn", text } };
+}
+
 function buildSlackBlocks(payload) {
-  const {
-    changes = [],
-    dsgEligibility = {},
-    admittedALEligibility,
-    zeroLotteryCarriers
-  } = payload || {};
+  const { changes = [], admittedALEligibility, registry } = payload || {};
+  const R = registryIndex(registry);
+  // A legacy pending file carries no registry; fall back to the raw key.
+  const displayOf = key => R.displayByKey[key] || key;
+  const paperOf = key => (R.admittedKeys.has(key) ? 'Admitted' : 'Non-Admitted');
 
-  // States that were already enabled for DSG before this update
-  const PREVIOUSLY_ENABLED_DSG_STATES = ['AL', 'AR', 'AZ', 'CA', 'CO', 'DE', 'GA', 'IA', 'ID', 'IN', 'MD', 'ME', 'MI', 'MN', 'MO', 'MS', 'MT', 'ND', 'NE', 'NH', 'OH', 'OK', 'OR', 'PA', 'RI', 'SD', 'TN', 'TX', 'UT', 'VA', 'WA', 'WV'];
+  const blocks = [{
+    type: "header",
+    text: { type: "plain_text", text: "🔔 Carrier Eligibility Update", emoji: true }
+  }];
 
-  // Get NEW states where DSG is enabled (excluding previously enabled)
-  const newDsgEnabledStates = Object.entries(dsgEligibility)
-    .filter(([state, entry]) => dsgEnabled(entry) && !PREVIOUSLY_ENABLED_DSG_STATES.includes(state))
-    .map(([state]) => state)
-    .sort();
-
-  // Filter for DSG-specific changes (only newly enabled, excluding previously enabled states)
-  const dsgChanges = changes.filter(c => c.type === 'DSG' && !PREVIOUSLY_ENABLED_DSG_STATES.includes(c.state));
+  // 1. Carrier eligibility changes
+  const eligibilityLines = [];
+  for (const c of changes.filter(c => c.type === 'CARRIER')) {
+    if (c.newValue === 'live') eligibilityLines.push(`🆕 ${displayOf(c.carrier)} is now live${c.oldValue === 'pre-launch' ? ' (launched)' : ''}`);
+    else if (c.newValue === 'retired') eligibilityLines.push(`⊗ ${displayOf(c.carrier)} is no longer writing business`);
+    else eligibilityLines.push(`• ${displayOf(c.carrier)}: ${c.oldValue || 'new'} → ${c.newValue}`);
+  }
   const activeChanges = changes.filter(c => c.type === 'ACTIVE');
+  for (const c of activeChanges.filter(c => !R.admittedKeys.has(c.carrier))) {
+    eligibilityLines.push(`• ${c.state} - ${displayOf(c.carrier)}: ${c.newValue ? 'enabled ✅' : 'disabled ❌'}`);
+  }
+  if (eligibilityLines.length > 0) blocks.push(section('Carrier eligibility changes', eligibilityLines));
 
-  // Identify admitted-carrier active changes (any live admitted carrier)
-  const admittedCarrierChanges = activeChanges.filter(c => ADMITTED_CARRIER_KEYS.has(c.carrier));
-
-  // Build message sections
-  const blocks = [
-    {
-      type: "header",
-      text: {
-        type: "plain_text",
-        text: "🔔 Carrier Eligibility Update",
-        emoji: true
-      }
-    }
-  ];
-
-  // Admitted AL changes (an admitted carrier becoming active in new states)
-  if (admittedCarrierChanges.length > 0) {
-    const admittedLines = admittedCarrierChanges.map(c => {
-      const status = c.newValue ? 'now available ✅' : 'no longer available ❌';
-      const display = (CARRIER_REGISTRY.find(r => r.key === c.carrier) || {}).display || c.carrier;
-      return `• ${c.state}: ${display} ${status}`;
-    });
-    blocks.push({
-      type: "section",
-      text: {
-        type: "mrkdwn",
-        text: `*Admitted AL Changes:*\n${admittedLines.join('\n')}`
-      }
-    });
-
-    // Show updated admitted AL count
+  // 2. Permitted AL Operations changes
+  const opsLines = [];
+  for (const c of activeChanges.filter(c => R.admittedKeys.has(c.carrier))) {
+    opsLines.push(`• ${c.state}: Admitted AL ${c.newValue ? 'now available ✅' : 'no longer available ❌'} (${displayOf(c.carrier)})`);
+  }
+  for (const c of changes.filter(c => c.type === 'DSG')) {
+    opsLines.push(`• ${c.state}: ${paperOf(c.carrier)} DS&G ${c.newValue ? 'enabled ✅' : 'disabled ❌'} (${displayOf(c.carrier)})`);
+  }
+  if (opsLines.length > 0) {
+    let tail = '';
     if (admittedALEligibility) {
-      const admittedCount = Object.values(admittedALEligibility)
-        .filter(v => v["Admitted AL"] === "Y").length;
-      blocks.push({
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: `*Permitted Admitted AL Operations:* ${admittedCount} states`
-        }
-      });
+      const count = Object.values(admittedALEligibility).filter(v => v && v["Admitted AL"] === "Y").length;
+      tail = `Admitted AL is now permitted in ${count} states`;
     }
+    blocks.push(section('Permitted AL Operations changes', opsLines, tail));
   }
 
-  // NEW DSG enabled states summary (excluding previously enabled)
-  if (newDsgEnabledStates.length > 0) {
-    blocks.push({
-      type: "section",
-      text: {
-        type: "mrkdwn",
-        text: `*DS&G is now enabled in ${newDsgEnabledStates.length} NEW states:*\n${newDsgEnabledStates.join(', ')}`
-      }
-    });
-  }
+  // 3. Drops to 0% — a carrier can stay enabled to quote while its weight drops to
+  // 0%, which no active/DSG signal above would surface. Other weight movements are
+  // routine rebalancing and are not posted; they still sync the site.
+  const zeroLines = changes
+    .filter(c => c.type === 'LOTTERY' && c.zeroed)
+    .map(c => `• ${c.state} - ${displayOf(c.carrier)}: ${formatLotteryValue(c.oldValue)} → *0%* ⚖️`);
+  if (zeroLines.length > 0) blocks.push(section('Carriers set to 0% on the lottery (still enabled to quote)', zeroLines));
 
-  // Show specific DSG changes if any
-  if (dsgChanges.length > 0) {
-    const dsgLines = dsgChanges.slice(0, 10).map(c => {
-      const status = c.newValue ? 'enabled ✅' : 'disabled ❌';
-      const entry = CARRIER_REGISTRY.find(r => r.key === c.carrier);
-      const paper = entry && entry.admitted ? 'Admitted' : 'Non-Admitted';
-      const display = (entry && entry.display) || c.carrier;
-      return `• ${c.state}: ${paper} DS&G ${status} (${display})`;
-    });
-    if (dsgChanges.length > 10) {
-      dsgLines.push(`• ... and ${dsgChanges.length - 10} more DS&G changes`);
-    }
-    blocks.push({
-      type: "section",
-      text: {
-        type: "mrkdwn",
-        text: `*DS&G changes detected:*\n${dsgLines.join('\n')}`
-      }
-    });
-  }
-
-  // Show other carrier active status changes (excluding admitted which are shown above)
-  const otherActiveChanges = activeChanges.filter(c => !ADMITTED_CARRIER_KEYS.has(c.carrier));
-  if (otherActiveChanges.length > 0) {
-    const activeLines = otherActiveChanges.slice(0, 10).map(c => {
-      const status = c.newValue ? 'enabled ✅' : 'disabled ❌';
-      return `• ${c.state} - ${c.carrier}: ${status}`;
-    });
-    if (otherActiveChanges.length > 10) {
-      activeLines.push(`• ... and ${otherActiveChanges.length - 10} more carrier changes`);
-    }
-    blocks.push({
-      type: "section",
-      text: {
-        type: "mrkdwn",
-        text: `*Carrier status changes:*\n${activeLines.join('\n')}`
-      }
-    });
-  }
-
-  // Lottery: only a drop to 0% is announced — a carrier can stay enabled to quote
-  // while its weight drops to 0%, which no active/DSG signal above would surface.
-  // Other weight movements (35% → 25%, a restore from 0%) are deliberately NOT
-  // posted: they are routine rebalancing and were noise in the channel (2026-09-15).
-  // They still change the hash, so index.html and the state file stay current.
-  const lotteryChanges = changes.filter(c => c.type === 'LOTTERY');
-  if (lotteryChanges.length > 0) {
-    const zeroedChanges = lotteryChanges.filter(c => c.zeroed);
-
-    if (zeroedChanges.length > 0) {
-      const zeroLines = zeroedChanges.slice(0, 10).map(c =>
-        `• ${c.state} - ${c.carrier}: ${formatLotteryValue(c.oldValue)} → *0%* ⚖️`
-      );
-      if (zeroedChanges.length > 10) {
-        zeroLines.push(`• ... and ${zeroedChanges.length - 10} more set to 0%`);
-      }
-      blocks.push({
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: `*Carriers set to 0% on the lottery (still enabled to quote):*\n${zeroLines.join('\n')}`
-        }
-      });
-    }
-
-  }
-
-  // Standing total of carriers sitting at 0% while still quotable
-  if (zeroLotteryCarriers && Object.keys(zeroLotteryCarriers).length > 0) {
-    const perCarrier = {};
-    for (const [state, carriers] of Object.entries(zeroLotteryCarriers)) {
-      for (const carrier of carriers) {
-        (perCarrier[carrier] = perCarrier[carrier] || []).push(state);
-      }
-    }
-    const summaryLines = Object.keys(perCarrier).sort().map(carrier =>
-      `• ${carrier}: ${perCarrier[carrier].length} state${perCarrier[carrier].length === 1 ? '' : 's'} (${perCarrier[carrier].join(', ')})`
-    );
-    blocks.push({
-      type: "section",
-      text: {
-        type: "mrkdwn",
-        text: `*Currently at 0% on the lottery (enabled, not selected):*\n${summaryLines.join('\n')}`
-      }
-    });
-  }
-
-  // Link to tool
   blocks.push({
     type: "section",
-    text: {
-      type: "mrkdwn",
-      text: `<${TOOL_URL}|View Coverages by State Tool>`
-    }
+    text: { type: "mrkdwn", text: `<${TOOL_URL}|View Coverages by State Tool>` }
   });
-
   return blocks;
 }
 
 /**
- * Operator-only sections: monitor health and carriers the registry does not know.
+ * Operator-only sections: monitor health and carriers shown under a fallback name.
  * These go to the approval DM and never to the general channel — the channel is
- * told what carriers can do, not how this tool is doing (2026-09-15). Empty when
- * there is nothing to say.
+ * told what carriers can do, not how this tool is doing. Empty when nothing to say.
  */
 function buildMonitorBlocks(payload) {
-  const { untrackedCarriers, staleness } = payload || {};
+  const { registry, staleness } = payload || {};
   const blocks = [];
 
-  // Carriers active in prod that this tool does not know about. Needs a human:
-  // being active in company_state does not prove a carrier is quotable.
-  if (untrackedCarriers && untrackedCarriers.length > 0) {
-    const lines = untrackedCarriers.map(c =>
-      `• \`${c.id}\` ${c.name} — active in ${c.activeStates} state${c.activeStates === 1 ? '' : 's'}${c.stateCodes.length ? ` (${c.stateCodes.join(', ')})` : ''}`
+  const unnamed = unnamedCarriers(registry);
+  if (unnamed.length > 0) {
+    const lines = unnamed.map(c =>
+      `• \`${c.id}\` shown as "${c.display}" — ${c.status}, active in ${c.activeStates} state${c.activeStates === 1 ? '' : 's'}`
     );
     blocks.push({
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `:rotating_light: *Carrier active in the database but NOT tracked by this tool:*\n${lines.join('\n')}\n_Not shown in the tool and not monitored for 0% changes. Confirm whether it has actually launched, then add it to CARRIER_REGISTRY in check-eligibility.js._`
+        text: `:label: *Carrier shown with a fallback name:*\n${lines.join('\n')}\n_Already on the site and in the channel post. Add it to CURATED_CARRIERS in check-eligibility.js to give it a proper name._`
       }
     });
   }
@@ -672,14 +645,16 @@ function buildMonitorBlocks(payload) {
     const icon = staleness.level === 'error' ? ':rotating_light:' : ':warning:';
     blocks.push({
       type: "section",
-      text: {
-        type: "mrkdwn",
-        text: `${icon} *Monitor health:* ${staleness.message}`
-      }
+      text: { type: "mrkdwn", text: `${icon} *Monitor health:* ${staleness.message}` }
     });
   }
 
   return blocks;
+}
+
+// Header + tool link are always present; anything more is real content.
+function hasChannelContent(channelBlocks) {
+  return channelBlocks.length > 2;
 }
 
 /**
@@ -694,11 +669,9 @@ function composeSlackMessage(payload, approved) {
   if (approved) return channelBlocks;
 
   const monitorBlocks = buildMonitorBlocks(payload);
-  // Header + tool link are always present; anything more is real content.
-  const hasChannelContent = channelBlocks.length > 2;
   const blocks = [];
 
-  if (hasChannelContent || monitorBlocks.length === 0) {
+  if (hasChannelContent(channelBlocks) || monitorBlocks.length === 0) {
     blocks.push(
       {
         type: "section",
@@ -848,6 +821,10 @@ async function main() {
       console.log('No pending_notification.json found — nothing to send');
       return;
     }
+    if (!hasChannelContent(buildSlackBlocks(pending))) {
+      console.log('Pending notification has nothing for the general channel under the current rules — not sending');
+      return;
+    }
     console.log('Sending APPROVED message to general channel');
     await sendSlackNotification(pending);
     // Clear the pending file after sending
@@ -889,31 +866,32 @@ async function main() {
       console.log(`Monitor health: ${staleness.message}`);
     }
 
+    // The carrier registry, derived from production: which carriers exist, which
+    // paper they write, and whether they are live, pre-launch or retired.
+    const [facts] = await connection.execute(CARRIER_FACTS_QUERY);
+    const registry = buildRegistry(facts);
+    const R = registryIndex(registry);
+    for (const c of registry.filter(c => c.id !== null)) {
+      console.log(`  carrier ${c.id} ${c.display}: ${c.status}${c.admitted ? ', admitted' : ''}, active in ${c.activeStates}, ${c.newBusiness30d} new-business submissions in ${LAUNCH_WINDOW_DAYS}d`);
+    }
+    const unnamed = unnamedCarriers(registry);
+    for (const c of unnamed) {
+      console.log(`::warning::Carrier ${c.id} is shown under a fallback name "${c.display}" — add it to CURATED_CARRIERS to name it`);
+    }
+
     // Get current state
     const [stateRows] = await connection.execute(STATE_QUERY);
-    const currentHash = computeHash(stateRows);
+    const currentHash = computeHash(stateRows, registry);
     console.log(`Current state hash: ${currentHash}`);
     console.log(`Records: ${stateRows.length}`);
-
-    // Carriers active in prod that the registry does not cover. Checked on every run,
-    // not just on change — a new carrier appears without any tracked row changing.
-    const [discoveryRows] = await connection.execute(CARRIER_DISCOVERY_QUERY);
-    const untrackedCarriers = findUntrackedCarriers(discoveryRows);
-    if (untrackedCarriers.length > 0) {
-      for (const c of untrackedCarriers) {
-        console.log(`::warning::Untracked carrier active in prod: ${c.id} ${c.name} (${c.stateCodes.join(', ') || c.activeStates + ' states'}) — add to CARRIER_REGISTRY`);
-      }
-    } else {
-      console.log(`Carrier registry covers all ${discoveryRows.length} active carriers`);
-    }
 
     // Heartbeat: rate limited so an hourly monitor does not commit hourly
     const heartbeatDue = shouldPersistHeartbeat(previousHeartbeat?.lastCheckedAt, now);
     if (heartbeatDue) {
       await fs.writeFile(HEARTBEAT_FILE, JSON.stringify({
         lastCheckedAt: new Date(now).toISOString(),
-        trackedCarriers: TRACKED_COMPANY_IDS.length,
-        untrackedCarriers: untrackedCarriers.map(c => ({ id: c.id, name: c.name })),
+        trackedCarriers: R.trackedIds.length,
+        unnamedCarriers: unnamed.map(c => ({ id: c.id, name: c.display })),
         note: 'Written on every successful check (rate limited). Drives the freshness indicator in the tool.'
       }, null, 2));
       console.log('Heartbeat updated');
@@ -932,8 +910,8 @@ async function main() {
     // Compare
     if (savedState && savedState.hash === currentHash) {
       console.log('No changes detected');
-      if (untrackedCarriers.length > 0 || staleness.level === 'error') {
-        await sendSlackNotification({ changes: [], untrackedCarriers, staleness });
+      if (unnamed.length > 0 || staleness.level === 'error') {
+        await sendSlackNotification({ changes: [], registry, staleness });
       }
       await connection.end();
       if (exitCode !== 0) process.exitCode = exitCode;
@@ -942,8 +920,12 @@ async function main() {
 
     console.log('Changes detected! Updating...');
 
-    // Detect specific changes for reporting
-    const changes = detectChanges(savedState?.data || [], stateRows);
+    // Detect specific changes for reporting: per-state rows, then carrier-level
+    // transitions (a launch) against the registry saved with the previous state.
+    const changes = [
+      ...detectCarrierChanges(savedState?.registry, registry),
+      ...detectChanges(savedState?.data || [], stateRows, R)
+    ];
     console.log(`Detected ${changes.length} specific change(s)`);
     for (const change of changes.slice(0, 10)) {
       console.log(`  - ${change.message}`);
@@ -954,23 +936,23 @@ async function main() {
 
     // Get full data for sync
     const [fullRows] = await connection.execute(CARRIER_QUERY);
-    const carrierData = processCarrierData(fullRows);
+    const carrierData = processCarrierData(fullRows, R);
 
     // Compute DS&G eligibility
-    const dsgEligibility = computeDsgEligibility(fullRows);
+    const dsgEligibility = computeDsgEligibility(fullRows, R);
     const dsgEnabledStates = Object.entries(dsgEligibility).filter(([_, v]) => dsgEnabled(v)).map(([k]) => k);
     const admittedDsgStates = Object.entries(dsgEligibility).filter(([_, v]) => v["Admitted AL DS&G"] === "Y").map(([k]) => k);
     console.log(`DS&G enabled in ${dsgEnabledStates.length} states: ${dsgEnabledStates.join(', ')}`);
     console.log(`  on admitted paper in ${admittedDsgStates.length}: ${admittedDsgStates.join(', ') || 'none'}`);
 
     // Compute Admitted AL eligibility from carrier data
-    const admittedALEligibility = computeAdmittedALEligibility(fullRows);
+    const admittedALEligibility = computeAdmittedALEligibility(fullRows, R);
     const admittedALStates = Object.entries(admittedALEligibility)
       .filter(([_, v]) => v["Admitted AL"] === "Y").map(([k]) => k);
     console.log(`Admitted AL in ${admittedALStates.length} states: ${admittedALStates.join(', ')}`);
 
     // Compute effective AL lottery weights and the 0%-but-still-quotable set
-    const lotteryData = computeLotteryData(fullRows);
+    const lotteryData = computeLotteryData(fullRows, R);
     const zeroLotteryCarriers = findZeroLotteryCarriers(lotteryData);
     const zeroLotteryStates = Object.keys(zeroLotteryCarriers);
     console.log(`Carriers set to 0% on the lottery in ${zeroLotteryStates.length} states`);
@@ -990,10 +972,9 @@ async function main() {
     html = replaceDataBlock(html, 'carrierLotteryData', lotteryData);
     console.log('Updated carrierLotteryData');
 
-    // Push the registry itself into the page so the UI's carrier cards and filter
-    // buttons come from one list — adding a carrier means editing CARRIER_REGISTRY
-    // above and nothing in index.html.
-    html = replaceDataBlock(html, 'carrierRegistry', CARRIER_REGISTRY);
+    // Push the derived registry into the page so the UI's carrier cards and filter
+    // buttons follow production — a new carrier needs no edit anywhere.
+    html = replaceDataBlock(html, 'carrierRegistry', registry);
     console.log('Updated carrierRegistry');
 
     // Update lobOpsData for DS&G eligibility and Admitted AL
@@ -1051,29 +1032,33 @@ async function main() {
       hash: currentHash,
       timestamp: new Date().toISOString(),
       rowCount: stateRows.length,
+      registry,
       data: stateRows
     }, null, 2));
 
     console.log('Files updated successfully');
 
-    // Save pending notification so approval run can replay it without re-querying DB
     const notification = {
       detectedAt: new Date().toISOString(),
       changes,
+      registry,
       dsgEligibility,
       admittedALEligibility,
       zeroLotteryCarriers,
-      untrackedCarriers,
       staleness
     };
-    await fs.writeFile('pending_notification.json', JSON.stringify(notification, null, 2));
-    console.log('Saved pending_notification.json for approval replay');
 
-    // Send Slack notification with carrier eligibility changes.
-    // A hash change with no reportable row-level change (e.g. the first run after a
-    // new tracked column is introduced) would otherwise post an empty update — but an
-    // untracked carrier or a staleness gap is worth saying on its own.
-    const hasSomethingToSay = changes.length > 0 || untrackedCarriers.length > 0 || staleness.level === 'error';
+    // A hash change with no reportable change (the first run after the change signal
+    // gains a field) must not post an empty update — nor overwrite a pending
+    // notification that is still waiting for approval. A staleness gap or an unnamed
+    // carrier is worth telling the operator on its own.
+    const channelHasContent = hasChannelContent(buildSlackBlocks(notification));
+    const hasSomethingToSay = channelHasContent || unnamed.length > 0 || staleness.level === 'error';
+    if (channelHasContent) {
+      // Saved so the approval run can replay it without re-querying the database
+      await fs.writeFile('pending_notification.json', JSON.stringify(notification, null, 2));
+      console.log('Saved pending_notification.json for approval replay');
+    }
     if (!hasSomethingToSay) {
       console.log('Hash changed but nothing reportable — skipping Slack notification');
     } else {
@@ -1088,18 +1073,20 @@ async function main() {
 }
 
 module.exports = {
-  CARRIER_REGISTRY,
-  TRACKED_COMPANY_IDS,
-  COMPANY_ID_MAPPING,
-  DEFAULT_CARRIER_STATUS,
-  NON_QUOTABLE_KEYS,
-  ADMITTED_CARRIER_IDS,
+  CURATED_CARRIERS,
+  LEGACY_CARRIERS,
+  LAUNCH_WINDOW_DAYS,
+  CARRIER_FACTS_QUERY,
+  deriveCarrierStatus,
+  buildRegistry,
+  registryIndex,
+  unnamedCarriers,
+  detectCarrierChanges,
   computeHash,
   normalizeLottery,
   processCarrierData,
   computeLotteryData,
   findZeroLotteryCarriers,
-  findUntrackedCarriers,
   evaluateStaleness,
   shouldPersistHeartbeat,
   computeDsgEligibility,
@@ -1108,6 +1095,7 @@ module.exports = {
   buildSlackBlocks,
   buildMonitorBlocks,
   composeSlackMessage,
+  hasChannelContent,
   sendSlackNotification,
   detectChanges,
   formatLotteryValue,
