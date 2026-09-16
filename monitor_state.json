@@ -1,6 +1,6 @@
 {
-  "hash": "ad2a0ea22d1608271171efac2d0b8d9c",
-  "timestamp": "2026-09-15T02:39:43.768Z",
+  "hash": "d9629a55066e837aa06deac4ab69c15c",
+  "timestamp": "2026-09-16T21:46:10.200Z",
   "rowCount": 173,
   "registry": [
     {
@@ -29,7 +29,7 @@
       "admitted": true,
       "curated": true,
       "activeStates": 7,
-      "newBusiness30d": 4652
+      "newBusiness30d": 4695
     },
     {
       "id": 6155,
@@ -39,7 +39,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 31,
-      "newBusiness30d": 7405
+      "newBusiness30d": 7419
     },
     {
       "id": 5245,
@@ -49,7 +49,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 33,
-      "newBusiness30d": 3408
+      "newBusiness30d": 3198
     },
     {
       "id": 6607,
@@ -59,7 +59,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 34,
-      "newBusiness30d": 7156
+      "newBusiness30d": 6677
     },
     {
       "id": 61,
@@ -81,7 +81,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 11,
-      "newBusiness30d": 1407
+      "newBusiness30d": 1634
     },
     {
       "id": 6881,
@@ -91,7 +91,7 @@
       "admitted": true,
       "curated": true,
       "activeStates": 1,
-      "newBusiness30d": 52,
+      "newBusiness30d": 191,
       "note": "Florida-only admitted program. Launched 2026-09-14."
     }
   ],
@@ -134,7 +134,7 @@
       "state_code": "AL",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 35
+      "lottery_al": 65
     },
     {
       "company_id": 5696,
@@ -150,7 +150,7 @@
       "state_code": "AL",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -158,34 +158,10 @@
       "state_code": "AL",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 65
+      "lottery_al": 34
     },
     {
       "company_id": 5245,
-      "company_name": "Accredited Specialty Insurance Company",
-      "state_code": "AR",
-      "active": 1,
-      "dsg_allowed": 1,
-      "lottery_al": 35
-    },
-    {
-      "company_id": 5696,
-      "company_name": "Ascot Specialty Insurance Company",
-      "state_code": "AR",
-      "active": 0,
-      "dsg_allowed": 1,
-      "lottery_al": null
-    },
-    {
-      "company_id": 6155,
-      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
-      "state_code": "AR",
-      "active": 1,
-      "dsg_allowed": 0,
-      "lottery_al": 0
-    },
-    {
-      "company_id": 6607,
       "company_name": "Accredited Specialty Insurance Company",
       "state_code": "AR",
       "active": 1,
@@ -193,12 +169,36 @@
       "lottery_al": 65
     },
     {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "AR",
+      "active": 0,
+      "dsg_allowed": 1,
+      "lottery_al": null
+    },
+    {
+      "company_id": 6155,
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
+      "state_code": "AR",
+      "active": 1,
+      "dsg_allowed": 0,
+      "lottery_al": 1
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "AR",
+      "active": 1,
+      "dsg_allowed": 1,
+      "lottery_al": 34
+    },
+    {
       "company_id": 5245,
       "company_name": "Accredited Specialty Insurance Company",
       "state_code": "AZ",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 64
     },
     {
       "company_id": 5696,
@@ -206,7 +206,7 @@
       "state_code": "AZ",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 1
     },
     {
       "company_id": 6155,
@@ -214,7 +214,7 @@
       "state_code": "AZ",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -222,7 +222,7 @@
       "state_code": "AZ",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 50
+      "lottery_al": 34
     },
     {
       "company_id": 5245,
@@ -230,7 +230,7 @@
       "state_code": "CA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 64
     },
     {
       "company_id": 5696,
@@ -238,7 +238,7 @@
       "state_code": "CA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 1
     },
     {
       "company_id": 6155,
@@ -246,7 +246,7 @@
       "state_code": "CA",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -254,7 +254,7 @@
       "state_code": "CA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 50
+      "lottery_al": 34
     },
     {
       "company_id": 5245,
@@ -262,7 +262,7 @@
       "state_code": "CO",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 64
     },
     {
       "company_id": 5696,
@@ -270,7 +270,7 @@
       "state_code": "CO",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 1
     },
     {
       "company_id": 6155,
@@ -278,7 +278,7 @@
       "state_code": "CO",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -286,7 +286,7 @@
       "state_code": "CO",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 50
+      "lottery_al": 34
     },
     {
       "company_id": 5245,
@@ -354,35 +354,35 @@
     },
     {
       "company_id": 5245,
-      "company_name": "Accredited Specialty Insurance Company",
-      "state_code": "DE",
-      "active": 1,
-      "dsg_allowed": 1,
-      "lottery_al": 35
-    },
-    {
-      "company_id": 5696,
-      "company_name": "Ascot Specialty Insurance Company",
-      "state_code": "DE",
-      "active": 0,
-      "dsg_allowed": 1,
-      "lottery_al": null
-    },
-    {
-      "company_id": 6155,
-      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
-      "state_code": "DE",
-      "active": 1,
-      "dsg_allowed": 0,
-      "lottery_al": 0
-    },
-    {
-      "company_id": 6607,
       "company_name": "Accredited Specialty Insurance Company",
       "state_code": "DE",
       "active": 1,
       "dsg_allowed": 1,
       "lottery_al": 65
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "DE",
+      "active": 0,
+      "dsg_allowed": 1,
+      "lottery_al": null
+    },
+    {
+      "company_id": 6155,
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
+      "state_code": "DE",
+      "active": 1,
+      "dsg_allowed": 0,
+      "lottery_al": 1
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "DE",
+      "active": 1,
+      "dsg_allowed": 1,
+      "lottery_al": 34
     },
     {
       "company_id": 6156,
@@ -390,7 +390,7 @@
       "state_code": "FL",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 100
+      "lottery_al": 50
     },
     {
       "company_id": 6881,
@@ -398,35 +398,35 @@
       "state_code": "FL",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 100
-    },
-    {
-      "company_id": 5245,
-      "company_name": "Accredited Specialty Insurance Company",
-      "state_code": "GA",
-      "active": 1,
-      "dsg_allowed": 1,
-      "lottery_al": 25
-    },
-    {
-      "company_id": 5696,
-      "company_name": "Ascot Specialty Insurance Company",
-      "state_code": "GA",
-      "active": 1,
-      "dsg_allowed": 1,
-      "lottery_al": 25
-    },
-    {
-      "company_id": 6607,
-      "company_name": "Accredited Specialty Insurance Company",
-      "state_code": "GA",
-      "active": 1,
-      "dsg_allowed": 1,
       "lottery_al": 50
     },
     {
       "company_id": 5245,
       "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "GA",
+      "active": 1,
+      "dsg_allowed": 1,
+      "lottery_al": 65
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "GA",
+      "active": 1,
+      "dsg_allowed": 1,
+      "lottery_al": 1
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "GA",
+      "active": 1,
+      "dsg_allowed": 1,
+      "lottery_al": 34
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
       "state_code": "HI",
       "active": 0,
       "dsg_allowed": 0,
@@ -462,7 +462,7 @@
       "state_code": "IA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 64
     },
     {
       "company_id": 5696,
@@ -470,7 +470,7 @@
       "state_code": "IA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 1
     },
     {
       "company_id": 6155,
@@ -478,7 +478,7 @@
       "state_code": "IA",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -486,39 +486,39 @@
       "state_code": "IA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 50
+      "lottery_al": 34
     },
     {
       "company_id": 5245,
-      "company_name": "Accredited Specialty Insurance Company",
-      "state_code": "ID",
-      "active": 1,
-      "dsg_allowed": 1,
-      "lottery_al": 35
-    },
-    {
-      "company_id": 5696,
-      "company_name": "Ascot Specialty Insurance Company",
-      "state_code": "ID",
-      "active": 0,
-      "dsg_allowed": 1,
-      "lottery_al": null
-    },
-    {
-      "company_id": 6155,
-      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
-      "state_code": "ID",
-      "active": 1,
-      "dsg_allowed": 0,
-      "lottery_al": 0
-    },
-    {
-      "company_id": 6607,
       "company_name": "Accredited Specialty Insurance Company",
       "state_code": "ID",
       "active": 1,
       "dsg_allowed": 1,
       "lottery_al": 65
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "ID",
+      "active": 0,
+      "dsg_allowed": 1,
+      "lottery_al": null
+    },
+    {
+      "company_id": 6155,
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
+      "state_code": "ID",
+      "active": 1,
+      "dsg_allowed": 0,
+      "lottery_al": 1
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "ID",
+      "active": 1,
+      "dsg_allowed": 1,
+      "lottery_al": 34
     },
     {
       "company_id": 6156,
@@ -534,7 +534,7 @@
       "state_code": "IN",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 64
     },
     {
       "company_id": 5696,
@@ -542,7 +542,7 @@
       "state_code": "IN",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 1
     },
     {
       "company_id": 6155,
@@ -550,7 +550,7 @@
       "state_code": "IN",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -558,7 +558,7 @@
       "state_code": "IN",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 50
+      "lottery_al": 34
     },
     {
       "company_id": 5245,
@@ -694,7 +694,7 @@
       "state_code": "MD",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 35
+      "lottery_al": 65
     },
     {
       "company_id": 6155,
@@ -702,7 +702,7 @@
       "state_code": "MD",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -710,7 +710,7 @@
       "state_code": "MD",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 65
+      "lottery_al": 34
     },
     {
       "company_id": 5245,
@@ -718,7 +718,7 @@
       "state_code": "ME",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 35
+      "lottery_al": 65
     },
     {
       "company_id": 5696,
@@ -734,7 +734,7 @@
       "state_code": "ME",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -742,7 +742,7 @@
       "state_code": "ME",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 65
+      "lottery_al": 34
     },
     {
       "company_id": 5245,
@@ -758,7 +758,7 @@
       "state_code": "MI",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -766,7 +766,7 @@
       "state_code": "MI",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 100
+      "lottery_al": 99
     },
     {
       "company_id": 5245,
@@ -790,7 +790,7 @@
       "state_code": "MN",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -798,7 +798,7 @@
       "state_code": "MN",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 100
+      "lottery_al": 99
     },
     {
       "company_id": 5245,
@@ -806,7 +806,7 @@
       "state_code": "MO",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 35
+      "lottery_al": 65
     },
     {
       "company_id": 5696,
@@ -822,7 +822,7 @@
       "state_code": "MO",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -830,7 +830,7 @@
       "state_code": "MO",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 65
+      "lottery_al": 34
     },
     {
       "company_id": 5245,
@@ -838,7 +838,7 @@
       "state_code": "MS",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 35
+      "lottery_al": 65
     },
     {
       "company_id": 6155,
@@ -846,7 +846,7 @@
       "state_code": "MS",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -854,7 +854,7 @@
       "state_code": "MS",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 65
+      "lottery_al": 34
     },
     {
       "company_id": 5245,
@@ -862,7 +862,7 @@
       "state_code": "MT",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 35
+      "lottery_al": 65
     },
     {
       "company_id": 5696,
@@ -878,7 +878,7 @@
       "state_code": "MT",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -886,7 +886,7 @@
       "state_code": "MT",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 65
+      "lottery_al": 34
     },
     {
       "company_id": 6156,
@@ -902,7 +902,7 @@
       "state_code": "ND",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 35
+      "lottery_al": 65
     },
     {
       "company_id": 5696,
@@ -918,7 +918,7 @@
       "state_code": "ND",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -926,7 +926,7 @@
       "state_code": "ND",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 65
+      "lottery_al": 34
     },
     {
       "company_id": 5245,
@@ -934,7 +934,7 @@
       "state_code": "NE",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 64
     },
     {
       "company_id": 5696,
@@ -942,7 +942,7 @@
       "state_code": "NE",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 1
     },
     {
       "company_id": 6155,
@@ -950,7 +950,7 @@
       "state_code": "NE",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -958,7 +958,7 @@
       "state_code": "NE",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 50
+      "lottery_al": 34
     },
     {
       "company_id": 5245,
@@ -966,7 +966,7 @@
       "state_code": "NH",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 64
     },
     {
       "company_id": 5696,
@@ -974,7 +974,7 @@
       "state_code": "NH",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 1
     },
     {
       "company_id": 6155,
@@ -982,7 +982,7 @@
       "state_code": "NH",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -990,7 +990,7 @@
       "state_code": "NH",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 50
+      "lottery_al": 34
     },
     {
       "company_id": 5245,
@@ -998,7 +998,7 @@
       "state_code": "NJ",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 35
+      "lottery_al": 65
     },
     {
       "company_id": 5696,
@@ -1014,7 +1014,7 @@
       "state_code": "NJ",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 65
+      "lottery_al": 35
     },
     {
       "company_id": 6156,
@@ -1070,7 +1070,7 @@
       "state_code": "OH",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 35
+      "lottery_al": 65
     },
     {
       "company_id": 6607,
@@ -1078,87 +1078,87 @@
       "state_code": "OH",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 65
-    },
-    {
-      "company_id": 5245,
-      "company_name": "Accredited Specialty Insurance Company",
-      "state_code": "OK",
-      "active": 1,
-      "dsg_allowed": 1,
-      "lottery_al": 25
-    },
-    {
-      "company_id": 5696,
-      "company_name": "Ascot Specialty Insurance Company",
-      "state_code": "OK",
-      "active": 1,
-      "dsg_allowed": 1,
-      "lottery_al": 25
-    },
-    {
-      "company_id": 6155,
-      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
-      "state_code": "OK",
-      "active": 1,
-      "dsg_allowed": 0,
-      "lottery_al": 0
-    },
-    {
-      "company_id": 6607,
-      "company_name": "Accredited Specialty Insurance Company",
-      "state_code": "OK",
-      "active": 1,
-      "dsg_allowed": 1,
-      "lottery_al": 50
-    },
-    {
-      "company_id": 5245,
-      "company_name": "Accredited Specialty Insurance Company",
-      "state_code": "OR",
-      "active": 1,
-      "dsg_allowed": 1,
-      "lottery_al": 25
-    },
-    {
-      "company_id": 5696,
-      "company_name": "Ascot Specialty Insurance Company",
-      "state_code": "OR",
-      "active": 1,
-      "dsg_allowed": 1,
-      "lottery_al": 25
-    },
-    {
-      "company_id": 6155,
-      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
-      "state_code": "OR",
-      "active": 1,
-      "dsg_allowed": 0,
-      "lottery_al": 0
-    },
-    {
-      "company_id": 6607,
-      "company_name": "Accredited Specialty Insurance Company",
-      "state_code": "OR",
-      "active": 1,
-      "dsg_allowed": 1,
-      "lottery_al": 50
-    },
-    {
-      "company_id": 5245,
-      "company_name": "Accredited Specialty Insurance Company",
-      "state_code": "PA",
-      "active": 1,
-      "dsg_allowed": 1,
       "lottery_al": 35
     },
     {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "OK",
+      "active": 1,
+      "dsg_allowed": 1,
+      "lottery_al": 64
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "OK",
+      "active": 1,
+      "dsg_allowed": 1,
+      "lottery_al": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
+      "state_code": "OK",
+      "active": 1,
+      "dsg_allowed": 0,
+      "lottery_al": 1
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "OK",
+      "active": 1,
+      "dsg_allowed": 1,
+      "lottery_al": 34
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "OR",
+      "active": 1,
+      "dsg_allowed": 1,
+      "lottery_al": 64
+    },
+    {
+      "company_id": 5696,
+      "company_name": "Ascot Specialty Insurance Company",
+      "state_code": "OR",
+      "active": 1,
+      "dsg_allowed": 1,
+      "lottery_al": 1
+    },
+    {
+      "company_id": 6155,
+      "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
+      "state_code": "OR",
+      "active": 1,
+      "dsg_allowed": 0,
+      "lottery_al": 1
+    },
+    {
+      "company_id": 6607,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "OR",
+      "active": 1,
+      "dsg_allowed": 1,
+      "lottery_al": 34
+    },
+    {
+      "company_id": 5245,
+      "company_name": "Accredited Specialty Insurance Company",
+      "state_code": "PA",
+      "active": 1,
+      "dsg_allowed": 1,
+      "lottery_al": 65
+    },
+    {
       "company_id": 6155,
       "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Indemnity Insurance Company - Issuing Insurance Company",
       "state_code": "PA",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -1166,7 +1166,7 @@
       "state_code": "PA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 65
+      "lottery_al": 34
     },
     {
       "company_id": 5245,
@@ -1174,7 +1174,7 @@
       "state_code": "RI",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 35
+      "lottery_al": 65
     },
     {
       "company_id": 5696,
@@ -1190,7 +1190,7 @@
       "state_code": "RI",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -1198,7 +1198,7 @@
       "state_code": "RI",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 65
+      "lottery_al": 34
     },
     {
       "company_id": 6156,
@@ -1214,7 +1214,7 @@
       "state_code": "SD",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 35
+      "lottery_al": 65
     },
     {
       "company_id": 5696,
@@ -1230,7 +1230,7 @@
       "state_code": "SD",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -1238,7 +1238,7 @@
       "state_code": "SD",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 65
+      "lottery_al": 34
     },
     {
       "company_id": 5245,
@@ -1246,7 +1246,7 @@
       "state_code": "TN",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 35
+      "lottery_al": 65
     },
     {
       "company_id": 6155,
@@ -1254,7 +1254,7 @@
       "state_code": "TN",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -1262,7 +1262,7 @@
       "state_code": "TN",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 65
+      "lottery_al": 34
     },
     {
       "company_id": 5245,
@@ -1270,7 +1270,7 @@
       "state_code": "TX",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 64
     },
     {
       "company_id": 5696,
@@ -1278,7 +1278,7 @@
       "state_code": "TX",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 1
     },
     {
       "company_id": 6155,
@@ -1286,7 +1286,7 @@
       "state_code": "TX",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -1294,7 +1294,7 @@
       "state_code": "TX",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 50
+      "lottery_al": 34
     },
     {
       "company_id": 5245,
@@ -1302,7 +1302,7 @@
       "state_code": "UT",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 35
+      "lottery_al": 65
     },
     {
       "company_id": 5696,
@@ -1318,7 +1318,7 @@
       "state_code": "UT",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -1326,7 +1326,7 @@
       "state_code": "UT",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 65
+      "lottery_al": 34
     },
     {
       "company_id": 5245,
@@ -1334,7 +1334,7 @@
       "state_code": "VA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 35
+      "lottery_al": 65
     },
     {
       "company_id": 5696,
@@ -1350,7 +1350,7 @@
       "state_code": "VA",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -1358,7 +1358,7 @@
       "state_code": "VA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 65
+      "lottery_al": 34
     },
     {
       "company_id": 5245,
@@ -1366,7 +1366,7 @@
       "state_code": "VT",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 35
+      "lottery_al": 65
     },
     {
       "company_id": 5696,
@@ -1382,7 +1382,7 @@
       "state_code": "VT",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -1390,7 +1390,7 @@
       "state_code": "VT",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 65
+      "lottery_al": 34
     },
     {
       "company_id": 6155,
@@ -1398,7 +1398,7 @@
       "state_code": "WA",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -1406,7 +1406,7 @@
       "state_code": "WA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 100
+      "lottery_al": 99
     },
     {
       "company_id": 6156,
@@ -1422,7 +1422,7 @@
       "state_code": "WV",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 35
+      "lottery_al": 65
     },
     {
       "company_id": 5696,
@@ -1438,7 +1438,7 @@
       "state_code": "WV",
       "active": 1,
       "dsg_allowed": 0,
-      "lottery_al": 0
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -1446,7 +1446,7 @@
       "state_code": "WV",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 65
+      "lottery_al": 34
     },
     {
       "company_id": 5245,
