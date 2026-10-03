@@ -608,4 +608,18 @@ test('the registry mirrored in index.html is a derived registry with the fields 
   assert.ok(inPage.some(c => c.id === 6881 && c.status === 'live'));
 });
 
+// Workers' Comp is not synced: the platform keeps its state list in code
+// (CoverWhale/coverwhale config/wc_states.php `active_states`), not in the database.
+// This pins the page to that list as of origin/master 82529e212c (2026-10-02).
+const WC_ACTIVE_STATES = ['AL', 'AR', 'AZ', 'GA', 'IL', 'IN', 'KY', 'LA', 'MO', 'MS', 'NM', 'NV', 'OK', 'SC', 'TN'];
+test("Workers' Comp is available in exactly the platform's active WC states", () => {
+  const html = require('fs').readFileSync(require('path').join(__dirname, '../../index.html'), 'utf-8');
+  const lob = JSON.parse(html.match(dataBlockPattern('lobOpsData'))[1]);
+  const wcStates = Object.keys(lob).filter(s => lob[s].WC === 'Y').sort();
+  assert.deepStrictEqual(wcStates, [...WC_ACTIVE_STATES].sort());
+  for (const [state, data] of Object.entries(lob)) {
+    if (!WC_ACTIVE_STATES.includes(state)) assert.strictEqual(data.WC, 'N/A', `${state} WC`);
+  }
+});
+
 console.log(`\n${passed} passed${process.exitCode ? ' — FAILURES ABOVE' : ''}`);
