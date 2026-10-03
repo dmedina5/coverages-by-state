@@ -1,4 +1,7 @@
 const AUTH_BACKEND = 'https://coverwhale-auth.vercel.app';
+// Names this site to the login service, which admits guest domains (breakwatermarkets.com)
+// here only. Must match the site's key in the service's lib/access.js.
+const AUTH_SITE = 'coverages-by-state';
 
 class CoverWhaleAuth {
   constructor() {
@@ -34,7 +37,7 @@ class CoverWhaleAuth {
   
   async verifyToken() {
     try {
-      const response = await fetch(`${AUTH_BACKEND}/api/verify`, {
+      const response = await fetch(`${AUTH_BACKEND}/api/verify?site=${AUTH_SITE}`, {
         headers: { 'Authorization': `Bearer ${this.token}` }
       });
       
