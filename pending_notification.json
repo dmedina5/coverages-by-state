@@ -1,413 +1,1175 @@
 {
-  "detectedAt": "2026-09-15T02:05:11.270Z",
+  "detectedAt": "2026-10-23T19:00:20.159Z",
   "changes": [
     {
       "type": "LOTTERY",
-      "state": "AZ",
-      "carrier": "Accredited Non-Admitted 1st",
-      "oldValue": 35,
-      "newValue": 25,
+      "state": "AL",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "AL - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "AL",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 35,
       "zeroed": false,
       "restored": false,
-      "message": "AZ - Accredited Non-Admitted 1st: lottery 35% → 25%"
+      "message": "AL - Accredited Non-Admitted New: lottery 34% → 35%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "AR",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "AR - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "AR",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 35,
+      "zeroed": false,
+      "restored": false,
+      "message": "AR - Accredited Non-Admitted New: lottery 34% → 35%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "AZ",
+      "carrier": "Accredited Non-Admitted 1st",
+      "oldValue": 64,
+      "newValue": 45,
+      "zeroed": false,
+      "restored": false,
+      "message": "AZ - Accredited Non-Admitted 1st: lottery 64% → 45%"
     },
     {
       "type": "LOTTERY",
       "state": "AZ",
       "carrier": "Ascot Non-Admitted",
       "oldValue": 1,
-      "newValue": 25,
+      "newValue": 30,
       "zeroed": false,
       "restored": false,
-      "message": "AZ - Ascot Non-Admitted: lottery 1% → 25%"
+      "message": "AZ - Ascot Non-Admitted: lottery 1% → 30%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "AZ",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "AZ - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
     },
     {
       "type": "LOTTERY",
       "state": "AZ",
       "carrier": "Accredited Non-Admitted New",
-      "oldValue": 64,
-      "newValue": 50,
+      "oldValue": 34,
+      "newValue": 25,
       "zeroed": false,
       "restored": false,
-      "message": "AZ - Accredited Non-Admitted New: lottery 64% → 50%"
+      "message": "AZ - Accredited Non-Admitted New: lottery 34% → 25%"
     },
     {
       "type": "LOTTERY",
       "state": "CA",
       "carrier": "Accredited Non-Admitted 1st",
-      "oldValue": 35,
-      "newValue": 25,
+      "oldValue": 64,
+      "newValue": 45,
       "zeroed": false,
       "restored": false,
-      "message": "CA - Accredited Non-Admitted 1st: lottery 35% → 25%"
+      "message": "CA - Accredited Non-Admitted 1st: lottery 64% → 45%"
     },
     {
       "type": "LOTTERY",
       "state": "CA",
       "carrier": "Ascot Non-Admitted",
       "oldValue": 1,
-      "newValue": 25,
+      "newValue": 30,
       "zeroed": false,
       "restored": false,
-      "message": "CA - Ascot Non-Admitted: lottery 1% → 25%"
+      "message": "CA - Ascot Non-Admitted: lottery 1% → 30%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "CA",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "CA - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
     },
     {
       "type": "LOTTERY",
       "state": "CA",
       "carrier": "Accredited Non-Admitted New",
-      "oldValue": 64,
-      "newValue": 50,
+      "oldValue": 34,
+      "newValue": 25,
       "zeroed": false,
       "restored": false,
-      "message": "CA - Accredited Non-Admitted New: lottery 64% → 50%"
+      "message": "CA - Accredited Non-Admitted New: lottery 34% → 25%"
     },
     {
       "type": "LOTTERY",
       "state": "CO",
       "carrier": "Accredited Non-Admitted 1st",
-      "oldValue": 35,
-      "newValue": 25,
+      "oldValue": 64,
+      "newValue": 45,
       "zeroed": false,
       "restored": false,
-      "message": "CO - Accredited Non-Admitted 1st: lottery 35% → 25%"
+      "message": "CO - Accredited Non-Admitted 1st: lottery 64% → 45%"
     },
     {
       "type": "LOTTERY",
       "state": "CO",
       "carrier": "Ascot Non-Admitted",
       "oldValue": 1,
-      "newValue": 25,
+      "newValue": 30,
       "zeroed": false,
       "restored": false,
-      "message": "CO - Ascot Non-Admitted: lottery 1% → 25%"
+      "message": "CO - Ascot Non-Admitted: lottery 1% → 30%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "CO",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "CO - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
     },
     {
       "type": "LOTTERY",
       "state": "CO",
       "carrier": "Accredited Non-Admitted New",
-      "oldValue": 64,
-      "newValue": 50,
+      "oldValue": 34,
+      "newValue": 25,
       "zeroed": false,
       "restored": false,
-      "message": "CO - Accredited Non-Admitted New: lottery 64% → 50%"
+      "message": "CO - Accredited Non-Admitted New: lottery 34% → 25%"
     },
     {
-      "type": "DSG",
+      "type": "LOTTERY",
+      "state": "DE",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "DE - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "DE",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 35,
+      "zeroed": false,
+      "restored": false,
+      "message": "DE - Accredited Non-Admitted New: lottery 34% → 35%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "FL",
+      "carrier": "Everspan Admitted MunichRe",
+      "oldValue": 50,
+      "newValue": 1,
+      "zeroed": false,
+      "restored": false,
+      "message": "FL - Everspan Admitted MunichRe: lottery 50% → 1%"
+    },
+    {
+      "type": "LOTTERY",
       "state": "FL",
       "carrier": "Accredited 2025 Admitted",
-      "oldValue": 0,
-      "newValue": 1,
-      "message": "FL - Accredited 2025 Admitted: DSG not allowed → allowed"
+      "oldValue": 50,
+      "newValue": 99,
+      "zeroed": false,
+      "restored": false,
+      "message": "FL - Accredited 2025 Admitted: lottery 50% → 99%"
     },
     {
       "type": "LOTTERY",
       "state": "GA",
       "carrier": "Accredited Non-Admitted 1st",
-      "oldValue": 34,
-      "newValue": 25,
-      "zeroed": false,
-      "restored": false,
-      "message": "GA - Accredited Non-Admitted 1st: lottery 34% → 25%"
-    },
-    {
-      "type": "LOTTERY",
-      "state": "GA",
-      "carrier": "Ascot Non-Admitted",
-      "oldValue": 1,
-      "newValue": 25,
-      "zeroed": false,
-      "restored": false,
-      "message": "GA - Ascot Non-Admitted: lottery 1% → 25%"
-    },
-    {
-      "type": "LOTTERY",
-      "state": "GA",
-      "carrier": "Accredited Non-Admitted New",
-      "oldValue": 64,
-      "newValue": 50,
-      "zeroed": false,
-      "restored": false,
-      "message": "GA - Accredited Non-Admitted New: lottery 64% → 50%"
-    },
-    {
-      "type": "LOTTERY",
-      "state": "IA",
-      "carrier": "Accredited Non-Admitted 1st",
-      "oldValue": 35,
-      "newValue": 25,
-      "zeroed": false,
-      "restored": false,
-      "message": "IA - Accredited Non-Admitted 1st: lottery 35% → 25%"
-    },
-    {
-      "type": "LOTTERY",
-      "state": "IA",
-      "carrier": "Ascot Non-Admitted",
-      "oldValue": 1,
-      "newValue": 25,
-      "zeroed": false,
-      "restored": false,
-      "message": "IA - Ascot Non-Admitted: lottery 1% → 25%"
-    },
-    {
-      "type": "LOTTERY",
-      "state": "IA",
-      "carrier": "Accredited Non-Admitted New",
-      "oldValue": 64,
-      "newValue": 50,
-      "zeroed": false,
-      "restored": false,
-      "message": "IA - Accredited Non-Admitted New: lottery 64% → 50%"
-    },
-    {
-      "type": "LOTTERY",
-      "state": "IN",
-      "carrier": "Accredited Non-Admitted 1st",
-      "oldValue": 35,
-      "newValue": 25,
-      "zeroed": false,
-      "restored": false,
-      "message": "IN - Accredited Non-Admitted 1st: lottery 35% → 25%"
-    },
-    {
-      "type": "LOTTERY",
-      "state": "IN",
-      "carrier": "Ascot Non-Admitted",
-      "oldValue": 1,
-      "newValue": 25,
-      "zeroed": false,
-      "restored": false,
-      "message": "IN - Ascot Non-Admitted: lottery 1% → 25%"
-    },
-    {
-      "type": "LOTTERY",
-      "state": "IN",
-      "carrier": "Accredited Non-Admitted New",
-      "oldValue": 64,
-      "newValue": 50,
-      "zeroed": false,
-      "restored": false,
-      "message": "IN - Accredited Non-Admitted New: lottery 64% → 50%"
-    },
-    {
-      "type": "LOTTERY",
-      "state": "NE",
-      "carrier": "Accredited Non-Admitted 1st",
-      "oldValue": 35,
-      "newValue": 25,
-      "zeroed": false,
-      "restored": false,
-      "message": "NE - Accredited Non-Admitted 1st: lottery 35% → 25%"
-    },
-    {
-      "type": "LOTTERY",
-      "state": "NE",
-      "carrier": "Ascot Non-Admitted",
-      "oldValue": 1,
-      "newValue": 25,
-      "zeroed": false,
-      "restored": false,
-      "message": "NE - Ascot Non-Admitted: lottery 1% → 25%"
-    },
-    {
-      "type": "LOTTERY",
-      "state": "NE",
-      "carrier": "Accredited Non-Admitted New",
-      "oldValue": 64,
-      "newValue": 50,
-      "zeroed": false,
-      "restored": false,
-      "message": "NE - Accredited Non-Admitted New: lottery 64% → 50%"
-    },
-    {
-      "type": "LOTTERY",
-      "state": "NH",
-      "carrier": "Accredited Non-Admitted 1st",
-      "oldValue": 35,
-      "newValue": 25,
-      "zeroed": false,
-      "restored": false,
-      "message": "NH - Accredited Non-Admitted 1st: lottery 35% → 25%"
-    },
-    {
-      "type": "LOTTERY",
-      "state": "NH",
-      "carrier": "Ascot Non-Admitted",
-      "oldValue": 1,
-      "newValue": 25,
-      "zeroed": false,
-      "restored": false,
-      "message": "NH - Ascot Non-Admitted: lottery 1% → 25%"
-    },
-    {
-      "type": "LOTTERY",
-      "state": "NH",
-      "carrier": "Accredited Non-Admitted New",
-      "oldValue": 64,
-      "newValue": 50,
-      "zeroed": false,
-      "restored": false,
-      "message": "NH - Accredited Non-Admitted New: lottery 64% → 50%"
-    },
-    {
-      "type": "DSG",
-      "state": "NJ",
-      "carrier": "Accredited Non-Admitted 1st",
-      "oldValue": 0,
-      "newValue": 1,
-      "message": "NJ - Accredited Non-Admitted 1st: DSG not allowed → allowed"
-    },
-    {
-      "type": "DSG",
-      "state": "NJ",
-      "carrier": "Accredited Non-Admitted New",
-      "oldValue": 0,
-      "newValue": 1,
-      "message": "NJ - Accredited Non-Admitted New: DSG not allowed → allowed"
-    },
-    {
-      "type": "LOTTERY",
-      "state": "OK",
-      "carrier": "Accredited Non-Admitted 1st",
-      "oldValue": 35,
-      "newValue": 25,
-      "zeroed": false,
-      "restored": false,
-      "message": "OK - Accredited Non-Admitted 1st: lottery 35% → 25%"
-    },
-    {
-      "type": "LOTTERY",
-      "state": "OK",
-      "carrier": "Ascot Non-Admitted",
-      "oldValue": 1,
-      "newValue": 25,
-      "zeroed": false,
-      "restored": false,
-      "message": "OK - Ascot Non-Admitted: lottery 1% → 25%"
-    },
-    {
-      "type": "LOTTERY",
-      "state": "OK",
-      "carrier": "Accredited Non-Admitted New",
-      "oldValue": 64,
-      "newValue": 50,
-      "zeroed": false,
-      "restored": false,
-      "message": "OK - Accredited Non-Admitted New: lottery 64% → 50%"
-    },
-    {
-      "type": "LOTTERY",
-      "state": "OR",
-      "carrier": "Accredited Non-Admitted 1st",
-      "oldValue": 34,
-      "newValue": 25,
-      "zeroed": false,
-      "restored": false,
-      "message": "OR - Accredited Non-Admitted 1st: lottery 34% → 25%"
-    },
-    {
-      "type": "LOTTERY",
-      "state": "OR",
-      "carrier": "Ascot Non-Admitted",
-      "oldValue": 1,
-      "newValue": 25,
-      "zeroed": false,
-      "restored": false,
-      "message": "OR - Ascot Non-Admitted: lottery 1% → 25%"
-    },
-    {
-      "type": "LOTTERY",
-      "state": "OR",
-      "carrier": "Accredited Non-Admitted New",
       "oldValue": 65,
-      "newValue": 50,
+      "newValue": 45,
       "zeroed": false,
       "restored": false,
-      "message": "OR - Accredited Non-Admitted New: lottery 65% → 50%"
+      "message": "GA - Accredited Non-Admitted 1st: lottery 65% → 45%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "GA",
+      "carrier": "Ascot Non-Admitted",
+      "oldValue": 1,
+      "newValue": 30,
+      "zeroed": false,
+      "restored": false,
+      "message": "GA - Ascot Non-Admitted: lottery 1% → 30%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "GA",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "GA - Accredited Non-Admitted New: lottery 34% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "IA",
+      "carrier": "Accredited Non-Admitted 1st",
+      "oldValue": 64,
+      "newValue": 45,
+      "zeroed": false,
+      "restored": false,
+      "message": "IA - Accredited Non-Admitted 1st: lottery 64% → 45%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "IA",
+      "carrier": "Ascot Non-Admitted",
+      "oldValue": 1,
+      "newValue": 30,
+      "zeroed": false,
+      "restored": false,
+      "message": "IA - Ascot Non-Admitted: lottery 1% → 30%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "IA",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "IA - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "IA",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "IA - Accredited Non-Admitted New: lottery 34% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "ID",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "ID - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "ID",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 35,
+      "zeroed": false,
+      "restored": false,
+      "message": "ID - Accredited Non-Admitted New: lottery 34% → 35%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "IN",
+      "carrier": "Accredited Non-Admitted 1st",
+      "oldValue": 64,
+      "newValue": 45,
+      "zeroed": false,
+      "restored": false,
+      "message": "IN - Accredited Non-Admitted 1st: lottery 64% → 45%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "IN",
+      "carrier": "Ascot Non-Admitted",
+      "oldValue": 1,
+      "newValue": 30,
+      "zeroed": false,
+      "restored": false,
+      "message": "IN - Ascot Non-Admitted: lottery 1% → 30%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "IN",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "IN - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "IN",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "IN - Accredited Non-Admitted New: lottery 34% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "MD",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "MD - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "MD",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 35,
+      "zeroed": false,
+      "restored": false,
+      "message": "MD - Accredited Non-Admitted New: lottery 34% → 35%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "ME",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "ME - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "ME",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 35,
+      "zeroed": false,
+      "restored": false,
+      "message": "ME - Accredited Non-Admitted New: lottery 34% → 35%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "MI",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "MI - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "MI",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 99,
+      "newValue": 100,
+      "zeroed": false,
+      "restored": false,
+      "message": "MI - Accredited Non-Admitted New: lottery 99% → 100%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "MN",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "MN - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "MN",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 99,
+      "newValue": 100,
+      "zeroed": false,
+      "restored": false,
+      "message": "MN - Accredited Non-Admitted New: lottery 99% → 100%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "MO",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "MO - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "MO",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 35,
+      "zeroed": false,
+      "restored": false,
+      "message": "MO - Accredited Non-Admitted New: lottery 34% → 35%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "MS",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "MS - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "MS",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 35,
+      "zeroed": false,
+      "restored": false,
+      "message": "MS - Accredited Non-Admitted New: lottery 34% → 35%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "MT",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "MT - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "MT",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 35,
+      "zeroed": false,
+      "restored": false,
+      "message": "MT - Accredited Non-Admitted New: lottery 34% → 35%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "ND",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "ND - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "ND",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 35,
+      "zeroed": false,
+      "restored": false,
+      "message": "ND - Accredited Non-Admitted New: lottery 34% → 35%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "NE",
+      "carrier": "Accredited Non-Admitted 1st",
+      "oldValue": 64,
+      "newValue": 45,
+      "zeroed": false,
+      "restored": false,
+      "message": "NE - Accredited Non-Admitted 1st: lottery 64% → 45%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "NE",
+      "carrier": "Ascot Non-Admitted",
+      "oldValue": 1,
+      "newValue": 30,
+      "zeroed": false,
+      "restored": false,
+      "message": "NE - Ascot Non-Admitted: lottery 1% → 30%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "NE",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "NE - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "NE",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "NE - Accredited Non-Admitted New: lottery 34% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "NH",
+      "carrier": "Accredited Non-Admitted 1st",
+      "oldValue": 64,
+      "newValue": 45,
+      "zeroed": false,
+      "restored": false,
+      "message": "NH - Accredited Non-Admitted 1st: lottery 64% → 45%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "NH",
+      "carrier": "Ascot Non-Admitted",
+      "oldValue": 1,
+      "newValue": 30,
+      "zeroed": false,
+      "restored": false,
+      "message": "NH - Ascot Non-Admitted: lottery 1% → 30%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "NH",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "NH - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "NH",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "NH - Accredited Non-Admitted New: lottery 34% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "OK",
+      "carrier": "Accredited Non-Admitted 1st",
+      "oldValue": 64,
+      "newValue": 45,
+      "zeroed": false,
+      "restored": false,
+      "message": "OK - Accredited Non-Admitted 1st: lottery 64% → 45%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "OK",
+      "carrier": "Ascot Non-Admitted",
+      "oldValue": 1,
+      "newValue": 30,
+      "zeroed": false,
+      "restored": false,
+      "message": "OK - Ascot Non-Admitted: lottery 1% → 30%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "OK",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "OK - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "OK",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "OK - Accredited Non-Admitted New: lottery 34% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "OR",
+      "carrier": "Accredited Non-Admitted 1st",
+      "oldValue": 64,
+      "newValue": 45,
+      "zeroed": false,
+      "restored": false,
+      "message": "OR - Accredited Non-Admitted 1st: lottery 64% → 45%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "OR",
+      "carrier": "Ascot Non-Admitted",
+      "oldValue": 1,
+      "newValue": 30,
+      "zeroed": false,
+      "restored": false,
+      "message": "OR - Ascot Non-Admitted: lottery 1% → 30%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "OR",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "OR - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "OR",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 25,
+      "zeroed": false,
+      "restored": false,
+      "message": "OR - Accredited Non-Admitted New: lottery 34% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "PA",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "PA - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "PA",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 35,
+      "zeroed": false,
+      "restored": false,
+      "message": "PA - Accredited Non-Admitted New: lottery 34% → 35%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "RI",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "RI - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "RI",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 35,
+      "zeroed": false,
+      "restored": false,
+      "message": "RI - Accredited Non-Admitted New: lottery 34% → 35%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "SD",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "SD - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "SD",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 35,
+      "zeroed": false,
+      "restored": false,
+      "message": "SD - Accredited Non-Admitted New: lottery 34% → 35%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "TN",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "TN - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "TN",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 35,
+      "zeroed": false,
+      "restored": false,
+      "message": "TN - Accredited Non-Admitted New: lottery 34% → 35%"
     },
     {
       "type": "LOTTERY",
       "state": "TX",
       "carrier": "Accredited Non-Admitted 1st",
-      "oldValue": 35,
-      "newValue": 25,
+      "oldValue": 64,
+      "newValue": 45,
       "zeroed": false,
       "restored": false,
-      "message": "TX - Accredited Non-Admitted 1st: lottery 35% → 25%"
+      "message": "TX - Accredited Non-Admitted 1st: lottery 64% → 45%"
     },
     {
       "type": "LOTTERY",
       "state": "TX",
       "carrier": "Ascot Non-Admitted",
       "oldValue": 1,
-      "newValue": 25,
+      "newValue": 30,
       "zeroed": false,
       "restored": false,
-      "message": "TX - Ascot Non-Admitted: lottery 1% → 25%"
+      "message": "TX - Ascot Non-Admitted: lottery 1% → 30%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "TX",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "TX - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
     },
     {
       "type": "LOTTERY",
       "state": "TX",
       "carrier": "Accredited Non-Admitted New",
-      "oldValue": 64,
-      "newValue": 50,
+      "oldValue": 34,
+      "newValue": 25,
       "zeroed": false,
       "restored": false,
-      "message": "TX - Accredited Non-Admitted New: lottery 64% → 50%"
+      "message": "TX - Accredited Non-Admitted New: lottery 34% → 25%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "UT",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "UT - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "UT",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 35,
+      "zeroed": false,
+      "restored": false,
+      "message": "UT - Accredited Non-Admitted New: lottery 34% → 35%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "VA",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "VA - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "VA",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 35,
+      "zeroed": false,
+      "restored": false,
+      "message": "VA - Accredited Non-Admitted New: lottery 34% → 35%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "VT",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "VT - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "VT",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 35,
+      "zeroed": false,
+      "restored": false,
+      "message": "VT - Accredited Non-Admitted New: lottery 34% → 35%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "WA",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "WA - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "WA",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 99,
+      "newValue": 100,
+      "zeroed": false,
+      "restored": false,
+      "message": "WA - Accredited Non-Admitted New: lottery 99% → 100%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "WV",
+      "carrier": "Everspan Non-Admitted MunichRe",
+      "oldValue": 1,
+      "newValue": 0,
+      "zeroed": true,
+      "restored": false,
+      "message": "WV - Everspan Non-Admitted MunichRe: lottery 1% → 0%"
+    },
+    {
+      "type": "LOTTERY",
+      "state": "WV",
+      "carrier": "Accredited Non-Admitted New",
+      "oldValue": 34,
+      "newValue": 35,
+      "zeroed": false,
+      "restored": false,
+      "message": "WV - Accredited Non-Admitted New: lottery 34% → 35%"
+    }
+  ],
+  "registry": [
+    {
+      "id": null,
+      "key": "Everspan Admitted GenRe",
+      "display": "Everspan Admitted (GenRe)",
+      "status": "retired",
+      "admitted": true,
+      "defaultStatus": "N/A",
+      "curated": true
+    },
+    {
+      "id": null,
+      "key": "Everspan Non-Admitted GenRe",
+      "display": "Everspan Non-Admitted (GenRe)",
+      "status": "retired",
+      "admitted": false,
+      "defaultStatus": "turned off permanently",
+      "curated": true
+    },
+    {
+      "id": 6156,
+      "key": "Everspan Admitted MunichRe",
+      "display": "Everspan Admitted (MunichRe)",
+      "status": "live",
+      "admitted": true,
+      "curated": true,
+      "activeStates": 7,
+      "newBusiness30d": 4007
+    },
+    {
+      "id": 6155,
+      "key": "Everspan Non-Admitted MunichRe",
+      "display": "Everspan Non-Admitted (MunichRe)",
+      "status": "live",
+      "admitted": false,
+      "curated": true,
+      "activeStates": 31,
+      "newBusiness30d": 2532
+    },
+    {
+      "id": 5245,
+      "key": "Accredited Non-Admitted 1st",
+      "display": "Accredited Non-Admitted (1st)",
+      "status": "live",
+      "admitted": false,
+      "curated": true,
+      "activeStates": 33,
+      "newBusiness30d": 9469
+    },
+    {
+      "id": 6607,
+      "key": "Accredited Non-Admitted New",
+      "display": "Accredited Non-Admitted (New)",
+      "status": "live",
+      "admitted": false,
+      "curated": true,
+      "activeStates": 34,
+      "newBusiness30d": 6099
+    },
+    {
+      "id": 61,
+      "key": "Knight Non-Admitted",
+      "display": "Knight Non-Admitted",
+      "status": "retired",
+      "admitted": false,
+      "curated": true,
+      "activeStates": 0,
+      "newBusiness30d": 0,
+      "defaultStatus": "turned off permanently",
+      "note": "Permanently turned off for new business; continues to endorse existing policies."
+    },
+    {
+      "id": 5696,
+      "key": "Ascot Non-Admitted",
+      "display": "Ascot Non-Admitted",
+      "status": "live",
+      "admitted": false,
+      "curated": true,
+      "activeStates": 11,
+      "newBusiness30d": 1681
+    },
+    {
+      "id": 6881,
+      "key": "Accredited 2025 Admitted",
+      "display": "Accredited Admitted (2025 Program)",
+      "status": "live",
+      "admitted": true,
+      "curated": true,
+      "activeStates": 1,
+      "newBusiness30d": 1787,
+      "note": "Florida-only admitted program. Launched 2026-09-14."
     }
   ],
   "dsgEligibility": {
-    "AK": "N/A",
-    "AL": "Y",
-    "AR": "Y",
-    "AZ": "Y",
-    "CA": "Y",
-    "CO": "Y",
-    "CT": "N/A",
-    "DC": "N/A",
-    "DE": "Y",
-    "FL": "Y",
-    "GA": "Y",
-    "HI": "N/A",
-    "IA": "Y",
-    "ID": "Y",
-    "IL": "N/A",
-    "IN": "Y",
-    "KS": "N/A",
-    "KY": "N/A",
-    "LA": "N/A",
-    "MA": "N/A",
-    "MD": "Y",
-    "ME": "Y",
-    "MI": "Y",
-    "MN": "Y",
-    "MO": "Y",
-    "MS": "Y",
-    "MT": "Y",
-    "NC": "N/A",
-    "ND": "Y",
-    "NE": "Y",
-    "NH": "Y",
-    "NJ": "Y",
-    "NM": "N/A",
-    "NV": "N/A",
-    "NY": "N/A",
-    "OH": "Y",
-    "OK": "Y",
-    "OR": "Y",
-    "PA": "Y",
-    "RI": "Y",
-    "SC": "N/A",
-    "SD": "Y",
-    "TN": "Y",
-    "TX": "Y",
-    "UT": "Y",
-    "VA": "Y",
-    "VT": "N/A",
-    "WA": "Y",
-    "WI": "N/A",
-    "WV": "Y",
-    "WY": "N/A"
+    "AK": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "N/A"
+    },
+    "AL": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "AR": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "AZ": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "CA": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "CO": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "CT": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "N/A"
+    },
+    "DC": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "N/A"
+    },
+    "DE": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "FL": {
+      "Admitted AL DS&G": "Y",
+      "Non-Admitted AL DS&G": "N/A"
+    },
+    "GA": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "HI": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "N/A"
+    },
+    "IA": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "ID": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "IL": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "N/A"
+    },
+    "IN": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "KS": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "N/A"
+    },
+    "KY": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "N/A"
+    },
+    "LA": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "N/A"
+    },
+    "MA": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "N/A"
+    },
+    "MD": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "ME": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "MI": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "MN": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "MO": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "MS": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "MT": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "NC": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "N/A"
+    },
+    "ND": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "NE": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "NH": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "NJ": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "NM": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "N/A"
+    },
+    "NV": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "N/A"
+    },
+    "NY": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "N/A"
+    },
+    "OH": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "OK": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "OR": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "PA": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "RI": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "SC": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "N/A"
+    },
+    "SD": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "TN": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "TX": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "UT": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "VA": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "VT": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "N/A"
+    },
+    "WA": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "WI": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "N/A"
+    },
+    "WV": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "Y"
+    },
+    "WY": {
+      "Admitted AL DS&G": "N/A",
+      "Non-Admitted AL DS&G": "N/A"
+    }
   },
   "admittedALEligibility": {
     "AK": {
@@ -765,100 +1527,7 @@
   },
   "staleness": {
     "level": "error",
-    "hours": 657.4,
-    "message": "Monitor has not completed a successful check in 657.4h (threshold 12h) — carrier data may be stale"
-  },
-  "registry": [
-    {
-      "id": null,
-      "key": "Everspan Admitted GenRe",
-      "display": "Everspan Admitted (GenRe)",
-      "status": "retired",
-      "admitted": true,
-      "defaultStatus": "N/A",
-      "curated": true
-    },
-    {
-      "id": null,
-      "key": "Everspan Non-Admitted GenRe",
-      "display": "Everspan Non-Admitted (GenRe)",
-      "status": "retired",
-      "admitted": false,
-      "defaultStatus": "turned off permanently",
-      "curated": true
-    },
-    {
-      "id": 6156,
-      "key": "Everspan Admitted MunichRe",
-      "display": "Everspan Admitted (MunichRe)",
-      "status": "live",
-      "admitted": true,
-      "curated": true,
-      "activeStates": 7,
-      "newBusiness30d": 4652
-    },
-    {
-      "id": 6155,
-      "key": "Everspan Non-Admitted MunichRe",
-      "display": "Everspan Non-Admitted (MunichRe)",
-      "status": "live",
-      "admitted": false,
-      "curated": true,
-      "activeStates": 31,
-      "newBusiness30d": 7405
-    },
-    {
-      "id": 5245,
-      "key": "Accredited Non-Admitted 1st",
-      "display": "Accredited Non-Admitted (1st)",
-      "status": "live",
-      "admitted": false,
-      "curated": true,
-      "activeStates": 33,
-      "newBusiness30d": 3408
-    },
-    {
-      "id": 6607,
-      "key": "Accredited Non-Admitted New",
-      "display": "Accredited Non-Admitted (New)",
-      "status": "live",
-      "admitted": false,
-      "curated": true,
-      "activeStates": 34,
-      "newBusiness30d": 7156
-    },
-    {
-      "id": 61,
-      "key": "Knight Non-Admitted",
-      "display": "Knight Non-Admitted",
-      "status": "retired",
-      "admitted": false,
-      "curated": true,
-      "activeStates": 0,
-      "newBusiness30d": 0,
-      "defaultStatus": "turned off permanently",
-      "note": "Permanently turned off for new business; continues to endorse existing policies."
-    },
-    {
-      "id": 5696,
-      "key": "Ascot Non-Admitted",
-      "display": "Ascot Non-Admitted",
-      "status": "live",
-      "admitted": false,
-      "curated": true,
-      "activeStates": 11,
-      "newBusiness30d": 1407
-    },
-    {
-      "id": 6881,
-      "key": "Accredited 2025 Admitted",
-      "display": "Accredited Admitted (2025 Program)",
-      "status": "live",
-      "admitted": true,
-      "curated": true,
-      "activeStates": 1,
-      "newBusiness30d": 52,
-      "note": "Florida-only admitted program. Launched 2026-09-14."
-    }
-  ]
+    "hours": 611.5,
+    "message": "Monitor has not completed a successful check in 611.5h (threshold 12h) — carrier data may be stale"
+  }
 }
