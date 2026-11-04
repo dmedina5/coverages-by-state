@@ -1,25 +1,13 @@
 {
-  "detectedAt": "2026-11-03T01:12:38.382Z",
+  "detectedAt": "2026-11-04T02:01:45.774Z",
   "changes": [
     {
-      "type": "LOTTERY",
-      "state": "FL",
-      "carrier": "Everspan Admitted MunichRe",
-      "oldValue": 1,
-      "newValue": 0,
-      "zeroed": true,
-      "restored": false,
-      "message": "FL - Everspan Admitted MunichRe: lottery 1% → 0%"
-    },
-    {
-      "type": "LOTTERY",
-      "state": "FL",
+      "type": "DSG",
+      "state": "IL",
       "carrier": "Accredited 2025 Admitted",
-      "oldValue": 99,
-      "newValue": 100,
-      "zeroed": false,
-      "restored": false,
-      "message": "FL - Accredited 2025 Admitted: lottery 99% → 100%"
+      "oldValue": 0,
+      "newValue": 1,
+      "message": "IL - Accredited 2025 Admitted: DSG not allowed → allowed"
     }
   ],
   "registry": [
@@ -49,7 +37,7 @@
       "admitted": true,
       "curated": true,
       "activeStates": 7,
-      "newBusiness30d": 3651
+      "newBusiness30d": 3801
     },
     {
       "id": 6155,
@@ -59,7 +47,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 31,
-      "newBusiness30d": 3
+      "newBusiness30d": 2
     },
     {
       "id": 5245,
@@ -69,7 +57,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 33,
-      "newBusiness30d": 9925
+      "newBusiness30d": 10325
     },
     {
       "id": 6607,
@@ -79,7 +67,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 34,
-      "newBusiness30d": 6382
+      "newBusiness30d": 6661
     },
     {
       "id": 61,
@@ -101,7 +89,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 11,
-      "newBusiness30d": 2690
+      "newBusiness30d": 2840
     },
     {
       "id": 6881,
@@ -111,7 +99,7 @@
       "admitted": true,
       "curated": true,
       "activeStates": 2,
-      "newBusiness30d": 2137,
+      "newBusiness30d": 2232,
       "note": "Florida-only admitted program. Launched 2026-09-14."
     }
   ],
@@ -173,7 +161,7 @@
       "Non-Admitted AL DS&G": "Y"
     },
     "IL": {
-      "Admitted AL DS&G": "N/A",
+      "Admitted AL DS&G": "Y",
       "Non-Admitted AL DS&G": "N/A"
     },
     "IN": {
@@ -679,8 +667,8 @@
     ]
   },
   "staleness": {
-    "level": "warn",
-    "hours": 6.6,
-    "message": "Last successful check was 6.6h ago (threshold 6h)"
+    "level": "ok",
+    "hours": 4.5,
+    "message": "Last successful check was 4.5h ago"
   }
 }
