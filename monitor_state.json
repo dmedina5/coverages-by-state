@@ -1,7 +1,7 @@
 {
-  "hash": "6fc728433c8423e13ebe741bb00c3005",
-  "timestamp": "2026-11-07T01:51:15.084Z",
-  "rowCount": 175,
+  "hash": "363183facade5d649ca45ff7024b2ab5",
+  "timestamp": "2026-11-07T07:52:34.456Z",
+  "rowCount": 176,
   "registry": [
     {
       "id": null,
@@ -49,7 +49,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 33,
-      "newBusiness30d": 9810
+      "newBusiness30d": 9797
     },
     {
       "id": 6607,
@@ -59,7 +59,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 34,
-      "newBusiness30d": 6390
+      "newBusiness30d": 6386
     },
     {
       "id": 61,
@@ -81,7 +81,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 11,
-      "newBusiness30d": 3279
+      "newBusiness30d": 3282
     },
     {
       "id": 6881,
@@ -90,8 +90,8 @@
       "status": "live",
       "admitted": true,
       "curated": true,
-      "activeStates": 3,
-      "newBusiness30d": 2375,
+      "activeStates": 4,
+      "newBusiness30d": 2376,
       "note": "Florida-only admitted program. Launched 2026-09-14."
     }
   ],
@@ -1035,6 +1035,14 @@
     {
       "company_id": 6156,
       "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Insurance Company - Issuing Insurance Company",
+      "state_code": "NV",
+      "active": 1,
+      "dsg_allowed": 0,
+      "lottery_al": 100
+    },
+    {
+      "company_id": 6881,
+      "company_name": "Accredited Surety and Casualty Company, Inc.",
       "state_code": "NV",
       "active": 1,
       "dsg_allowed": 0,
