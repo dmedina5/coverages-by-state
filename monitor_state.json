@@ -1,7 +1,7 @@
 {
-  "hash": "20cb84c8803b964b1aac7664c3d08291",
-  "timestamp": "2026-11-04T02:01:45.772Z",
-  "rowCount": 174,
+  "hash": "6fc728433c8423e13ebe741bb00c3005",
+  "timestamp": "2026-11-07T01:51:15.084Z",
+  "rowCount": 175,
   "registry": [
     {
       "id": null,
@@ -29,7 +29,7 @@
       "admitted": true,
       "curated": true,
       "activeStates": 7,
-      "newBusiness30d": 3801
+      "newBusiness30d": 3415
     },
     {
       "id": 6155,
@@ -39,7 +39,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 31,
-      "newBusiness30d": 2
+      "newBusiness30d": 1
     },
     {
       "id": 5245,
@@ -49,7 +49,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 33,
-      "newBusiness30d": 10325
+      "newBusiness30d": 9810
     },
     {
       "id": 6607,
@@ -59,7 +59,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 34,
-      "newBusiness30d": 6661
+      "newBusiness30d": 6390
     },
     {
       "id": 61,
@@ -81,7 +81,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 11,
-      "newBusiness30d": 2840
+      "newBusiness30d": 3279
     },
     {
       "id": 6881,
@@ -90,8 +90,8 @@
       "status": "live",
       "admitted": true,
       "curated": true,
-      "activeStates": 2,
-      "newBusiness30d": 2232,
+      "activeStates": 3,
+      "newBusiness30d": 2375,
       "note": "Florida-only admitted program. Launched 2026-09-14."
     }
   ],
@@ -1419,6 +1419,14 @@
     {
       "company_id": 6156,
       "company_name": "MUNICH RE - 100% Reinsurance Provider | A.M. Best A+ (Superior) • Everspan Insurance Company - Issuing Insurance Company",
+      "state_code": "WI",
+      "active": 1,
+      "dsg_allowed": 0,
+      "lottery_al": 100
+    },
+    {
+      "company_id": 6881,
+      "company_name": "Accredited Surety and Casualty Company, Inc.",
       "state_code": "WI",
       "active": 1,
       "dsg_allowed": 0,
