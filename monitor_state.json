@@ -1,6 +1,6 @@
 {
-  "hash": "363183facade5d649ca45ff7024b2ab5",
-  "timestamp": "2026-11-07T07:52:34.456Z",
+  "hash": "411a1a3c2d7dced23c8daaf0b551abfb",
+  "timestamp": "2026-11-11T18:05:54.951Z",
   "rowCount": 176,
   "registry": [
     {
@@ -29,7 +29,7 @@
       "admitted": true,
       "curated": true,
       "activeStates": 7,
-      "newBusiness30d": 3415
+      "newBusiness30d": 3253
     },
     {
       "id": 6155,
@@ -49,7 +49,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 33,
-      "newBusiness30d": 9797
+      "newBusiness30d": 9566
     },
     {
       "id": 6607,
@@ -59,7 +59,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 34,
-      "newBusiness30d": 6386
+      "newBusiness30d": 6172
     },
     {
       "id": 61,
@@ -81,7 +81,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 11,
-      "newBusiness30d": 3282
+      "newBusiness30d": 3722
     },
     {
       "id": 6881,
@@ -91,7 +91,7 @@
       "admitted": true,
       "curated": true,
       "activeStates": 4,
-      "newBusiness30d": 2376,
+      "newBusiness30d": 2531,
       "note": "Florida-only admitted program. Launched 2026-09-14."
     }
   ],
@@ -198,7 +198,7 @@
       "state_code": "AZ",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 45
+      "lottery_al": 64
     },
     {
       "company_id": 5696,
@@ -206,7 +206,7 @@
       "state_code": "AZ",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 30
+      "lottery_al": 1
     },
     {
       "company_id": 6155,
@@ -222,7 +222,7 @@
       "state_code": "AZ",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 35
     },
     {
       "company_id": 5245,
@@ -230,7 +230,7 @@
       "state_code": "CA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 45
+      "lottery_al": 64
     },
     {
       "company_id": 5696,
@@ -238,7 +238,7 @@
       "state_code": "CA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 30
+      "lottery_al": 1
     },
     {
       "company_id": 6155,
@@ -254,7 +254,7 @@
       "state_code": "CA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 35
     },
     {
       "company_id": 5245,
@@ -262,7 +262,7 @@
       "state_code": "CO",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 45
+      "lottery_al": 64
     },
     {
       "company_id": 5696,
@@ -270,7 +270,7 @@
       "state_code": "CO",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 30
+      "lottery_al": 1
     },
     {
       "company_id": 6155,
@@ -286,7 +286,7 @@
       "state_code": "CO",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 35
     },
     {
       "company_id": 5245,
@@ -406,7 +406,7 @@
       "state_code": "GA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 45
+      "lottery_al": 64
     },
     {
       "company_id": 5696,
@@ -414,7 +414,7 @@
       "state_code": "GA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 30
+      "lottery_al": 1
     },
     {
       "company_id": 6607,
@@ -422,7 +422,7 @@
       "state_code": "GA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 35
     },
     {
       "company_id": 5245,
@@ -462,7 +462,7 @@
       "state_code": "IA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 45
+      "lottery_al": 64
     },
     {
       "company_id": 5696,
@@ -470,7 +470,7 @@
       "state_code": "IA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 30
+      "lottery_al": 1
     },
     {
       "company_id": 6155,
@@ -486,7 +486,7 @@
       "state_code": "IA",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 35
     },
     {
       "company_id": 5245,
@@ -542,7 +542,7 @@
       "state_code": "IN",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 45
+      "lottery_al": 64
     },
     {
       "company_id": 5696,
@@ -550,7 +550,7 @@
       "state_code": "IN",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 30
+      "lottery_al": 1
     },
     {
       "company_id": 6155,
@@ -566,7 +566,7 @@
       "state_code": "IN",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 35
     },
     {
       "company_id": 5245,
@@ -942,7 +942,7 @@
       "state_code": "NE",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 45
+      "lottery_al": 64
     },
     {
       "company_id": 5696,
@@ -950,7 +950,7 @@
       "state_code": "NE",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 30
+      "lottery_al": 1
     },
     {
       "company_id": 6155,
@@ -966,7 +966,7 @@
       "state_code": "NE",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 35
     },
     {
       "company_id": 5245,
@@ -974,7 +974,7 @@
       "state_code": "NH",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 45
+      "lottery_al": 64
     },
     {
       "company_id": 5696,
@@ -982,7 +982,7 @@
       "state_code": "NH",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 30
+      "lottery_al": 1
     },
     {
       "company_id": 6155,
@@ -998,7 +998,7 @@
       "state_code": "NH",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 35
     },
     {
       "company_id": 5245,
@@ -1102,7 +1102,7 @@
       "state_code": "OK",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 45
+      "lottery_al": 64
     },
     {
       "company_id": 5696,
@@ -1110,7 +1110,7 @@
       "state_code": "OK",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 30
+      "lottery_al": 1
     },
     {
       "company_id": 6155,
@@ -1126,7 +1126,7 @@
       "state_code": "OK",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 35
     },
     {
       "company_id": 5245,
@@ -1134,7 +1134,7 @@
       "state_code": "OR",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 45
+      "lottery_al": 64
     },
     {
       "company_id": 5696,
@@ -1142,7 +1142,7 @@
       "state_code": "OR",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 30
+      "lottery_al": 1
     },
     {
       "company_id": 6155,
@@ -1158,7 +1158,7 @@
       "state_code": "OR",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 35
     },
     {
       "company_id": 5245,
@@ -1286,7 +1286,7 @@
       "state_code": "TX",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 45
+      "lottery_al": 64
     },
     {
       "company_id": 5696,
@@ -1294,7 +1294,7 @@
       "state_code": "TX",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 30
+      "lottery_al": 1
     },
     {
       "company_id": 6155,
@@ -1310,7 +1310,7 @@
       "state_code": "TX",
       "active": 1,
       "dsg_allowed": 1,
-      "lottery_al": 25
+      "lottery_al": 35
     },
     {
       "company_id": 5245,
