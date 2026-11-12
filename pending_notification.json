@@ -1,13 +1,13 @@
 {
-  "detectedAt": "2026-11-04T02:01:45.774Z",
+  "detectedAt": "2026-11-12T00:34:40.884Z",
   "changes": [
     {
       "type": "DSG",
       "state": "IL",
       "carrier": "Accredited 2025 Admitted",
-      "oldValue": 0,
-      "newValue": 1,
-      "message": "IL - Accredited 2025 Admitted: DSG not allowed → allowed"
+      "oldValue": 1,
+      "newValue": 0,
+      "message": "IL - Accredited 2025 Admitted: DSG allowed → not allowed"
     }
   ],
   "registry": [
@@ -37,7 +37,7 @@
       "admitted": true,
       "curated": true,
       "activeStates": 7,
-      "newBusiness30d": 3801
+      "newBusiness30d": 3232
     },
     {
       "id": 6155,
@@ -47,7 +47,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 31,
-      "newBusiness30d": 2
+      "newBusiness30d": 1
     },
     {
       "id": 5245,
@@ -57,7 +57,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 33,
-      "newBusiness30d": 10325
+      "newBusiness30d": 9569
     },
     {
       "id": 6607,
@@ -67,7 +67,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 34,
-      "newBusiness30d": 6661
+      "newBusiness30d": 6183
     },
     {
       "id": 61,
@@ -89,7 +89,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 11,
-      "newBusiness30d": 2840
+      "newBusiness30d": 3725
     },
     {
       "id": 6881,
@@ -98,8 +98,8 @@
       "status": "live",
       "admitted": true,
       "curated": true,
-      "activeStates": 2,
-      "newBusiness30d": 2232,
+      "activeStates": 4,
+      "newBusiness30d": 2572,
       "note": "Florida-only admitted program. Launched 2026-09-14."
     }
   ],
@@ -161,7 +161,7 @@
       "Non-Admitted AL DS&G": "Y"
     },
     "IL": {
-      "Admitted AL DS&G": "Y",
+      "Admitted AL DS&G": "N/A",
       "Non-Admitted AL DS&G": "N/A"
     },
     "IN": {
@@ -667,8 +667,8 @@
     ]
   },
   "staleness": {
-    "level": "ok",
-    "hours": 4.5,
-    "message": "Last successful check was 4.5h ago"
+    "level": "warn",
+    "hours": 6.5,
+    "message": "Last successful check was 6.5h ago (threshold 6h)"
   }
 }
