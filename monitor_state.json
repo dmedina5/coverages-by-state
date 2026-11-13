@@ -1,6 +1,6 @@
 {
-  "hash": "0f2d81d2162b13360d61f0efc55c9c8b",
-  "timestamp": "2026-11-12T00:34:40.883Z",
+  "hash": "411a1a3c2d7dced23c8daaf0b551abfb",
+  "timestamp": "2026-11-13T10:00:18.451Z",
   "rowCount": 176,
   "registry": [
     {
@@ -29,7 +29,7 @@
       "admitted": true,
       "curated": true,
       "activeStates": 7,
-      "newBusiness30d": 3232
+      "newBusiness30d": 3148
     },
     {
       "id": 6155,
@@ -49,7 +49,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 33,
-      "newBusiness30d": 9569
+      "newBusiness30d": 9583
     },
     {
       "id": 6607,
@@ -59,7 +59,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 34,
-      "newBusiness30d": 6183
+      "newBusiness30d": 6156
     },
     {
       "id": 61,
@@ -81,7 +81,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 11,
-      "newBusiness30d": 3725
+      "newBusiness30d": 3704
     },
     {
       "id": 6881,
@@ -91,7 +91,7 @@
       "admitted": true,
       "curated": true,
       "activeStates": 4,
-      "newBusiness30d": 2572,
+      "newBusiness30d": 2606,
       "note": "Florida-only admitted program. Launched 2026-09-14."
     }
   ],
@@ -533,7 +533,7 @@
       "company_name": "Accredited Surety and Casualty Company, Inc.",
       "state_code": "IL",
       "active": 1,
-      "dsg_allowed": 0,
+      "dsg_allowed": 1,
       "lottery_al": 100
     },
     {

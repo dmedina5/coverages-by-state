@@ -1,13 +1,13 @@
 {
-  "detectedAt": "2026-11-12T00:34:40.884Z",
+  "detectedAt": "2026-11-13T10:00:18.452Z",
   "changes": [
     {
       "type": "DSG",
       "state": "IL",
       "carrier": "Accredited 2025 Admitted",
-      "oldValue": 1,
-      "newValue": 0,
-      "message": "IL - Accredited 2025 Admitted: DSG allowed → not allowed"
+      "oldValue": 0,
+      "newValue": 1,
+      "message": "IL - Accredited 2025 Admitted: DSG not allowed → allowed"
     }
   ],
   "registry": [
@@ -37,7 +37,7 @@
       "admitted": true,
       "curated": true,
       "activeStates": 7,
-      "newBusiness30d": 3232
+      "newBusiness30d": 3148
     },
     {
       "id": 6155,
@@ -57,7 +57,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 33,
-      "newBusiness30d": 9569
+      "newBusiness30d": 9583
     },
     {
       "id": 6607,
@@ -67,7 +67,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 34,
-      "newBusiness30d": 6183
+      "newBusiness30d": 6156
     },
     {
       "id": 61,
@@ -89,7 +89,7 @@
       "admitted": false,
       "curated": true,
       "activeStates": 11,
-      "newBusiness30d": 3725
+      "newBusiness30d": 3704
     },
     {
       "id": 6881,
@@ -99,7 +99,7 @@
       "admitted": true,
       "curated": true,
       "activeStates": 4,
-      "newBusiness30d": 2572,
+      "newBusiness30d": 2606,
       "note": "Florida-only admitted program. Launched 2026-09-14."
     }
   ],
@@ -161,7 +161,7 @@
       "Non-Admitted AL DS&G": "Y"
     },
     "IL": {
-      "Admitted AL DS&G": "N/A",
+      "Admitted AL DS&G": "Y",
       "Non-Admitted AL DS&G": "N/A"
     },
     "IN": {
@@ -668,7 +668,7 @@
   },
   "staleness": {
     "level": "warn",
-    "hours": 6.5,
-    "message": "Last successful check was 6.5h ago (threshold 6h)"
+    "hours": 7.3,
+    "message": "Last successful check was 7.3h ago (threshold 6h)"
   }
 }
